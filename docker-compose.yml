@@ -1,0 +1,14 @@
+services:
+  cockroachdb:
+    image: cockroachdb/cockroach:latest-v24.2
+    container_name: recall-cockroachdb
+    command: start-single-node --insecure
+    ports:
+      - "26257:26257"
+      - "8080:8080"
+    volumes:
+      - cockroach-data:/cockroach/cockroach-data
+    restart: unless-stopped
+
+volumes:
+  cockroach-data:
