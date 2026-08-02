@@ -160,11 +160,27 @@ async def get_problem(
     async with conn.cursor(row_factory=dict_row) as cur:
         await cur.execute(
             """
-            SELECT id, title, statement, difficulty, topic_id, source, created_at
+            SELECT id, title, statement, difficulty, topic_id, source, url, created_at
             FROM problems
             WHERE id = %s
             """,
             (str(problem_id),),
+        )
+        row = await cur.fetchone()
+        return Problem.model_validate(row) if row else None
+
+
+async def get_problem_by_title(
+    conn: psycopg.AsyncConnection, title: str
+) -> Optional[Problem]:
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(
+            """
+            SELECT id, title, statement, difficulty, topic_id, source, url, created_at
+            FROM problems
+            WHERE title = %s
+            """,
+            (title,),
         )
         row = await cur.fetchone()
         return Problem.model_validate(row) if row else None
@@ -177,13 +193,14 @@ async def create_problem(
     difficulty: Optional[str] = None,
     topic_id: Optional[UUID | str] = None,
     source: Optional[str] = None,
+    url: Optional[str] = None,
 ) -> Problem:
     async with conn.cursor(row_factory=dict_row) as cur:
         await cur.execute(
             """
-            INSERT INTO problems (title, statement, difficulty, topic_id, source)
-            VALUES (%s, %s, %s, %s, %s)
-            RETURNING id, title, statement, difficulty, topic_id, source, created_at
+            INSERT INTO problems (title, statement, difficulty, topic_id, source, url)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            RETURNING id, title, statement, difficulty, topic_id, source, url, created_at
             """,
             (
                 title,
@@ -191,6 +208,7 @@ async def create_problem(
                 difficulty,
                 str(topic_id) if topic_id else None,
                 source,
+                url,
             ),
         )
         row = await cur.fetchone()
