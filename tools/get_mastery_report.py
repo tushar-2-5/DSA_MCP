@@ -1,4 +1,5 @@
 from typing import Optional, Dict, Any
+from uuid import UUID
 from database.connection import get_db_connection
 from database.queries import get_user_mastery_report_rows
 
@@ -21,8 +22,14 @@ async def get_mastery_report(
         Dict with key 'topics' containing a list of topic mastery summaries:
         {"topics": [{"slug": str, "mastery_score": float, "last_practiced_at": str or None}]}
     """
+    try:
+        UUID(user_id)
+    except (ValueError, TypeError):
+        return {"topics": []}
+
     async with get_db_connection() as conn:
         rows = await get_user_mastery_report_rows(conn, user_id, topic_slug=topic)
+
 
     topics_list = []
     for row in rows:

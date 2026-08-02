@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 from typing import Optional, Dict, Any
+from uuid import UUID
 from database.connection import get_db_connection
 from database.queries import (
     insert_attempt,
@@ -54,7 +55,14 @@ async def log_attempt(
         Dict confirming attempt was logged and showing updated mastery score:
         {"attempt_id": str, "status": "logged", "mastery_score_after": float}
     """
+    try:
+        UUID(user_id)
+        UUID(problem_id)
+    except (ValueError, TypeError):
+        raise ValueError("user_id and problem_id must be valid UUID strings.")
+
     async with get_db_connection() as conn:
+
         async with conn.transaction():
             attempt = await insert_attempt(
                 conn=conn,
