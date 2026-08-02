@@ -236,3 +236,79 @@ async def get_user_mastery_report_rows(
         await cur.execute(query, params)
         return await cur.fetchall()
 
+
+async def get_user_topic_masteries(
+    conn: psycopg.AsyncConnection, user_id: UUID | str
+) -> List[dict]:
+    """Get topic masteries for all topics in the database for a given user,
+    sorted by mastery_score ascending. Topics without a mastery row default to 0.0.
+    """
+    query = """
+        SELECT t.id AS topic_id, t.slug, COALESCE(m.mastery_score, 0.0) AS mastery_score
+        FROM topics t
+        LEFT JOIN mastery m ON t.id = m.topic_id AND m.user_id = %s
+        ORDER BY mastery_score ASC, t.slug ASC
+    """
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(query, (str(user_id),))
+        rows = await cur.fetchall()
+        return [
+            {
+                "topic_id": str(r["topic_id"]),
+                "slug": r["slug"],
+                "mastery_score": float(r["mastery_score"]),
+            }
+            for r in rows
+        ]
+
+
+async def get_unattempted_problem_for_topic(
+    conn: psycopg.AsyncConnection,
+    user_id: UUID | str,
+    topic_id: UUID | str,
+    difficulties: List[str],
+) -> tuple[Optional[Problem], bool]:
+    """Find the first unattempted problem for a user in a topic within allowed difficulties.
+    If none match difficulty filter, fallback to any unattempted problem in that topic.
+    Returns tuple: (Problem or None, fallback_used: bool).
+    """
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(
+            """
+            SELECT p.id, p.title, p.statement, p.difficulty, p.topic_id, p.source, p.url, p.created_at
+            FROM problems p
+            WHERE p.topic_id = %s
+              AND p.difficulty = ANY(%s)
+              AND p.id NOT IN (
+                  SELECT a.problem_id FROM attempts a WHERE a.user_id = %s
+              )
+            ORDER BY p.created_at ASC
+            LIMIT 1
+            """,
+            (str(topic_id), difficulties, str(user_id)),
+        )
+        row = await cur.fetchone()
+        if row:
+            return Problem.model_validate(row), False
+
+        # Fallback: any unattempted problem in topic regardless of difficulty
+        await cur.execute(
+            """
+            SELECT p.id, p.title, p.statement, p.difficulty, p.topic_id, p.source, p.url, p.created_at
+            FROM problems p
+            WHERE p.topic_id = %s
+              AND p.id NOT IN (
+                  SELECT a.problem_id FROM attempts a WHERE a.user_id = %s
+              )
+            ORDER BY p.created_at ASC
+            LIMIT 1
+            """,
+            (str(topic_id), str(user_id)),
+        )
+        row = await cur.fetchone()
+        if row:
+            return Problem.model_validate(row), True
+
+        return None, False
+
+

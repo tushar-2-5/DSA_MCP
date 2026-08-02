@@ -1,6 +1,7 @@
 from mcp.server.fastmcp import FastMCP
 from tools.get_mastery_report import get_mastery_report
 from tools.log_attempt import log_attempt
+from tools.suggest_next_problem import suggest_next_problem
 
 mcp = FastMCP("recall")
 
@@ -15,6 +16,7 @@ def say_hello(name: str) -> str:
 # Register additional tools
 mcp.tool()(get_mastery_report)
 mcp.tool()(log_attempt)
+mcp.tool()(suggest_next_problem)
 
 
 def main():

@@ -1,0 +1,40 @@
+import random
+from typing import List, Dict, Any
+
+
+def pick_weak_topic(mastery_rows: List[Dict[str, Any]], epsilon: float = 0.2) -> Dict[str, Any]:
+    """Given topics sorted by mastery_score ascending, return the weakest 
+    topic with probability (1-epsilon), or randomly pick from the 2nd/3rd 
+    weakest with probability epsilon (if at least 2 topics exist).
+    
+    If mastery_rows is empty, returns {}.
+    If only 1 topic exists or epsilon <= 0, returns the weakest (first) topic.
+    """
+    if not mastery_rows:
+        return {}
+
+    if len(mastery_rows) == 1 or epsilon <= 0.0:
+        return mastery_rows[0]
+
+    if random.random() < (1.0 - epsilon):
+        return mastery_rows[0]
+
+    candidates = mastery_rows[1:min(3, len(mastery_rows))]
+    return random.choice(candidates)
+
+
+def difficulty_band(mastery_score: float) -> List[str]:
+    """Determine targeted problem difficulty band based on mastery score:
+    0.0 - 0.3  -> ["easy"]
+    0.3 - 0.6  -> ["easy", "medium"]
+    0.6 - 0.85 -> ["medium"]
+    0.85 - 1.0 -> ["medium", "hard"]
+    """
+    if mastery_score < 0.3:
+        return ["easy"]
+    elif mastery_score < 0.6:
+        return ["easy", "medium"]
+    elif mastery_score < 0.85:
+        return ["medium"]
+    else:
+        return ["medium", "hard"]

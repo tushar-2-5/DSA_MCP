@@ -5,6 +5,7 @@ import pytest_asyncio
 from database.connection import close_pool
 from tools.get_mastery_report import get_mastery_report
 from tools.log_attempt import log_attempt
+from tools.suggest_next_problem import suggest_next_problem
 
 
 @pytest_asyncio.fixture(autouse=True)
@@ -48,3 +49,10 @@ async def test_log_attempt_malformed_problem_id():
             code="print('hello')",
             outcome="pass",
         )
+
+
+@pytest.mark.asyncio
+async def test_suggest_next_problem_malformed_user_id():
+    with pytest.raises(ValueError, match="user_id must be a valid UUID string"):
+        await suggest_next_problem(user_id="not-a-uuid")
+
