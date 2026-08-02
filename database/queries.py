@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from typing import Optional, List
+from typing import Optional, List, Any
 from uuid import UUID
 import psycopg
 from psycopg.rows import dict_row
@@ -195,3 +195,26 @@ async def create_problem(
         )
         row = await cur.fetchone()
         return Problem.model_validate(row)
+
+
+async def get_user_mastery_report_rows(
+    conn: psycopg.AsyncConnection,
+    user_id: UUID | str,
+    topic_slug: Optional[str] = None,
+) -> List[dict]:
+    query = """
+        SELECT t.slug, m.mastery_score, m.last_practiced_at
+        FROM mastery m
+        JOIN topics t ON m.topic_id = t.id
+        WHERE m.user_id = %s
+    """
+    params: List[Any] = [str(user_id)]
+    if topic_slug:
+        query += " AND t.slug = %s"
+        params.append(topic_slug)
+    query += " ORDER BY m.last_practiced_at DESC NULLS LAST"
+
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(query, params)
+        return await cur.fetchall()
+
