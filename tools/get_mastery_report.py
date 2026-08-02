@@ -25,7 +25,7 @@ async def get_mastery_report(
     try:
         UUID(user_id)
     except (ValueError, TypeError):
-        return {"topics": []}
+        raise ValueError("user_id must be a valid UUID string.")
 
     async with get_db_connection() as conn:
         rows = await get_user_mastery_report_rows(conn, user_id, topic_slug=topic)

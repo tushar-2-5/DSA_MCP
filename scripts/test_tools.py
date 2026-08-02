@@ -42,15 +42,38 @@ async def run_verification():
         print(f"Created test problem_id: {problem.id}")
         print("--------------------------------------------------")
 
-        # Step B: Test get_mastery_report on fresh user (expecting {"topics": []})
-        print("\n--- Test 1: get_mastery_report for empty user ---")
+        # Step B1: Test get_mastery_report on malformed UUID (expecting ValueError)
+        print("\n--- Test 1a: get_mastery_report for malformed UUID ---")
+        try:
+            await get_mastery_report(user_id="invalid-user-uuid")
+            assert False, "Expected ValueError for malformed user_id, but none was raised"
+        except ValueError as e:
+            print(f"Caught expected ValueError: {e}")
+        print("PASSED: Malformed user_id raises ValueError as expected.")
+
+        # Step B2: Test get_mastery_report on fresh user with valid UUID (expecting {"topics": []})
+        print("\n--- Test 1b: get_mastery_report for valid user with no data ---")
         empty_report = await get_mastery_report(user_id=str(user.id))
         print(f"Actual Output: {empty_report}")
         assert empty_report == {"topics": []}, f"Expected {{'topics': []}}, got {empty_report}"
-        print("PASSED: Empty report matches contract shape exactly.")
+        print("PASSED: Empty report for valid user matches contract shape exactly.")
 
-        # Step C: Test log_attempt (outcome: 'pass')
-        print("\n--- Test 2: log_attempt (outcome='pass') ---")
+        # Step C1: Test log_attempt with malformed UUID (expecting ValueError)
+        print("\n--- Test 2a: log_attempt for malformed UUID ---")
+        try:
+            await log_attempt(
+                user_id="invalid-user-uuid",
+                problem_id=str(problem.id),
+                code="print('hi')",
+                outcome="pass",
+            )
+            assert False, "Expected ValueError for malformed user_id in log_attempt, but none was raised"
+        except ValueError as e:
+            print(f"Caught expected ValueError: {e}")
+        print("PASSED: Malformed user_id in log_attempt raises ValueError as expected.")
+
+        # Step C2: Test log_attempt (outcome: 'pass')
+        print("\n--- Test 2b: log_attempt (outcome='pass') ---")
         code_sample = "def twoSum(nums, target): return [0, 1]"
         log_res1 = await log_attempt(
             user_id=str(user.id),
