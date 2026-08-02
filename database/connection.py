@@ -9,6 +9,7 @@ from psycopg_pool import AsyncConnectionPool
 from dotenv import load_dotenv
 
 # On Windows, psycopg3 async requires WindowsSelectorEventLoopPolicy
+# TODO: revisit if Python 3.16 removes this
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
