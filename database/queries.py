@@ -19,6 +19,18 @@ async def get_user(
         return User.model_validate(row) if row else None
 
 
+async def get_user_by_email(
+    conn: psycopg.AsyncConnection, email: str
+) -> Optional[User]:
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(
+            "SELECT id, email, display_name, created_at FROM users WHERE email = %s",
+            (email.lower(),),
+        )
+        row = await cur.fetchone()
+        return User.model_validate(row) if row else None
+
+
 async def create_user(
     conn: psycopg.AsyncConnection, email: str, display_name: Optional[str] = None
 ) -> User:

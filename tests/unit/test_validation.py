@@ -2,10 +2,11 @@ import uuid
 import pytest
 import pytest_asyncio
 
-from database.connection import close_pool
+from database.connection import get_db_connection, close_pool
 from tools.get_mastery_report import get_mastery_report
 from tools.log_attempt import log_attempt
 from tools.suggest_next_problem import suggest_next_problem
+from tools.get_or_create_user import get_or_create_user
 
 
 @pytest_asyncio.fixture(autouse=True)
@@ -15,16 +16,65 @@ async def cleanup_db_pool():
 
 
 @pytest.mark.asyncio
+async def test_get_or_create_user_idempotent():
+    test_email = f"pytest_user_{uuid.uuid4().hex[:6]}@example.com"
+    res1 = await get_or_create_user(email=test_email, display_name="Test User")
+    assert res1["status"] == "created"
+    user_id_1 = res1["user_id"]
+
+    res2 = await get_or_create_user(email=test_email, display_name="Test User")
+    assert res2["status"] == "existing"
+    user_id_2 = res2["user_id"]
+
+    assert user_id_1 == user_id_2
+
+    # Clean up test user
+    async with get_db_connection() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute("DELETE FROM users WHERE id = %s", (user_id_1,))
+        await conn.commit()
+
+
+@pytest.mark.asyncio
+async def test_log_attempt_unregistered_user_id():
+    random_user_id = str(uuid.uuid4())
+    random_problem_id = str(uuid.uuid4())
+    with pytest.raises(ValueError, match="Call get_or_create_user first to register"):
+        await log_attempt(
+            user_id=random_user_id,
+            problem_id=random_problem_id,
+            code="print('hello')",
+            outcome="pass",
+        )
+
+
+@pytest.mark.asyncio
+async def test_get_mastery_report_unregistered_user_id():
+    random_user_id = str(uuid.uuid4())
+    with pytest.raises(ValueError, match="Call get_or_create_user first to register"):
+        await get_mastery_report(user_id=random_user_id)
+
+
+@pytest.mark.asyncio
 async def test_get_mastery_report_malformed_user_id():
     with pytest.raises(ValueError, match="user_id must be a valid UUID string"):
         await get_mastery_report(user_id="not-a-uuid")
 
 
 @pytest.mark.asyncio
-async def test_get_mastery_report_valid_uuid_no_mastery():
-    random_user_id = str(uuid.uuid4())
-    result = await get_mastery_report(user_id=random_user_id)
+async def test_get_mastery_report_valid_user_no_mastery():
+    test_email = f"pytest_report_{uuid.uuid4().hex[:6]}@example.com"
+    user_res = await get_or_create_user(email=test_email, display_name="Report User")
+    user_id = user_res["user_id"]
+
+    result = await get_mastery_report(user_id=user_id)
     assert result == {"topics": []}
+
+    # Clean up test user
+    async with get_db_connection() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
+        await conn.commit()
 
 
 @pytest.mark.asyncio
@@ -55,4 +105,3 @@ async def test_log_attempt_malformed_problem_id():
 async def test_suggest_next_problem_malformed_user_id():
     with pytest.raises(ValueError, match="user_id must be a valid UUID string"):
         await suggest_next_problem(user_id="not-a-uuid")
-

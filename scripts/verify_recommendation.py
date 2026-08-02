@@ -7,10 +7,11 @@ from datetime import datetime, timezone
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from database.connection import get_db_connection, close_pool
-from database.queries import create_user, get_topic_by_slug, get_problem
+from database.queries import get_topic_by_slug, get_problem
 from tools.log_attempt import log_attempt
 from tools.suggest_next_problem import suggest_next_problem
 from tools.get_mastery_report import get_mastery_report
+from tools.get_or_create_user import get_or_create_user
 from psycopg.rows import dict_row
 
 
@@ -20,13 +21,13 @@ async def run_verification():
     print("      TASK 13 RECOMMENDATION LOGIC TEST          ")
     print("==================================================")
 
+    # Step A: Create test user via get_or_create_user
+    user_res = await get_or_create_user(email=test_email, display_name="Rec Test User")
+    user_id_str = user_res["user_id"]
+    print(f"Created test user_id: {user_id_str}")
+    print("--------------------------------------------------")
+
     async with get_db_connection() as conn:
-        # Step A: Create test user
-        user = await create_user(conn, test_email, "Rec Test User")
-        await conn.commit()
-        user_id_str = str(user.id)
-        print(f"Created test user_id: {user_id_str}")
-        print("--------------------------------------------------")
 
         # Step B: Call suggest_next_problem on fresh user (0 mastery)
         print("\n--- Test 1: Recommendation for Fresh User (Mastery = 0.0) ---")

@@ -3,6 +3,7 @@ from typing import Optional, Dict, Any
 from uuid import UUID
 from database.connection import get_db_connection
 from database.queries import (
+    get_user,
     insert_attempt,
     get_problem,
     get_mastery_row,
@@ -43,6 +44,12 @@ async def log_attempt(
         raise ValueError("user_id and problem_id must be valid UUID strings.")
 
     async with get_db_connection() as conn:
+        user = await get_user(conn, user_id)
+        if not user:
+            raise ValueError(
+                f"No user found for user_id {user_id}. Call get_or_create_user first to register."
+            )
+
         async with conn.transaction():
             attempt = await insert_attempt(
                 conn=conn,

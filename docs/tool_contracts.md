@@ -126,3 +126,24 @@
   "checked": true
 }
 ```
+
+## 6. get_or_create_user
+
+### Input
+```json
+{
+  "email": "string",
+  "display_name": "string or null"
+}
+```
+
+### Output
+```json
+{
+  "user_id": "uuid",
+  "email": "string",
+  "display_name": "string or null",
+  "status": "existing | created"
+}
+```
+

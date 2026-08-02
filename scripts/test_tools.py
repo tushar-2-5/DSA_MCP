@@ -9,9 +9,10 @@ from typing import Dict, Any
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from database.connection import get_db_connection, close_pool
-from database.queries import create_user, create_topic, create_problem, upsert_mastery
+from database.queries import create_topic, create_problem, upsert_mastery
 from tools.get_mastery_report import get_mastery_report
 from tools.log_attempt import log_attempt
+from tools.get_or_create_user import get_or_create_user
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("test_tools")
@@ -25,9 +26,11 @@ async def run_verification():
     print("         TASK 11 MASTERY DECAY TEST               ")
     print("==================================================")
 
+    # Step A: Setup test user via get_or_create_user, topic, and problem
+    user_res = await get_or_create_user(email=test_email, display_name="Tool Test User")
+    user_id_str = user_res["user_id"]
+
     async with get_db_connection() as conn:
-        # Step A: Setup test user, topic, and problem
-        user = await create_user(conn, test_email, "Tool Test User")
         topic = await create_topic(conn, test_topic_slug, "Test Sliding Window")
         problem = await create_problem(
             conn,
@@ -38,7 +41,7 @@ async def run_verification():
             source="leetcode",
         )
         await conn.commit()
-        print(f"Created test user_id: {user.id}")
+        print(f"Created test user_id: {user_id_str}")
         print(f"Created test topic_slug: {topic.slug} (id: {topic.id})")
         print(f"Created test problem_id: {problem.id}")
         print("--------------------------------------------------")
@@ -54,7 +57,7 @@ async def run_verification():
 
         # Step B2: Test get_mastery_report on fresh user with valid UUID (expecting {"topics": []})
         print("\n--- Test 1b: get_mastery_report for valid user with no data ---")
-        empty_report = await get_mastery_report(user_id=str(user.id))
+        empty_report = await get_mastery_report(user_id=user_id_str)
         print(f"Actual Output: {empty_report}")
         assert empty_report == {"topics": []}, f"Expected {{'topics': []}}, got {empty_report}"
         print("PASSED: Empty report for valid user matches contract shape exactly.")
@@ -77,7 +80,7 @@ async def run_verification():
         print("\n--- Test 2b: log_attempt Attempt #1 (pass + optimal complexity) ---")
         code_sample = "def twoSum(nums, target): return [0, 1]"
         log_res1 = await log_attempt(
-            user_id=str(user.id),
+            user_id=user_id_str,
             problem_id=str(problem.id),
             code=code_sample,
             outcome="pass",
@@ -97,7 +100,7 @@ async def run_verification():
         fourteen_days_ago = datetime.now(timezone.utc) - timedelta(days=14)
         await upsert_mastery(
             conn=conn,
-            user_id=user.id,
+            user_id=user_id_str,
             topic_id=topic.id,
             mastery_score=0.15,
             last_practiced_at=fourteen_days_ago,
@@ -107,7 +110,7 @@ async def run_verification():
 
         # Log attempt #2: pass, NOT optimal complexity (complexity_achieved=None) -> +0.08
         log_res2 = await log_attempt(
-            user_id=str(user.id),
+            user_id=user_id_str,
             problem_id=str(problem.id),
             code=code_sample,
             outcome="pass",
@@ -136,7 +139,7 @@ async def run_verification():
         print("\n--- Test 3b: Backdate last_practiced_at by 14 days & test Decay + Optimal Pass (+0.15) ---")
         await upsert_mastery(
             conn=conn,
-            user_id=user.id,
+            user_id=user_id_str,
             topic_id=topic.id,
             mastery_score=0.155,
             last_practiced_at=fourteen_days_ago,
@@ -145,7 +148,7 @@ async def run_verification():
 
         # Log attempt #3: pass, OPTIMAL complexity (complexity_achieved='O(N)') -> +0.15
         log_res3 = await log_attempt(
-            user_id=str(user.id),
+            user_id=user_id_str,
             problem_id=str(problem.id),
             code=code_sample,
             outcome="pass",
@@ -177,10 +180,10 @@ async def run_verification():
                 "DELETE FROM attempts WHERE id IN (%s, %s, %s)",
                 (attempt_id_1, attempt_id_2, attempt_id_3),
             )
-            await cur.execute("DELETE FROM mastery WHERE user_id = %s", (str(user.id),))
+            await cur.execute("DELETE FROM mastery WHERE user_id = %s", (user_id_str,))
             await cur.execute("DELETE FROM problems WHERE id = %s", (str(problem.id),))
             await cur.execute("DELETE FROM topics WHERE id = %s", (str(topic.id),))
-            await cur.execute("DELETE FROM users WHERE id = %s", (str(user.id),))
+            await cur.execute("DELETE FROM users WHERE id = %s", (user_id_str,))
         await conn.commit()
         print("Cleanup completed successfully.")
 

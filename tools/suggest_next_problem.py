@@ -2,6 +2,7 @@ from typing import Dict, Any
 from uuid import UUID
 from database.connection import get_db_connection
 from database.queries import (
+    get_user,
     get_user_topic_masteries,
     get_unattempted_problem_for_topic,
 )
@@ -33,6 +34,12 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
         raise ValueError("user_id must be a valid UUID string.")
 
     async with get_db_connection() as conn:
+        user = await get_user(conn, user_id)
+        if not user:
+            raise ValueError(
+                f"No user found for user_id {user_id}. Call get_or_create_user first to register."
+            )
+
         topic_masteries = await get_user_topic_masteries(conn, user_id)
         if not topic_masteries:
             return {

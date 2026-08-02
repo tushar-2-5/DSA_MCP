@@ -1,7 +1,7 @@
 from typing import Optional, Dict, Any
 from uuid import UUID
 from database.connection import get_db_connection
-from database.queries import get_user_mastery_report_rows
+from database.queries import get_user_mastery_report_rows, get_user
 
 
 async def get_mastery_report(
@@ -28,6 +28,11 @@ async def get_mastery_report(
         raise ValueError("user_id must be a valid UUID string.")
 
     async with get_db_connection() as conn:
+        user = await get_user(conn, user_id)
+        if not user:
+            raise ValueError(
+                f"No user found for user_id {user_id}. Call get_or_create_user first to register."
+            )
         rows = await get_user_mastery_report_rows(conn, user_id, topic_slug=topic)
 
 
