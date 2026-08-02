@@ -8,26 +8,7 @@ from database.queries import (
     get_mastery_row,
     upsert_mastery,
 )
-
-
-def compute_placeholder_mastery(current_score: float, outcome: str) -> float:
-    """Compute updated mastery score using a placeholder delta rule.
-
-    +0.10 for 'pass', -0.05 for 'fail', +0.02 for 'partial', clamped to [0.0, 1.0].
-    """
-    outcome_lower = outcome.lower()
-    if outcome_lower == "pass":
-        delta = 0.10
-    elif outcome_lower == "fail":
-        delta = -0.05
-    elif outcome_lower == "partial":
-        delta = 0.02
-    else:
-        delta = 0.0
-
-    new_score = current_score + delta
-    clamped_score = max(0.0, min(1.0, new_score))
-    return round(clamped_score, 4)
+from memory.mastery import decayed_mastery, update_base_score
 
 
 async def log_attempt(
@@ -62,7 +43,6 @@ async def log_attempt(
         raise ValueError("user_id and problem_id must be valid UUID strings.")
 
     async with get_db_connection() as conn:
-
         async with conn.transaction():
             attempt = await insert_attempt(
                 conn=conn,
@@ -80,11 +60,26 @@ async def log_attempt(
                     f"Problem '{problem_id}' not found or missing topic association."
                 )
 
-            mastery_row = await get_mastery_row(conn, user_id, problem.topic_id)
-            current_score = float(mastery_row.mastery_score) if mastery_row else 0.0
-            new_score = compute_placeholder_mastery(current_score, outcome)
-
             now = datetime.now(timezone.utc)
+            mastery_row = await get_mastery_row(conn, user_id, problem.topic_id)
+
+            if mastery_row and mastery_row.last_practiced_at:
+                days_since = (
+                    now - mastery_row.last_practiced_at
+                ).total_seconds() / 86400.0
+                prev_score = decayed_mastery(
+                    float(mastery_row.mastery_score), max(0.0, days_since)
+                )
+            else:
+                prev_score = 0.0
+
+            is_optimal = bool(complexity_achieved and complexity_achieved.strip())
+            new_score = update_base_score(
+                prev_base_score=prev_score,
+                outcome=outcome,
+                complexity_optimal=is_optimal,
+            )
+
             await upsert_mastery(
                 conn=conn,
                 user_id=user_id,
