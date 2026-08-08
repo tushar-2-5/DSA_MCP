@@ -1,0 +1,4243 @@
+[
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "70",
+    "title": "Climbing Stairs",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/climbing-stairs",
+    "statement": "Given n steps where you can climb 1 or 2 steps at a time, count distinct ways to reach the top. This follows a Fibonacci recurrence: ways(n) = ways(n-1) + ways(n-2).",
+    "master_id": 1,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "121",
+    "title": "Best Time to Buy and Sell Stock",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock",
+    "statement": "Given an array of stock prices where prices[i] is the price on day i, find the maximum profit from a single buy-sell transaction. Track the minimum price seen so far and compute the profit at each step.",
+    "master_id": 2,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "746",
+    "title": "Min Cost Climbing Stairs",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/min-cost-climbing-stairs",
+    "statement": "Given an array of step costs, find the minimum cost to reach the top starting from step 0 or 1. Use DP where cost[i] = cost[i] + min(cost[i-1], cost[i-2]).",
+    "master_id": 3,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Arrays & Hashing",
+    "display_name": "Arrays & Hashing",
+    "id": "217",
+    "title": "Contains Duplicate",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/contains-duplicate",
+    "statement": "Given an integer array, return true if any value appears at least twice. Use a hash set to track seen elements, returning true on the first repeat.",
+    "master_id": 8,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "arrays"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "arrays-hashing"
+  },
+  {
+    "topic": "Arrays & Hashing",
+    "display_name": "Arrays & Hashing",
+    "id": "1",
+    "title": "Two Sum",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/two-sum",
+    "statement": "Given an array and a target, return indices of the two numbers that add to the target. Use a hash map storing each number's index, checking for the complement at each step.",
+    "master_id": 9,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "two-pointers"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "arrays-hashing"
+  },
+  {
+    "topic": "Arrays & Hashing",
+    "display_name": "Arrays & Hashing",
+    "id": "219",
+    "title": "Contains Duplicate II",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/contains-duplicate-ii",
+    "statement": "Given an integer array and integer k, return true if there exist two distinct indices i and j such that nums[i] == nums[j] and abs(i-j) <= k. Use a sliding window hash set of size k.",
+    "master_id": 10,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "arrays"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "arrays-hashing"
+  },
+  {
+    "topic": "Arrays & Hashing",
+    "display_name": "Arrays & Hashing",
+    "id": "169",
+    "title": "Majority Element",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/majority-element",
+    "statement": "Given an integer array, find the element that appears more than n/2 times. Use the Boyer-Moore Voting Algorithm: maintain a candidate and a count, incrementing on match and decrementing on mismatch, resetting when count reaches zero.",
+    "master_id": 11,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "arrays"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "arrays-hashing"
+  },
+  {
+    "topic": "Binary Search",
+    "display_name": "Binary Search",
+    "id": "704",
+    "title": "Binary Search",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/binary-search",
+    "statement": "Given a sorted array of integers and a target, return its index or -1 if not found. Implement classic binary search by repeatedly halving the search space based on midpoint comparison.",
+    "master_id": 22,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "binary-search"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "binary-search"
+  },
+  {
+    "topic": "Binary Search",
+    "display_name": "Binary Search",
+    "id": "108",
+    "title": "Convert Sorted Array to Binary Search Tree",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree",
+    "statement": "Given an integer array sorted in ascending order, convert it to a height-balanced BST. Recursively use the middle element as the root and build left and right subtrees from the two halves.",
+    "master_id": 23,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "binary-search",
+      "trees"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting",
+      "recursion",
+      "stack-queue"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "binary-search"
+  },
+  {
+    "topic": "Binary Search",
+    "display_name": "Binary Search",
+    "id": "501",
+    "title": "Find Mode in Binary Search Tree",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/find-mode-in-binary-search-tree",
+    "statement": "Given a BST that may contain duplicates, find all modes (most frequently occurring elements). Use inorder traversal tracking current streak and maximum frequency without extra space.",
+    "master_id": 24,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "binary-search",
+      "trees"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting",
+      "recursion",
+      "stack-queue"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "binary-search"
+  },
+  {
+    "topic": "Binary Search",
+    "display_name": "Binary Search",
+    "id": "35",
+    "title": "Search Insert Position",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/search-insert-position",
+    "statement": "Given a sorted array and a target, return the index if found or the index where it would be inserted. Apply standard binary search, returning the left pointer as the insertion position when not found.",
+    "master_id": 25,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "binary-search"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "binary-search"
+  },
+  {
+    "topic": "Binary Search",
+    "display_name": "Binary Search",
+    "id": "374",
+    "title": "Guess Number Higher or Lower",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/guess-number-higher-or-lower",
+    "statement": "A number from 1 to n is picked; guess() API returns -1, 1, or 0. Find the number in the fewest calls using binary search, adjusting the range based on each guess result.",
+    "master_id": 26,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "binary-search"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "binary-search"
+  },
+  {
+    "topic": "Binary Search",
+    "display_name": "Binary Search",
+    "id": "69",
+    "title": "Sqrt(x)",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/sqrt-x",
+    "statement": "Given a non-negative integer x, return the integer square root (floor of sqrt(x)) without using pow or sqrt. Use binary search between 0 and x, finding the largest integer whose square is \u2264 x.",
+    "master_id": 27,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "binary-search"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "binary-search"
+  },
+  {
+    "topic": "Linked List",
+    "display_name": "Linked List",
+    "id": "141",
+    "title": "Linked List Cycle",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/linked-list-cycle",
+    "statement": "Given the head of a linked list, determine if it contains a cycle. Use Floyd's slow and fast pointer algorithm: if they meet, a cycle exists.",
+    "master_id": 35,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "linked-list"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "pointers",
+      "arrays-basics"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "linked-list"
+  },
+  {
+    "topic": "Linked List",
+    "display_name": "Linked List",
+    "id": "21",
+    "title": "Merge Two Sorted Lists",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/merge-two-sorted-lists",
+    "statement": "Given the heads of two sorted linked lists, merge them into one sorted list. Use a dummy head and iteratively advance the pointer from whichever list has the smaller current value.",
+    "master_id": 36,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "linked-list"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "pointers",
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "linked-list"
+  },
+  {
+    "topic": "Linked List",
+    "display_name": "Linked List",
+    "id": "206",
+    "title": "Reverse Linked List",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/reverse-linked-list",
+    "statement": "Given the head of a singly linked list, reverse it in place. Use three pointers (prev, curr, next) to iteratively reverse each link.",
+    "master_id": 37,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "linked-list"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "pointers",
+      "arrays-basics"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "linked-list"
+  },
+  {
+    "topic": "Linked List",
+    "display_name": "Linked List",
+    "id": "160",
+    "title": "Intersection of Two Linked Lists",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/intersection-of-two-linked-lists",
+    "statement": "Given heads of two linked lists, find the node where they intersect or null if they don't. Use two pointers that switch to the other list's head when reaching the end, meeting at the intersection after equal total steps.",
+    "master_id": 38,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "linked-list"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "pointers",
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "linked-list"
+  },
+  {
+    "topic": "Linked List",
+    "display_name": "Linked List",
+    "id": "234",
+    "title": "Palindrome Linked List",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/palindrome-linked-list",
+    "statement": "Given the head of a singly linked list, return true if it is a palindrome. Find the middle, reverse the second half, compare with the first half, then restore.",
+    "master_id": 39,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "linked-list"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "pointers",
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "linked-list"
+  },
+  {
+    "topic": "Sliding Window",
+    "display_name": "Sliding Window",
+    "id": "643",
+    "title": "Maximum Average Subarray I",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/maximum-average-subarray-i",
+    "statement": "Given an integer array and integer k, find the contiguous subarray of length k with the maximum average value. Use a fixed sliding window computing the sum and updating as the window slides.",
+    "master_id": 48,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "sliding-window"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics",
+      "two-pointers"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "sliding-window"
+  },
+  {
+    "topic": "Sliding Window",
+    "display_name": "Sliding Window",
+    "id": "485",
+    "title": "Max Consecutive Ones",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/max-consecutive-ones",
+    "statement": "Given a binary array, find the maximum number of consecutive 1s. Use a simple linear scan tracking the current streak and updating the maximum when the streak breaks.",
+    "master_id": 49,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "sliding-window"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics",
+      "two-pointers"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "sliding-window"
+  },
+  {
+    "topic": "Trees",
+    "display_name": "Trees",
+    "id": "104",
+    "title": "Maximum Depth of Binary Tree",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree",
+    "statement": "Given the root of a binary tree, return its maximum depth. Use recursive DFS returning 1 + max(depth(left), depth(right)), or iterative BFS tracking level count.",
+    "master_id": 50,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "trees"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "recursion",
+      "stack-queue"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "trees"
+  },
+  {
+    "topic": "Trees",
+    "display_name": "Trees",
+    "id": "543",
+    "title": "Diameter of Binary Tree",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/diameter-of-binary-tree",
+    "statement": "Given the root, find the diameter (longest path between any two nodes). For each node, the diameter passing through it is the sum of the heights of its left and right subtrees.",
+    "master_id": 51,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "trees"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "recursion",
+      "stack-queue"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "trees"
+  },
+  {
+    "topic": "Trees",
+    "display_name": "Trees",
+    "id": "100",
+    "title": "Same Tree",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/same-tree",
+    "statement": "Given the roots of two binary trees, determine if they are structurally identical with the same node values. Use recursive DFS checking both roots are null (match), one is null (mismatch), or values differ (mismatch).",
+    "master_id": 52,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "trees"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "recursion",
+      "stack-queue"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "trees"
+  },
+  {
+    "topic": "Trees",
+    "display_name": "Trees",
+    "id": "559",
+    "title": "Maximum Depth of N-ary Tree",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/maximum-depth-of-n-ary-tree",
+    "statement": "Given the root of an N-ary tree, return its maximum depth. Use recursive DFS: the depth of a node is 1 plus the maximum depth among all its children.",
+    "master_id": 74,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "trees"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "recursion",
+      "stack-queue"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "trees"
+  },
+  {
+    "topic": "Two Pointers",
+    "display_name": "Two Pointers",
+    "id": "283",
+    "title": "Move Zeroes",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/move-zeroes",
+    "statement": "Given an integer array, move all zeros to the end while maintaining the relative order of non-zero elements. Use two pointers: one for the current position and one for the next non-zero element.",
+    "master_id": 81,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "two-pointers"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "two-pointers"
+  },
+  {
+    "topic": "Two Pointers",
+    "display_name": "Two Pointers",
+    "id": "26",
+    "title": "Remove Duplicates from Sorted Array",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/remove-duplicates-from-sorted-array",
+    "statement": "Given a sorted integer array, remove duplicates in-place and return the count of unique elements. Use two pointers where one tracks the position of the last unique element written.",
+    "master_id": 82,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "two-pointers"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "two-pointers"
+  },
+  {
+    "topic": "Two Pointers",
+    "display_name": "Two Pointers",
+    "id": "125",
+    "title": "Valid Palindrome",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/valid-palindrome",
+    "statement": "Given a string, determine if it is a palindrome considering only alphanumeric characters. Use two pointers from both ends, skipping non-alphanumeric characters and comparing case-insensitively.",
+    "master_id": 83,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "two-pointers"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "two-pointers"
+  },
+  {
+    "topic": "Two Pointers",
+    "display_name": "Two Pointers",
+    "id": "88",
+    "title": "Merge Sorted Array",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/merge-sorted-array",
+    "statement": "Given two sorted arrays nums1 and nums2, merge nums2 into nums1 in-place. Use three pointers starting from the end to avoid overwriting unread elements.",
+    "master_id": 84,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "two-pointers"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "two-pointers"
+  },
+  {
+    "topic": "Two Pointers",
+    "display_name": "Two Pointers",
+    "id": "844",
+    "title": "Backspace String Compare",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/backspace-string-compare",
+    "statement": "Given two strings with '#' as backspace, determine if they are equal after processing. Use two pointers from the end, skipping characters when backspaces are encountered.",
+    "master_id": 85,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "two-pointers"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "two-pointers"
+  },
+  {
+    "topic": "Stack & Queue",
+    "display_name": "Stack & Queue",
+    "id": "20",
+    "title": "Valid Parentheses",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/valid-parentheses",
+    "statement": "Given a string of brackets, determine if the brackets are correctly matched and nested. Use a stack, pushing opening brackets and popping/matching when closing brackets are encountered.",
+    "master_id": 91,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue",
+      "backtracking"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics",
+      "recursion"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "stack-queue"
+  },
+  {
+    "topic": "Stack & Queue",
+    "display_name": "Stack & Queue",
+    "id": "496",
+    "title": "Next Greater Element I",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/next-greater-element-i",
+    "statement": "Given two arrays where nums1 is a subset of nums2, find the next greater element in nums2 for each element of nums1. Use a monotonic decreasing stack processing nums2 to precompute next greater elements.",
+    "master_id": 92,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "stack-queue"
+  },
+  {
+    "topic": "Stack & Queue",
+    "display_name": "Stack & Queue",
+    "id": "232",
+    "title": "Implement Queue using Stacks",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/implement-queue-using-stacks",
+    "statement": "Implement a FIFO queue using only two stacks. Use one stack for input and one for output; move all elements from input to output when output is empty and a dequeue is needed.",
+    "master_id": 93,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "stack-queue"
+  },
+  {
+    "topic": "Heap & Priority Queue",
+    "display_name": "Heap & Priority Queue",
+    "id": "1046",
+    "title": "Last Stone Weight",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/last-stone-weight",
+    "statement": "Given stone weights where the two heaviest collide each round (canceling if equal, surviving with their difference), find the last remaining stone weight. Use a max-heap to always extract the two heaviest.",
+    "master_id": 102,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue",
+      "heap"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "heap-priority-queue"
+  },
+  {
+    "topic": "Heap & Priority Queue",
+    "display_name": "Heap & Priority Queue",
+    "id": "703",
+    "title": "Kth Largest Element in a Stream",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/kth-largest-element-in-a-stream",
+    "statement": "Design a class that finds the kth largest element in a stream. Use a min-heap of size k: the heap's minimum (top) is always the kth largest of all elements seen so far.",
+    "master_id": 103,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue",
+      "heap"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "heap-priority-queue"
+  },
+  {
+    "topic": "Greedy",
+    "display_name": "Greedy",
+    "id": "252",
+    "title": "Meeting Rooms",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/meeting-rooms",
+    "statement": "Given an array of meeting time intervals, determine if a person can attend all meetings without overlap. Sort by start time and check if any meeting starts before the previous one ends.",
+    "master_id": 104,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "greedy"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "sorting",
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "greedy"
+  },
+  {
+    "topic": "Greedy",
+    "display_name": "Greedy",
+    "id": "455",
+    "title": "Assign Cookies",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/assign-cookies",
+    "statement": "Given children with greed factors and cookie sizes, find the maximum number of children you can satisfy (cookie size \u2265 greed factor). Sort both arrays and greedily assign the smallest sufficient cookie to each child.",
+    "master_id": 105,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "greedy"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "sorting",
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "greedy"
+  },
+  {
+    "topic": "Greedy",
+    "display_name": "Greedy",
+    "id": "860",
+    "title": "Lemonade Change",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/lemonade-change",
+    "statement": "Given a sequence of customer payments of $5, $10, or $20 at a lemonade stand charging $5, determine if you can provide correct change. Greedily give largest bills first when making change.",
+    "master_id": 106,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "greedy"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "sorting",
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "greedy"
+  },
+  {
+    "topic": "Graphs",
+    "display_name": "Graphs",
+    "id": "953",
+    "title": "Verifying an Alien Dictionary",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/verifying-an-alien-dictionary",
+    "statement": "Given a list of words sorted according to an alien language's order, verify if the ordering is consistent. Compare adjacent words character by character using the alien alphabet ordering.",
+    "master_id": 112,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "graphs"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics",
+      "queue-stack",
+      "trees-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "graphs"
+  },
+  {
+    "topic": "Graphs",
+    "display_name": "Graphs",
+    "id": "1971",
+    "title": "Find if Path Exists in Graph",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/find-if-path-exists-in-graph",
+    "statement": "Given a bidirectional graph, determine if a valid path exists between source and destination. Use DFS/BFS from the source, returning true if the destination is reached.",
+    "master_id": 116,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "graphs"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics",
+      "queue-stack",
+      "trees-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "graphs"
+  },
+  {
+    "topic": "Math",
+    "display_name": "Math",
+    "id": "7",
+    "title": "Reverse Integer",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/reverse-integer",
+    "statement": "Given a signed 32-bit integer, reverse its digits and return 0 if the result overflows. Extract digits one by one from the end and build the reversed number, checking for 32-bit overflow before each step.",
+    "master_id": 121,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "math"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "math-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "math"
+  },
+  {
+    "topic": "Math",
+    "display_name": "Math",
+    "id": "9",
+    "title": "Palindrome Number",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/palindrome-number",
+    "statement": "Determine whether an integer is a palindrome without converting to a string. Reverse only the second half of the number and compare with the first half, handling negative numbers and trailing zeros.",
+    "master_id": 122,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "math"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "math-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "math"
+  },
+  {
+    "topic": "Math",
+    "display_name": "Math",
+    "id": "171",
+    "title": "Excel Sheet Column Number",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/excel-sheet-column-number",
+    "statement": "Given a column title as it appears in an Excel sheet, return its corresponding column number. Treat it as a base-26 number where A=1, B=2, ..., Z=26, processing left to right.",
+    "master_id": 123,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "math"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "math-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "math"
+  },
+  {
+    "topic": "Math",
+    "display_name": "Math",
+    "id": "202",
+    "title": "Happy Number",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/happy-number",
+    "statement": "A happy number is one where repeatedly replacing the number with the sum of squares of its digits eventually reaches 1. Use Floyd's cycle detection to determine if the sequence ends at 1 or enters a cycle.",
+    "master_id": 124,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "math"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "math-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "math"
+  },
+  {
+    "topic": "Strings",
+    "display_name": "Strings",
+    "id": "13",
+    "title": "Roman to Integer",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/roman-to-integer",
+    "statement": "Convert a Roman numeral string to an integer. Map each Roman symbol to its value; if a smaller value precedes a larger one, subtract it, otherwise add it.",
+    "master_id": 142,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "strings"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "strings"
+  },
+  {
+    "topic": "Strings",
+    "display_name": "Strings",
+    "id": "14",
+    "title": "Longest Common Prefix",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/longest-common-prefix",
+    "statement": "Given an array of strings, find the longest common prefix shared among all strings. Compare character by character using the first string as reference, stopping when a mismatch or end of any string is reached.",
+    "master_id": 143,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "tries"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "strings",
+      "trees-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "strings"
+  },
+  {
+    "topic": "Strings",
+    "display_name": "Strings",
+    "id": "720",
+    "title": "Longest Word in Dictionary",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/longest-word-in-dictionary",
+    "statement": "Given an array of strings, find the longest word that can be built one character at a time by other words in the array. Use a Trie, only following paths where every prefix is also a complete word.",
+    "master_id": 159,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "strings"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "strings"
+  },
+  {
+    "topic": "Arrays",
+    "display_name": "Arrays",
+    "id": "66",
+    "title": "Plus One",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/plus-one",
+    "statement": "Given a large integer represented as a digit array, increment it by one. Process digits from right to left handling carries; if all digits were 9, prepend a new 1.",
+    "master_id": 163,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "arrays"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "arrays"
+  },
+  {
+    "topic": "Bit Manipulation",
+    "display_name": "Bit Manipulation",
+    "id": "136",
+    "title": "Single Number",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/single-number",
+    "statement": "Given a non-empty array where every element appears twice except one, find that single element. XOR all numbers together: duplicates cancel out (a XOR a = 0), leaving only the unique element.",
+    "master_id": 188,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "bit-manipulation"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "binary-representation",
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "bit-manipulation"
+  },
+  {
+    "topic": "Bit Manipulation",
+    "display_name": "Bit Manipulation",
+    "id": "190",
+    "title": "Reverse Bits",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/reverse-bits",
+    "statement": "Reverse the bits of a given 32-bit unsigned integer. For each of 32 positions, extract the least significant bit and shift it into the result's appropriate position.",
+    "master_id": 189,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "bit-manipulation"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "binary-representation",
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "bit-manipulation"
+  },
+  {
+    "topic": "Bit Manipulation",
+    "display_name": "Bit Manipulation",
+    "id": "191",
+    "title": "Number of 1 Bits",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/number-of-1-bits",
+    "statement": "Given an unsigned integer, return the number of '1' bits (Hamming weight). Use Brian Kernighan's algorithm: repeatedly clear the lowest set bit with n &= (n-1), counting iterations.",
+    "master_id": 190,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "bit-manipulation"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "binary-representation",
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "bit-manipulation"
+  },
+  {
+    "topic": "Bit Manipulation",
+    "display_name": "Bit Manipulation",
+    "id": "231",
+    "title": "Power of Two",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/power-of-two",
+    "statement": "Given an integer, determine if it is a power of two. A power of two has exactly one set bit, so n > 0 and (n & (n-1)) == 0 is both necessary and sufficient.",
+    "master_id": 191,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "bit-manipulation"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "binary-representation",
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "bit-manipulation"
+  },
+  {
+    "topic": "Bit Manipulation",
+    "display_name": "Bit Manipulation",
+    "id": "268",
+    "title": "Missing Number",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/missing-number",
+    "statement": "Given an array of n distinct numbers from 0 to n, find the missing number. XOR all indices and all values: every number cancels except the missing one. Alternatively, use expected sum minus actual sum.",
+    "master_id": 192,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "bit-manipulation"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "binary-representation",
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "bit-manipulation"
+  },
+  {
+    "topic": "Bit Manipulation",
+    "display_name": "Bit Manipulation",
+    "id": "338",
+    "title": "Counting Bits",
+    "difficulty": "easy",
+    "url": "https://leetcode.com/problems/counting-bits",
+    "statement": "Given an integer n, return an array of the number of 1 bits in each number from 0 to n. Use DP: ans[i] = ans[i >> 1] + (i & 1), leveraging that i shares all bits with i/2 except possibly the last.",
+    "master_id": 193,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "bit-manipulation"
+    ],
+    "study_priority": "core",
+    "prerequisites": [
+      "binary-representation",
+      "arrays-basics"
+    ],
+    "interview_relevance": "foundation",
+    "topic_slug": "bit-manipulation"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "322",
+    "title": "Coin Change",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/coin-change",
+    "statement": "Given coin denominations and a target amount, find the minimum number of coins needed or -1 if impossible. Use bottom-up DP building up from smaller amounts.",
+    "master_id": 226,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "72",
+    "title": "Edit Distance",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/edit-distance",
+    "statement": "Given two strings, find the minimum number of single-character edits (insert, delete, replace) to transform one into the other. Use 2D DP over string prefixes.",
+    "master_id": 227,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "198",
+    "title": "House Robber",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/house-robber",
+    "statement": "Given an array of house values, find the maximum you can rob without robbing two adjacent houses. Use DP where each state is the max money robbed up to that house considering robbing or skipping it.",
+    "master_id": 228,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "1143",
+    "title": "Longest Common Subsequence",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/longest-common-subsequence",
+    "statement": "Given two strings, find the length of their longest common subsequence. Use a 2D DP table where each cell represents the LCS length for prefixes of both strings.",
+    "master_id": 229,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "122",
+    "title": "Best Time to Buy and Sell Stock II",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii",
+    "statement": "Given daily stock prices, find the maximum profit from unlimited buy-sell transactions (no holding two stocks simultaneously). Sum all positive day-to-day differences greedily.",
+    "master_id": 230,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "279",
+    "title": "Perfect Squares",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/perfect-squares",
+    "statement": "Given a positive integer n, find the least number of perfect square numbers that sum to n. Use DP where dp[i] is the minimum squares needed for i, checking all j where j\u00b2 \u2264 i.",
+    "master_id": 231,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "62",
+    "title": "Unique Paths",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/unique-paths",
+    "statement": "Given an m\u00d7n grid, find the number of unique paths from top-left to bottom-right moving only right or down. Use DP where each cell is the sum of paths from the cell above and the cell to the left.",
+    "master_id": 232,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "120",
+    "title": "Triangle",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/triangle",
+    "statement": "Given a triangular array of integers, find the minimum path sum from top to bottom. Use bottom-up DP modifying in-place: each cell becomes its value plus the minimum of the two cells directly below it.",
+    "master_id": 233,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "647",
+    "title": "Palindromic Substrings",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/palindromic-substrings",
+    "statement": "Given a string, count the number of palindromic substrings. Use expand-around-center for each possible center (both odd and even length), counting valid palindromes.",
+    "master_id": 234,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "97",
+    "title": "Interleaving String",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/interleaving-string",
+    "statement": "Given strings s1, s2, and s3, determine if s3 is formed by interleaving s1 and s2. Use 2D DP where dp[i][j] is true if s3[:i+j] can be formed from s1[:i] and s2[:j].",
+    "master_id": 235,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "452",
+    "title": "Minimum Number of Arrows to Burst Balloons",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons",
+    "statement": "Given balloon intervals on an x-axis, find the minimum number of arrows to burst all balloons. Sort by end position and greedily shoot at the end of the current balloon, bursting all overlapping ones.",
+    "master_id": 236,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming",
+      "greedy"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "241",
+    "title": "Different Ways to Add Parentheses",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/different-ways-to-add-parentheses",
+    "statement": "Given a math expression string, compute all possible results from different ways of grouping with parentheses. Use divide-and-conquer: split at each operator and combine left and right results.",
+    "master_id": 245,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming",
+      "backtracking"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "337",
+    "title": "House Robber III",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/house-robber-iii",
+    "statement": "Given a binary tree of house values where adjacent nodes cannot both be robbed, find the maximum money. Use tree DP returning a pair (rob_root, skip_root) from each subtree.",
+    "master_id": 248,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "516",
+    "title": "Longest Palindromic Subsequence",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/longest-palindromic-subsequence",
+    "statement": "Given a string, find the length of its longest palindromic subsequence. This equals the LCS of the string with its reverse, solved with 2D DP over string prefixes.",
+    "master_id": 255,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Arrays & Hashing",
+    "display_name": "Arrays & Hashing",
+    "id": "53",
+    "title": "Maximum Subarray",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/maximum-subarray",
+    "statement": "Given an integer array, find the contiguous subarray with the largest sum. Use Kadane's algorithm: at each step either extend the current subarray or start a new one.",
+    "master_id": 297,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "arrays"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "arrays-hashing"
+  },
+  {
+    "topic": "Arrays & Hashing",
+    "display_name": "Arrays & Hashing",
+    "id": "238",
+    "title": "Product of Array Except Self",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/product-of-array-except-self",
+    "statement": "Given an array, return an output array where each element is the product of all others without using division. Use prefix products going left and suffix products going right.",
+    "master_id": 298,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "arrays"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "arrays-hashing"
+  },
+  {
+    "topic": "Arrays & Hashing",
+    "display_name": "Arrays & Hashing",
+    "id": "49",
+    "title": "Group Anagrams",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/group-anagrams",
+    "statement": "Given an array of strings, group the anagrams together. Use a hash map keyed by the sorted version of each string.",
+    "master_id": 299,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "arrays"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "arrays-hashing"
+  },
+  {
+    "topic": "Arrays & Hashing",
+    "display_name": "Arrays & Hashing",
+    "id": "128",
+    "title": "Longest Consecutive Sequence",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/longest-consecutive-sequence",
+    "statement": "Given an unsorted array, find the longest consecutive integer sequence in O(n) time. Use a hash set and only start counting from sequence beginnings (numbers with no predecessor in the set).",
+    "master_id": 300,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "hashing"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "arrays-hashing"
+  },
+  {
+    "topic": "Arrays & Hashing",
+    "display_name": "Arrays & Hashing",
+    "id": "347",
+    "title": "Top K Frequent Elements",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/top-k-frequent-elements",
+    "statement": "Given an integer array and k, return the k most frequent elements. Use a hash map for frequencies and a min-heap of size k, or bucket sort for O(n) time.",
+    "master_id": 301,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "heap"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "arrays-hashing"
+  },
+  {
+    "topic": "Arrays & Hashing",
+    "display_name": "Arrays & Hashing",
+    "id": "31",
+    "title": "Next Permutation",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/next-permutation",
+    "statement": "Given an array of integers, rearrange it to the next lexicographically greater permutation. Find the rightmost ascending pair, swap with the next greater element to its right, then reverse the suffix.",
+    "master_id": 302,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "backtracking"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "arrays-hashing"
+  },
+  {
+    "topic": "Arrays & Hashing",
+    "display_name": "Arrays & Hashing",
+    "id": "54",
+    "title": "Spiral Matrix",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/spiral-matrix",
+    "statement": "Given an m\u00d7n matrix, return all elements in spiral order. Maintain four boundaries (top, bottom, left, right) and peel them layer by layer.",
+    "master_id": 303,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "arrays"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "arrays-hashing"
+  },
+  {
+    "topic": "Arrays & Hashing",
+    "display_name": "Arrays & Hashing",
+    "id": "73",
+    "title": "Set Matrix Zeroes",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/set-matrix-zeroes",
+    "statement": "Given an m\u00d7n matrix, set entire row and column to zero if an element is zero, in-place. Use the first row and column as markers to avoid extra space.",
+    "master_id": 304,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "arrays"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "arrays-hashing"
+  },
+  {
+    "topic": "Binary Search",
+    "display_name": "Binary Search",
+    "id": "34",
+    "title": "Find First and Last Position of Element in Sorted Array",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array",
+    "statement": "Given a sorted array, find the first and last index of a target value. Run binary search twice: once biased toward the left boundary and once toward the right.",
+    "master_id": 312,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "binary-search"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "binary-search"
+  },
+  {
+    "topic": "Binary Search",
+    "display_name": "Binary Search",
+    "id": "162",
+    "title": "Find Peak Element",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/find-peak-element",
+    "statement": "Given an array where a peak element is greater than its neighbors, return the index of any peak. Use binary search, moving toward the side with the larger neighbor.",
+    "master_id": 313,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "binary-search"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "binary-search"
+  },
+  {
+    "topic": "Binary Search",
+    "display_name": "Binary Search",
+    "id": "875",
+    "title": "Koko Eating Bananas",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/koko-eating-bananas",
+    "statement": "Given piles of bananas and h hours, find the minimum eating speed k such that Koko finishes all piles within h hours. Binary search on the answer space from 1 to max(piles).",
+    "master_id": 314,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "binary-search"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "binary-search"
+  },
+  {
+    "topic": "Binary Search",
+    "display_name": "Binary Search",
+    "id": "33",
+    "title": "Search in Rotated Sorted Array",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/search-in-rotated-sorted-array",
+    "statement": "Given a rotated sorted array with unique elements and a target, return its index or -1. At each step determine which half is sorted and check if the target lies within it.",
+    "master_id": 315,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "binary-search"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "binary-search"
+  },
+  {
+    "topic": "Binary Search",
+    "display_name": "Binary Search",
+    "id": "81",
+    "title": "Search in Rotated Sorted Array II",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/search-in-rotated-sorted-array-ii",
+    "statement": "Given a rotated sorted array with possible duplicates and a target, determine if the target exists. Use modified binary search, handling the ambiguous case when left equals mid by incrementing left.",
+    "master_id": 316,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "binary-search"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "binary-search"
+  },
+  {
+    "topic": "Binary Search",
+    "display_name": "Binary Search",
+    "id": "1011",
+    "title": "Capacity To Ship Packages Within D Days",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/capacity-to-ship-packages-within-d-days",
+    "statement": "Given package weights and D days, find the minimum ship capacity to transport all packages in order within D days. Binary search on the capacity from max(weights) to sum(weights).",
+    "master_id": 317,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "binary-search"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "binary-search"
+  },
+  {
+    "topic": "Binary Search",
+    "display_name": "Binary Search",
+    "id": "658",
+    "title": "Find K Closest Elements",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/find-k-closest-elements",
+    "statement": "Given a sorted array, value x, and integer k, return the k closest elements to x. Binary search for the left boundary of the k-element window by comparing distances from x to arr[mid] and arr[mid+k].",
+    "master_id": 325,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "binary-search",
+      "heap"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "binary-search"
+  },
+  {
+    "topic": "Binary Search",
+    "display_name": "Binary Search",
+    "id": "1482",
+    "title": "Minimum Number of Days to Make m Bouquets",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/minimum-number-of-days-to-make-m-bouquets",
+    "statement": "Given bloom days and k consecutive flowers per bouquet, find the minimum day to make m bouquets. Binary search on the answer (day number), checking feasibility with a linear scan.",
+    "master_id": 329,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "binary-search"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "binary-search"
+  },
+  {
+    "topic": "Linked List",
+    "display_name": "Linked List",
+    "id": "2",
+    "title": "Add Two Numbers",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/add-two-numbers",
+    "statement": "Given two non-empty linked lists representing non-negative integers in reverse order, add them and return the sum as a linked list. Simulate digit-by-digit addition with carry.",
+    "master_id": 336,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "linked-list"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "pointers",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "linked-list"
+  },
+  {
+    "topic": "Linked List",
+    "display_name": "Linked List",
+    "id": "19",
+    "title": "Remove Nth Node From End of List",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list",
+    "statement": "Given a linked list and n, remove the nth node from the end in one pass. Use two pointers with an n-step gap so the trailing pointer is at the target when the leading pointer reaches the end.",
+    "master_id": 337,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "linked-list"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "pointers",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "linked-list"
+  },
+  {
+    "topic": "Linked List",
+    "display_name": "Linked List",
+    "id": "146",
+    "title": "LRU Cache",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/lru-cache",
+    "statement": "Design a data structure supporting O(1) get and put with LRU eviction. Use a hash map combined with a doubly linked list to track access order.",
+    "master_id": 338,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "linked-list"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "pointers",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "linked-list"
+  },
+  {
+    "topic": "Linked List",
+    "display_name": "Linked List",
+    "id": "138",
+    "title": "Copy List with Random Pointer",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/copy-list-with-random-pointer",
+    "statement": "Given a linked list where each node has a random pointer, create a deep copy. Use a hash map from original nodes to their clones to set up next and random pointers.",
+    "master_id": 339,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "linked-list"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "pointers",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "linked-list"
+  },
+  {
+    "topic": "Linked List",
+    "display_name": "Linked List",
+    "id": "445",
+    "title": "Add Two Numbers II",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/add-two-numbers-ii",
+    "statement": "Given two linked lists representing integers stored in forward order, return their sum as a linked list. Use stacks to reverse the digit order, then simulate digit-by-digit addition with carry.",
+    "master_id": 340,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "linked-list"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "pointers",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "linked-list"
+  },
+  {
+    "topic": "Linked List",
+    "display_name": "Linked List",
+    "id": "148",
+    "title": "Sort List",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/sort-list",
+    "statement": "Given the head of a linked list, sort it in O(n log n) time using O(1) extra space. Use merge sort: find the middle, split, sort each half, then merge.",
+    "master_id": 341,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "linked-list",
+      "sorting"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "pointers",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "linked-list"
+  },
+  {
+    "topic": "Linked List",
+    "display_name": "Linked List",
+    "id": "24",
+    "title": "Swap Nodes in Pairs",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/swap-nodes-in-pairs",
+    "statement": "Given a linked list, swap every two adjacent nodes and return the head. Use recursion: swap the first two nodes, then recursively swap the rest, linking them together.",
+    "master_id": 342,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "linked-list"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "pointers",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "linked-list"
+  },
+  {
+    "topic": "Linked List",
+    "display_name": "Linked List",
+    "id": "61",
+    "title": "Rotate List",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/rotate-list",
+    "statement": "Given a linked list and integer k, rotate the list to the right by k places. Find the length, normalize k to k%length, then reconnect the tail to the head and break at the new tail.",
+    "master_id": 343,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "linked-list"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "pointers",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "linked-list"
+  },
+  {
+    "topic": "Linked List",
+    "display_name": "Linked List",
+    "id": "430",
+    "title": "Flatten a Multilevel Doubly Linked List",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/flatten-a-multilevel-doubly-linked-list",
+    "statement": "Given a doubly linked list where nodes may have a child pointer to another doubly linked list, flatten it. Use DFS: when encountering a child, insert its flattened list between the current node and next.",
+    "master_id": 352,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "linked-list"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "pointers",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "linked-list"
+  },
+  {
+    "topic": "Sliding Window",
+    "display_name": "Sliding Window",
+    "id": "438",
+    "title": "Find All Anagrams in a String",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/find-all-anagrams-in-a-string",
+    "statement": "Given strings s and p, find all start indices of p's anagrams in s. Use a fixed-size sliding window of length len(p) with character frequency maps.",
+    "master_id": 375,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "sliding-window"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "two-pointers"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "sliding-window"
+  },
+  {
+    "topic": "Sliding Window",
+    "display_name": "Sliding Window",
+    "id": "3",
+    "title": "Longest Substring Without Repeating Characters",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters",
+    "statement": "Given a string s, find the length of the longest substring without repeating characters. Use a sliding window with a hash set to track characters currently in the window, expanding right and shrinking left when a duplicate is found.",
+    "master_id": 376,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "sliding-window"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "two-pointers"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "sliding-window"
+  },
+  {
+    "topic": "Sliding Window",
+    "display_name": "Sliding Window",
+    "id": "904",
+    "title": "Fruit Into Baskets",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/fruit-into-baskets",
+    "statement": "Given an array of fruit types, find the longest subarray containing at most two distinct fruit types. Use a sliding window with a frequency map, shrinking from the left when a third fruit type enters.",
+    "master_id": 377,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "sliding-window"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "two-pointers"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "sliding-window"
+  },
+  {
+    "topic": "Sliding Window",
+    "display_name": "Sliding Window",
+    "id": "1004",
+    "title": "Max Consecutive Ones III",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/max-consecutive-ones-iii",
+    "statement": "Given a binary array and integer k, find the maximum number of consecutive 1s after flipping at most k zeros. Use a sliding window tracking the count of zeros inside the window.",
+    "master_id": 378,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "sliding-window"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "two-pointers"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "sliding-window"
+  },
+  {
+    "topic": "Sliding Window",
+    "display_name": "Sliding Window",
+    "id": "567",
+    "title": "Permutation in String",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/permutation-in-string",
+    "statement": "Given strings s1 and s2, return true if s2 contains a permutation of s1. Use a fixed-size sliding window of length len(s1) and compare character frequency counts.",
+    "master_id": 379,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "sliding-window",
+      "backtracking"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "two-pointers",
+      "recursion"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "sliding-window"
+  },
+  {
+    "topic": "Sliding Window",
+    "display_name": "Sliding Window",
+    "id": "424",
+    "title": "Longest Repeating Character Replacement",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/longest-repeating-character-replacement",
+    "statement": "Given a string and integer k, find the length of the longest substring containing the same letter after replacing at most k characters. Use a sliding window: the window is valid if its length minus the max frequency \u2264 k.",
+    "master_id": 382,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "sliding-window"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "two-pointers"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "sliding-window"
+  },
+  {
+    "topic": "Trees",
+    "display_name": "Trees",
+    "id": "102",
+    "title": "Binary Tree Level Order Traversal",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/binary-tree-level-order-traversal",
+    "statement": "Given the root of a binary tree, return its values grouped by level. Use BFS with a queue, processing all nodes at the current level before moving to the next.",
+    "master_id": 396,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "trees"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "recursion",
+      "stack-queue"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "trees"
+  },
+  {
+    "topic": "Trees",
+    "display_name": "Trees",
+    "id": "236",
+    "title": "Lowest Common Ancestor of a Binary Tree",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree",
+    "statement": "Given a binary tree and two nodes p and q, find their lowest common ancestor. Use post-order DFS, returning a node when it matches p or q or when both are found in subtrees.",
+    "master_id": 397,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "trees"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "recursion",
+      "stack-queue"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "trees"
+  },
+  {
+    "topic": "Trees",
+    "display_name": "Trees",
+    "id": "105",
+    "title": "Construct Binary Tree from Preorder and Inorder Traversal",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal",
+    "statement": "Given preorder and inorder traversal arrays, reconstruct the binary tree. The first preorder element is always the root; find it in inorder to split left and right subtrees, then recurse.",
+    "master_id": 398,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "trees"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion",
+      "stack-queue"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "trees"
+  },
+  {
+    "topic": "Trees",
+    "display_name": "Trees",
+    "id": "666",
+    "title": "Path Sum IV",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/path-sum-iv",
+    "statement": "Given a list of 3-digit numbers representing a tree in level-order encoding, find the sum of all root-to-leaf path sums. Decode positions using hundreds and tens digits, compute paths using DFS.",
+    "master_id": 399,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "trees"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion",
+      "stack-queue"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "trees"
+  },
+  {
+    "topic": "Trees",
+    "display_name": "Trees",
+    "id": "107",
+    "title": "Binary Tree Level Order Traversal II",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/binary-tree-level-order-traversal-ii",
+    "statement": "Given a binary tree root, return its node values from leaves to root, level by level. Perform standard BFS level-order traversal and reverse the resulting list of levels.",
+    "master_id": 400,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "trees"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "recursion",
+      "stack-queue"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "trees"
+  },
+  {
+    "topic": "Trees",
+    "display_name": "Trees",
+    "id": "199",
+    "title": "Binary Tree Right Side View",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/binary-tree-right-side-view",
+    "statement": "Given a binary tree root, return the values visible from the right side. Use BFS level-order traversal, recording the last node at each level.",
+    "master_id": 401,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "trees"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion",
+      "stack-queue"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "trees"
+  },
+  {
+    "topic": "Trees",
+    "display_name": "Trees",
+    "id": "114",
+    "title": "Flatten Binary Tree to Linked List",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/flatten-binary-tree-to-linked-list",
+    "statement": "Given a binary tree root, flatten it into a linked list in-place using preorder traversal order. Use Morris traversal or recursive post-order approach rewiring right pointers.",
+    "master_id": 402,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "linked-list",
+      "trees"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "pointers",
+      "arrays-basics",
+      "recursion",
+      "stack-queue"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "trees"
+  },
+  {
+    "topic": "Trees",
+    "display_name": "Trees",
+    "id": "129",
+    "title": "Sum Root to Leaf Numbers",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/sum-root-to-leaf-numbers",
+    "statement": "Given a binary tree where each root-to-leaf path represents a number, return the total sum of all root-to-leaf numbers. Use DFS passing the current accumulated number and adding it to the total at each leaf.",
+    "master_id": 411,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "trees"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion",
+      "stack-queue"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "trees"
+  },
+  {
+    "topic": "Two Pointers",
+    "display_name": "Two Pointers",
+    "id": "11",
+    "title": "Container With Most Water",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/container-with-most-water",
+    "statement": "Given an array of heights representing vertical lines, find two lines that together with the x-axis forms a container holding the most water. Use two pointers from both ends, always moving the shorter line inward.",
+    "master_id": 461,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "two-pointers"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "two-pointers"
+  },
+  {
+    "topic": "Two Pointers",
+    "display_name": "Two Pointers",
+    "id": "75",
+    "title": "Sort Colors",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/sort-colors",
+    "statement": "Given an array with values 0, 1, 2 (representing colors), sort it in-place without using library sort. Use the Dutch National Flag algorithm with three pointers tracking boundaries for each color.",
+    "master_id": 462,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "two-pointers",
+      "sorting"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "two-pointers"
+  },
+  {
+    "topic": "Two Pointers",
+    "display_name": "Two Pointers",
+    "id": "167",
+    "title": "Two Sum II - Input Array Is Sorted",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted",
+    "statement": "Given a 1-indexed sorted array and a target, find two numbers that add to the target. Use two pointers starting from both ends, moving inward based on whether the current sum is too large or too small.",
+    "master_id": 463,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "two-pointers"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "two-pointers"
+  },
+  {
+    "topic": "Two Pointers",
+    "display_name": "Two Pointers",
+    "id": "80",
+    "title": "Remove Duplicates from Sorted Array II",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii",
+    "statement": "Given a sorted array, remove duplicates in-place allowing at most two occurrences of each element. Use a slow pointer tracking the valid position, allowing elements that differ from two positions back.",
+    "master_id": 464,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "two-pointers"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "two-pointers"
+  },
+  {
+    "topic": "Two Pointers",
+    "display_name": "Two Pointers",
+    "id": "1836",
+    "title": "Remove Duplicates From an Unsorted Linked List",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/remove-duplicates-from-an-unsorted-linked-list",
+    "statement": "Given the head of an unsorted linked list, remove all nodes with duplicate values, keeping only nodes with unique values. Use a hash map for frequency counts, then rebuild or filter the list in a second pass.",
+    "master_id": 465,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "two-pointers",
+      "linked-list"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "pointers"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "two-pointers"
+  },
+  {
+    "topic": "Two Pointers",
+    "display_name": "Two Pointers",
+    "id": "18",
+    "title": "4Sum",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/4sum",
+    "statement": "Given an array and a target, find all unique quadruplets summing to the target. Sort the array, fix two elements with nested loops, then use two pointers on the remaining subarray, skipping duplicates at each level.",
+    "master_id": 468,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "two-pointers"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "two-pointers"
+  },
+  {
+    "topic": "Two Pointers",
+    "display_name": "Two Pointers",
+    "id": "881",
+    "title": "Boats to Save People",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/boats-to-save-people",
+    "statement": "Given person weights and a boat limit carrying at most 2 people, find the minimum number of boats. Sort and use two pointers: if the lightest and heaviest fit together, use one boat; otherwise the heaviest goes alone.",
+    "master_id": 471,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "two-pointers"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "two-pointers"
+  },
+  {
+    "topic": "Stack & Queue",
+    "display_name": "Stack & Queue",
+    "id": "739",
+    "title": "Daily Temperatures",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/daily-temperatures",
+    "statement": "Given daily temperatures, return how many days until a warmer temperature for each day. Use a monotonic decreasing stack of indices, popping when a warmer day is found.",
+    "master_id": 476,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "stack-queue"
+  },
+  {
+    "topic": "Stack & Queue",
+    "display_name": "Stack & Queue",
+    "id": "22",
+    "title": "Generate Parentheses",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/generate-parentheses",
+    "statement": "Given n pairs of parentheses, generate all combinations of well-formed parentheses. Use backtracking, tracking the count of open and close brackets used.",
+    "master_id": 477,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue",
+      "backtracking"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "recursion"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "stack-queue"
+  },
+  {
+    "topic": "Stack & Queue",
+    "display_name": "Stack & Queue",
+    "id": "394",
+    "title": "Decode String",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/decode-string",
+    "statement": "Given an encoded string like '3[a2[bc]]', decode it by repeating substrings. Use a stack to handle nested encodings, processing character by character.",
+    "master_id": 478,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "stack-queue"
+  },
+  {
+    "topic": "Stack & Queue",
+    "display_name": "Stack & Queue",
+    "id": "155",
+    "title": "Min Stack",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/min-stack",
+    "statement": "Design a stack that supports push, pop, top, and retrieving the minimum element in O(1). Maintain a parallel stack tracking the current minimum at each level.",
+    "master_id": 479,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "stack-queue"
+  },
+  {
+    "topic": "Stack & Queue",
+    "display_name": "Stack & Queue",
+    "id": "735",
+    "title": "Asteroid Collision",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/asteroid-collision",
+    "statement": "Given an array of asteroids moving left or right, determine the final state after all collisions. Use a stack: right-moving asteroids push on; left-moving ones destroy smaller right-movers or themselves.",
+    "master_id": 480,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "stack-queue"
+  },
+  {
+    "topic": "Stack & Queue",
+    "display_name": "Stack & Queue",
+    "id": "71",
+    "title": "Simplify Path",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/simplify-path",
+    "statement": "Given a Unix-style absolute path, simplify it by processing . (current dir) and .. (parent dir) components. Use a stack, pushing directory names and popping on '..'.",
+    "master_id": 481,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "stack-queue"
+  },
+  {
+    "topic": "Stack & Queue",
+    "display_name": "Stack & Queue",
+    "id": "456",
+    "title": "132 Pattern",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/132-pattern",
+    "statement": "Given an array, find if there exists a 132 pattern (i<j<k where nums[i]<nums[k]<nums[j]). Traverse right to left using a monotonic stack, tracking the third element candidate as the largest popped value.",
+    "master_id": 486,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "stack-queue"
+  },
+  {
+    "topic": "Stack & Queue",
+    "display_name": "Stack & Queue",
+    "id": "402",
+    "title": "Remove K Digits",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/remove-k-digits",
+    "statement": "Given a number as a string and integer k, remove k digits to form the smallest possible number. Use a monotonic increasing stack, popping larger digits when a smaller digit arrives, then remove remaining k digits from the end.",
+    "master_id": 499,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "stack-queue"
+  },
+  {
+    "topic": "Heap & Priority Queue",
+    "display_name": "Heap & Priority Queue",
+    "id": "215",
+    "title": "Kth Largest Element in an Array",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/kth-largest-element-in-an-array",
+    "statement": "Given an integer array and k, find the kth largest element. Use a min-heap of size k: push elements and pop when size exceeds k, leaving the kth largest at the top.",
+    "master_id": 515,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue",
+      "heap"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "heap-priority-queue"
+  },
+  {
+    "topic": "Heap & Priority Queue",
+    "display_name": "Heap & Priority Queue",
+    "id": "355",
+    "title": "Design Twitter",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/design-twitter",
+    "statement": "Design a simplified Twitter with post tweet, follow/unfollow, and news feed (10 most recent tweets from followees). Use a hash map and a min-heap merging followees' tweet streams.",
+    "master_id": 516,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue",
+      "heap"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "heap-priority-queue"
+  },
+  {
+    "topic": "Heap & Priority Queue",
+    "display_name": "Heap & Priority Queue",
+    "id": "973",
+    "title": "K Closest Points to Origin",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/k-closest-points-to-origin",
+    "statement": "Given a list of points, find the k closest to the origin using Euclidean distance. Use a max-heap of size k, keeping the k smallest distances seen so far.",
+    "master_id": 517,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue",
+      "heap"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "heap-priority-queue"
+  },
+  {
+    "topic": "Heap & Priority Queue",
+    "display_name": "Heap & Priority Queue",
+    "id": "621",
+    "title": "Task Scheduler",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/task-scheduler",
+    "statement": "Given tasks with cooldown n between same-task executions, find the minimum intervals to finish all tasks. Use a greedy approach with a max-heap of task frequencies and a cooldown queue.",
+    "master_id": 518,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue",
+      "heap"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "heap-priority-queue"
+  },
+  {
+    "topic": "Heap & Priority Queue",
+    "display_name": "Heap & Priority Queue",
+    "id": "1049",
+    "title": "Last Stone Weight II",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/last-stone-weight-ii",
+    "statement": "Given stone weights, split them into two groups and minimize the absolute difference of their sums. Reduce to a subset-sum/knapsack DP problem targeting sum/2.",
+    "master_id": 519,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue",
+      "heap"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "heap-priority-queue"
+  },
+  {
+    "topic": "Heap & Priority Queue",
+    "display_name": "Heap & Priority Queue",
+    "id": "767",
+    "title": "Reorganize String",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/reorganize-string",
+    "statement": "Given a string, rearrange characters so no two adjacent characters are the same, or return empty if impossible. Use a max-heap to always place the most frequent remaining character next.",
+    "master_id": 520,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue",
+      "heap"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "heap-priority-queue"
+  },
+  {
+    "topic": "Heap & Priority Queue",
+    "display_name": "Heap & Priority Queue",
+    "id": "373",
+    "title": "Find K Pairs with Smallest Sums",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/find-k-pairs-with-smallest-sums",
+    "statement": "Given two sorted arrays, find the k pairs (one from each array) with the smallest sums. Use a min-heap initialized with the first element of the second array paired with every element of the first.",
+    "master_id": 521,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue",
+      "heap"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "heap-priority-queue"
+  },
+  {
+    "topic": "Heap & Priority Queue",
+    "display_name": "Heap & Priority Queue",
+    "id": "264",
+    "title": "Ugly Number II",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/ugly-number-ii",
+    "statement": "Find the nth ugly number where ugly numbers have only prime factors 2, 3, and 5. Use three pointers into the ugly number sequence, always multiplying the smallest current pointer's value.",
+    "master_id": 522,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue",
+      "heap"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "heap-priority-queue"
+  },
+  {
+    "topic": "Greedy",
+    "display_name": "Greedy",
+    "id": "56",
+    "title": "Merge Intervals",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/merge-intervals",
+    "statement": "Given an array of intervals, merge all overlapping intervals. Sort by start time and greedily merge each interval with the last merged interval if they overlap.",
+    "master_id": 535,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "greedy"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "sorting",
+      "arrays-basics"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "greedy"
+  },
+  {
+    "topic": "Greedy",
+    "display_name": "Greedy",
+    "id": "134",
+    "title": "Gas Station",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/gas-station",
+    "statement": "Given gas amounts and costs at each station in a circle, find the starting station index that allows completing the circuit. Use a greedy approach tracking current tank and total surplus.",
+    "master_id": 536,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "binary-search",
+      "greedy"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "greedy"
+  },
+  {
+    "topic": "Greedy",
+    "display_name": "Greedy",
+    "id": "253",
+    "title": "Meeting Rooms II",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/meeting-rooms-ii",
+    "statement": "Given meeting time intervals, find the minimum number of conference rooms required. Use a min-heap tracking end times of ongoing meetings, allocating a new room only when needed.",
+    "master_id": 537,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "greedy"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "sorting",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "greedy"
+  },
+  {
+    "topic": "Greedy",
+    "display_name": "Greedy",
+    "id": "846",
+    "title": "Hand of Straights",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/hand-of-straights",
+    "statement": "Given a hand of cards and a group size W, determine if the hand can be rearranged into consecutive groups of size W. Use a sorted map to greedily form groups starting from the smallest card.",
+    "master_id": 538,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "greedy"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "sorting",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "greedy"
+  },
+  {
+    "topic": "Greedy",
+    "display_name": "Greedy",
+    "id": "57",
+    "title": "Insert Interval",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/insert-interval",
+    "statement": "Given a list of non-overlapping sorted intervals and a new interval, insert it and merge as needed. Iterate through, adding non-overlapping intervals and merging those that overlap with the new one.",
+    "master_id": 539,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "greedy"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "sorting",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "greedy"
+  },
+  {
+    "topic": "Greedy",
+    "display_name": "Greedy",
+    "id": "45",
+    "title": "Jump Game II",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/jump-game-ii",
+    "statement": "Given an array of maximum jump lengths, find the minimum number of jumps to reach the last index. Use greedy BFS: track the current range reachable and the furthest reachable, counting jumps when you exhaust the current range.",
+    "master_id": 540,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "greedy"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "sorting",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "greedy"
+  },
+  {
+    "topic": "Greedy",
+    "display_name": "Greedy",
+    "id": "179",
+    "title": "Largest Number",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/largest-number",
+    "statement": "Given a list of non-negative integers, arrange them to form the largest number. Define a custom comparator: compare concatenations ab vs ba, and sort in descending order by this comparator.",
+    "master_id": 542,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "greedy"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "sorting",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "greedy"
+  },
+  {
+    "topic": "Graphs",
+    "display_name": "Graphs",
+    "id": "200",
+    "title": "Number of Islands",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/number-of-islands",
+    "statement": "Given a 2D grid of land and water cells, count the number of islands. Use DFS or BFS from each unvisited land cell, marking all connected land as visited.",
+    "master_id": 568,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "graphs"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics",
+      "queue-stack",
+      "trees-basics"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "graphs"
+  },
+  {
+    "topic": "Graphs",
+    "display_name": "Graphs",
+    "id": "207",
+    "title": "Course Schedule",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/course-schedule",
+    "statement": "Given n courses and prerequisite pairs, determine if all courses can be finished. Detect cycles in a directed graph using DFS with three states: unvisited, visiting, visited.",
+    "master_id": 569,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "graphs"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics",
+      "queue-stack",
+      "trees-basics"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "graphs"
+  },
+  {
+    "topic": "Graphs",
+    "display_name": "Graphs",
+    "id": "417",
+    "title": "Pacific Atlantic Water Flow",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/pacific-atlantic-water-flow",
+    "statement": "Given a height matrix, find all cells from which water can flow to both the Pacific and Atlantic oceans. Use reverse BFS/DFS from each ocean's border cells.",
+    "master_id": 570,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "graphs"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "queue-stack",
+      "trees-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "graphs"
+  },
+  {
+    "topic": "Graphs",
+    "display_name": "Graphs",
+    "id": "547",
+    "title": "Number of Provinces",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/number-of-provinces",
+    "statement": "Given an n\u00d7n adjacency matrix of cities, find the number of connected components (provinces). Use DFS or Union-Find, visiting all cities reachable from each unvisited city.",
+    "master_id": 571,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "graphs"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "queue-stack",
+      "trees-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "graphs"
+  },
+  {
+    "topic": "Graphs",
+    "display_name": "Graphs",
+    "id": "994",
+    "title": "Rotting Oranges",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/rotting-oranges",
+    "statement": "Given a grid of fresh, rotten, and empty cells, find the minimum minutes for all fresh oranges to rot (or -1 if impossible). Use multi-source BFS starting from all initially rotten oranges simultaneously.",
+    "master_id": 572,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "graphs"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "queue-stack",
+      "trees-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "graphs"
+  },
+  {
+    "topic": "Graphs",
+    "display_name": "Graphs",
+    "id": "787",
+    "title": "Cheapest Flights Within K Stops",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/cheapest-flights-within-k-stops",
+    "statement": "Given cities, flights with costs, and k, find the cheapest price from source to destination with at most k stops. Use Bellman-Ford with k+1 relaxation rounds, or BFS/Dijkstra with state (city, stops).",
+    "master_id": 573,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "graphs"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics",
+      "queue-stack",
+      "trees-basics"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "graphs"
+  },
+  {
+    "topic": "Graphs",
+    "display_name": "Graphs",
+    "id": "721",
+    "title": "Accounts Merge",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/accounts-merge",
+    "statement": "Given a list of accounts where each is a name followed by emails, merge accounts sharing a common email. Use Union-Find grouping emails by shared account, then collect and sort each group's emails.",
+    "master_id": 584,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "graphs"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "queue-stack",
+      "trees-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "graphs"
+  },
+  {
+    "topic": "Math",
+    "display_name": "Math",
+    "id": "50",
+    "title": "Pow(x, n)",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/pow-x-n",
+    "statement": "Implement pow(x, n) in O(log n) time. Use fast exponentiation: if n is even, compute x^(n/2) and square it; if odd, multiply by x. Handle negative n by taking reciprocal.",
+    "master_id": 640,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "math"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "math-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "math"
+  },
+  {
+    "topic": "Math",
+    "display_name": "Math",
+    "id": "172",
+    "title": "Factorial Trailing Zeroes",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/factorial-trailing-zeroes",
+    "statement": "Given an integer n, return the number of trailing zeroes in n!. Each trailing zero comes from a factor of 10 = 2\u00d75. Count factors of 5 in n! using n/5 + n/25 + n/125 + ..., since 5 is the limiting factor.",
+    "master_id": 642,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "math",
+      "recursion"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "math-basics",
+      "functions",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "math"
+  },
+  {
+    "topic": "Math",
+    "display_name": "Math",
+    "id": "204",
+    "title": "Count Primes",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/count-primes",
+    "statement": "Given an integer n, return the number of prime numbers strictly less than n. Use the Sieve of Eratosthenes: mark multiples of each prime as composite starting from 2.",
+    "master_id": 643,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "math"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "math-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "math"
+  },
+  {
+    "topic": "Strings",
+    "display_name": "Strings",
+    "id": "12",
+    "title": "Integer to Roman",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/integer-to-roman",
+    "statement": "Convert an integer to its Roman numeral representation. Use a greedy approach with a list of value-symbol pairs in descending order, repeatedly subtracting the largest fitting value.",
+    "master_id": 662,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "strings"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "strings"
+  },
+  {
+    "topic": "Strings",
+    "display_name": "Strings",
+    "id": "38",
+    "title": "Count and Say",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/count-and-say",
+    "statement": "The count-and-say sequence encodes each term by describing groups of consecutive digits. Generate the nth term by iterating from '1', counting consecutive characters and building the next string.",
+    "master_id": 663,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "strings"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "strings"
+  },
+  {
+    "topic": "Strings",
+    "display_name": "Strings",
+    "id": "151",
+    "title": "Reverse Words in a String",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/reverse-words-in-a-string",
+    "statement": "Given an input string, reverse the order of the words. Words are separated by spaces, and the result should have no leading/trailing spaces or multiple spaces between words. Use split and join or a two-pointer approach after trimming.",
+    "master_id": 664,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "strings"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "strings"
+  },
+  {
+    "topic": "Strings",
+    "display_name": "Strings",
+    "id": "EXT-0781",
+    "title": "Longest Palindromic Substring",
+    "difficulty": "medium",
+    "url": "https://www.google.com/search?q=longest+palindromic+substring+DSA+problem",
+    "statement": "Given a string, return the longest palindromic substring. Use expand-around-center for each possible center position (odd and even length), tracking the longest palindrome found.",
+    "source": "Additional free-platform/interview classic",
+    "master_id": 683,
+    "tags": [
+      "strings"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "strings"
+  },
+  {
+    "topic": "Arrays",
+    "display_name": "Arrays",
+    "id": "287",
+    "title": "Find the Duplicate Number",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/find-the-duplicate-number",
+    "statement": "Given an array of n+1 integers in range [1,n], find the one duplicate without modifying the array. Treat the array as a linked list with next[i]=nums[i] and use Floyd's cycle detection algorithm.",
+    "master_id": 692,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "arrays"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "arrays"
+  },
+  {
+    "topic": "Arrays",
+    "display_name": "Arrays",
+    "id": "289",
+    "title": "Game of Life",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/game-of-life",
+    "statement": "Given a board of cells (0=dead, 1=alive), apply Conway's Game of Life rules simultaneously. Use in-place encoding with extra states (2=was alive, 3=was dead) to track transitions without extra space.",
+    "master_id": 693,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "arrays"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "arrays"
+  },
+  {
+    "topic": "Bit Manipulation",
+    "display_name": "Bit Manipulation",
+    "id": "137",
+    "title": "Single Number II",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/single-number-ii",
+    "statement": "Given an array where every element appears three times except one, find the unique element. Use bit counting: for each bit position, the count mod 3 gives the unique element's bit.",
+    "master_id": 727,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "bit-manipulation"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "binary-representation",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "bit-manipulation"
+  },
+  {
+    "topic": "Bit Manipulation",
+    "display_name": "Bit Manipulation",
+    "id": "260",
+    "title": "Single Number III",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/single-number-iii",
+    "statement": "Given an array where every element appears twice except two elements, find those two. XOR all to get their XOR, find a set bit to partition elements into two groups, then XOR each group separately.",
+    "master_id": 729,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "bit-manipulation"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "binary-representation",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "bit-manipulation"
+  },
+  {
+    "topic": "Bit Manipulation",
+    "display_name": "Bit Manipulation",
+    "id": "371",
+    "title": "Sum of Two Integers",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/sum-of-two-integers",
+    "statement": "Calculate the sum of two integers without using + or -. Use XOR for the sum without carry, AND shifted left for the carry, repeating until carry is zero.",
+    "master_id": 731,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "bit-manipulation"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "binary-representation",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "bit-manipulation"
+  },
+  {
+    "topic": "Prefix Sum",
+    "display_name": "Prefix Sum",
+    "id": "560",
+    "title": "Subarray Sum Equals K",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/subarray-sum-equals-k",
+    "statement": "Given an integer array and target k, count the number of subarrays whose elements sum to k. Use a running prefix sum with a hash map counting how many times each prefix sum has appeared.",
+    "master_id": 737,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "prefix-sum",
+      "tries"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "arrays-basics",
+      "strings",
+      "trees-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "prefix-sum"
+  },
+  {
+    "topic": "DSA Basics",
+    "display_name": "DSA Basics",
+    "id": "EXT-0705",
+    "title": "Tower of Hanoi",
+    "difficulty": "medium",
+    "url": "https://www.google.com/search?q=tower+of+hanoi+DSA+problem",
+    "statement": "Move n disks from source to destination using an auxiliary peg, never placing a larger disk on a smaller one. The recursive solution moves n-1 disks to auxiliary, moves disk n, then moves n-1 disks from auxiliary to destination.",
+    "source": "Additional free-platform/interview classic",
+    "master_id": 747,
+    "tags": [
+      "recursion"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "functions",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "dsa-basics"
+  },
+  {
+    "topic": "Backtracking",
+    "display_name": "Backtracking",
+    "id": "17",
+    "title": "Letter Combinations of a Phone Number",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/letter-combinations-of-a-phone-number",
+    "statement": "Given a string of phone digits, return all possible letter combinations using a phone keypad. Use backtracking building combinations character by character.",
+    "master_id": 760,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "backtracking"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "backtracking"
+  },
+  {
+    "topic": "Backtracking",
+    "display_name": "Backtracking",
+    "id": "79",
+    "title": "Word Search",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/word-search",
+    "statement": "Given a grid of characters and a target word, determine if the word exists as a sequence of adjacent cells. Use DFS backtracking marking cells as visited during exploration.",
+    "master_id": 761,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "backtracking"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "backtracking"
+  },
+  {
+    "topic": "Backtracking",
+    "display_name": "Backtracking",
+    "id": "131",
+    "title": "Palindrome Partitioning",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/palindrome-partitioning",
+    "statement": "Given a string s, return all possible ways to partition it so that every substring is a palindrome. Use backtracking with palindrome precomputation via DP to prune invalid partitions early.",
+    "master_id": 762,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "backtracking"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "backtracking"
+  },
+  {
+    "topic": "Backtracking",
+    "display_name": "Backtracking",
+    "id": "40",
+    "title": "Combination Sum II",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/combination-sum-ii",
+    "statement": "Given a collection of candidates with duplicates and a target, find all unique combinations summing to target (each number used once). Sort candidates and use backtracking with duplicate skipping.",
+    "master_id": 763,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "backtracking"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "recursion"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "backtracking"
+  },
+  {
+    "topic": "Backtracking",
+    "display_name": "Backtracking",
+    "id": "93",
+    "title": "Restore IP Addresses",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/restore-ip-addresses",
+    "statement": "Given a string of digits, return all valid IP addresses that can be formed. Use backtracking placing dots at valid positions, ensuring each segment is between 0 and 255 with no leading zeros.",
+    "master_id": 764,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "backtracking"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "backtracking"
+  },
+  {
+    "topic": "Backtracking",
+    "display_name": "Backtracking",
+    "id": "47",
+    "title": "Permutations II",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/permutations-ii",
+    "statement": "Given a collection of numbers that might contain duplicates, return all unique permutations. Sort and use backtracking with a visited array, skipping a number if it is the same as the previous unvisited number.",
+    "master_id": 765,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "backtracking"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "recursion"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "backtracking"
+  },
+  {
+    "topic": "Backtracking",
+    "display_name": "Backtracking",
+    "id": "90",
+    "title": "Subsets II",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/subsets-ii",
+    "statement": "Given an array that may contain duplicates, return all possible unique subsets. Sort the array and use backtracking, skipping duplicate elements at the same recursion depth.",
+    "master_id": 766,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "backtracking"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "recursion"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "backtracking"
+  },
+  {
+    "topic": "Backtracking",
+    "display_name": "Backtracking",
+    "id": "494",
+    "title": "Target Sum",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/target-sum",
+    "statement": "Given an array and a target, count the number of ways to assign + or - to each element so the expression evaluates to target. Use DP or DFS memoization over (index, current_sum) states.",
+    "master_id": 767,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "backtracking"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "recursion"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "backtracking"
+  },
+  {
+    "topic": "Tries",
+    "display_name": "Tries",
+    "id": "208",
+    "title": "Implement Trie (Prefix Tree)",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/implement-trie-prefix-tree",
+    "statement": "Implement a Trie with insert, search, and startsWith operations. Each node has up to 26 children (one per letter) and an isEndOfWord flag. All operations run in O(L) time where L is the word length.",
+    "master_id": 788,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "tries",
+      "trees"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "strings",
+      "trees-basics",
+      "recursion",
+      "stack-queue"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "tries"
+  },
+  {
+    "topic": "Tries",
+    "display_name": "Tries",
+    "id": "211",
+    "title": "Design Add and Search Words Data Structure",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/design-add-and-search-words-data-structure",
+    "statement": "Design a data structure supporting addWord and search where '.' matches any letter. Use a Trie for storage and DFS with backtracking when a '.' wildcard is encountered during search.",
+    "master_id": 789,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "tries"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "strings",
+      "trees-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "tries"
+  },
+  {
+    "topic": "Tries",
+    "display_name": "Tries",
+    "id": "421",
+    "title": "Maximum XOR of Two Numbers in an Array",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array",
+    "statement": "Given an integer array, find the maximum XOR of any two elements. Insert all numbers into a binary Trie (bit by bit from MSB) and for each number greedily choose the opposite bit to maximize XOR.",
+    "master_id": 790,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "bit-manipulation"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "binary-representation",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "tries"
+  },
+  {
+    "topic": "Tries",
+    "display_name": "Tries",
+    "id": "677",
+    "title": "Map Sum Pairs",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/map-sum-pairs",
+    "statement": "Design a map where insert(key, val) inserts a key-value pair and sum(prefix) returns the sum of all values whose keys have the given prefix. Use a Trie storing values at terminal nodes and accumulating sums during prefix traversal.",
+    "master_id": 792,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "tries"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "strings",
+      "trees-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "tries"
+  },
+  {
+    "topic": "Tries",
+    "display_name": "Tries",
+    "id": "648",
+    "title": "Replace Words",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/replace-words",
+    "statement": "Given a dictionary of roots and a sentence, replace each word in the sentence with the shortest root that is a prefix of it. Build a Trie of roots and for each sentence word traverse the Trie to find the shortest matching root.",
+    "master_id": 793,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "tries"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "strings",
+      "trees-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "tries"
+  },
+  {
+    "topic": "Recursion",
+    "display_name": "Recursion",
+    "id": "779",
+    "title": "K-th Symbol in Grammar",
+    "difficulty": "medium",
+    "url": "https://leetcode.com/problems/k-th-symbol-in-grammar",
+    "statement": "In a grammar sequence where each 0 becomes 01 and each 1 becomes 10, find the kth symbol in the nth row. Use recursion: the kth symbol in row n derives from the ceil(k/2)th symbol in row n-1.",
+    "master_id": 801,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "recursion"
+    ],
+    "study_priority": "high-value",
+    "prerequisites": [
+      "functions",
+      "arrays-basics"
+    ],
+    "interview_relevance": "common-pattern",
+    "topic_slug": "recursion"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "123",
+    "title": "Best Time to Buy and Sell Stock III",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii",
+    "statement": "Given daily prices, find the maximum profit from at most two buy-sell transactions. Use DP tracking the best profit states for each transaction phase across days.",
+    "master_id": 807,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "188",
+    "title": "Best Time to Buy and Sell Stock IV",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv",
+    "statement": "Given daily prices and k allowed transactions, find the maximum profit. Use DP with states for transaction count and holding/not-holding status, optimized to avoid TLE.",
+    "master_id": 808,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "10",
+    "title": "Regular Expression Matching",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/regular-expression-matching",
+    "statement": "Given a string and a pattern with '.' and '*', implement regex matching. Use 2D DP where dp[i][j] is true if pattern[:j] matches string[:i], handling '.' as any character and '*' as zero or more of the preceding.",
+    "master_id": 822,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "recursion",
+      "arrays-basics"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Dynamic Programming",
+    "display_name": "Dynamic Programming",
+    "id": "115",
+    "title": "Distinct Subsequences",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/distinct-subsequences",
+    "statement": "Given strings s and t, count the number of distinct subsequences of s that equal t. Use 2D DP where dp[i][j] counts ways to form t[:j] from s[:i], either skipping s[i] or matching it with t[j].",
+    "master_id": 824,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "hashing",
+      "dynamic-programming"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "arrays-basics",
+      "recursion"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "dynamic-programming"
+  },
+  {
+    "topic": "Arrays & Hashing",
+    "display_name": "Arrays & Hashing",
+    "id": "220",
+    "title": "Contains Duplicate III",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/contains-duplicate-iii",
+    "statement": "Given an integer array and integers indexDiff and valueDiff, check if any two distinct indices i, j satisfy abs(i-j) <= indexDiff and abs(nums[i]-nums[j]) <= valueDiff. Use bucket sort with bucket size valueDiff+1 for O(n) time.",
+    "master_id": 844,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "arrays"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "arrays-hashing"
+  },
+  {
+    "topic": "Arrays & Hashing",
+    "display_name": "Arrays & Hashing",
+    "id": "41",
+    "title": "First Missing Positive",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/first-missing-positive",
+    "statement": "Given an unsorted integer array, find the smallest missing positive integer in O(n) time and O(1) space. Use the array itself as a hash map by placing each number in its correct index position.",
+    "master_id": 845,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "arrays"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "arrays-hashing"
+  },
+  {
+    "topic": "Binary Search",
+    "display_name": "Binary Search",
+    "id": "4",
+    "title": "Median of Two Sorted Arrays",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/median-of-two-sorted-arrays",
+    "statement": "Given two sorted arrays, find the median of the combined sorted array in O(log(min(m,n))) time. Binary search on the smaller array to find the correct partition point.",
+    "master_id": 846,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "binary-search"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "binary-search"
+  },
+  {
+    "topic": "Binary Search",
+    "display_name": "Binary Search",
+    "id": "272",
+    "title": "Closest Binary Search Tree Value II",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/closest-binary-search-tree-value-ii",
+    "statement": "Given a BST root, a target value, and integer k, return the k values in the BST closest to the target. Use inorder traversal with a sliding window deque of size k, removing the farther end when closer values arrive.",
+    "master_id": 847,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "binary-search",
+      "trees"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting",
+      "recursion",
+      "stack-queue"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "binary-search"
+  },
+  {
+    "topic": "Binary Search",
+    "display_name": "Binary Search",
+    "id": "410",
+    "title": "Split Array Largest Sum",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/split-array-largest-sum",
+    "statement": "Given an array and integer k, split the array into k non-empty subarrays minimizing the largest subarray sum. Binary search on the answer from max(nums) to sum(nums).",
+    "master_id": 848,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "binary-search"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "binary-search"
+  },
+  {
+    "topic": "Linked List",
+    "display_name": "Linked List",
+    "id": "25",
+    "title": "Reverse Nodes in k-Group",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/reverse-nodes-in-k-group",
+    "statement": "Given a linked list and k, reverse the nodes in every k-group. Iteratively find k-length segments and reverse them in place, linking segments together.",
+    "master_id": 859,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "linked-list"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "pointers",
+      "arrays-basics"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "linked-list"
+  },
+  {
+    "topic": "Linked List",
+    "display_name": "Linked List",
+    "id": "23",
+    "title": "Merge k Sorted Lists",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/merge-k-sorted-lists",
+    "statement": "Given k sorted linked lists, merge them into one sorted linked list. Use a min-heap of size k containing each list's current head, extracting the minimum and advancing that list at each step.",
+    "master_id": 860,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "heap",
+      "linked-list"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting",
+      "pointers"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "linked-list"
+  },
+  {
+    "topic": "Sliding Window",
+    "display_name": "Sliding Window",
+    "id": "76",
+    "title": "Minimum Window Substring",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/minimum-window-substring",
+    "statement": "Given strings s and t, return the minimum window substring of s such that every character in t is included. Use a sliding window with two pointers and a character frequency map, shrinking from the left once all characters are covered.",
+    "master_id": 864,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "sliding-window"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics",
+      "two-pointers"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "sliding-window"
+  },
+  {
+    "topic": "Sliding Window",
+    "display_name": "Sliding Window",
+    "id": "239",
+    "title": "Sliding Window Maximum",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/sliding-window-maximum",
+    "statement": "Given an integer array and a window size k, return the maximum value in each sliding window position. Use a monotonic deque to efficiently track the maximum as the window slides from left to right.",
+    "master_id": 865,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "sliding-window"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics",
+      "two-pointers"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "sliding-window"
+  },
+  {
+    "topic": "Sliding Window",
+    "display_name": "Sliding Window",
+    "id": "30",
+    "title": "Substring with Concatenation of All Words",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/substring-with-concatenation-of-all-words",
+    "statement": "Given a string and a list of words, find all starting indices of substrings that are concatenations of all words in any order. Use a sliding window of fixed size (total words length) with a word frequency map.",
+    "master_id": 866,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "sliding-window"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "arrays-basics",
+      "two-pointers"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "sliding-window"
+  },
+  {
+    "topic": "Trees",
+    "display_name": "Trees",
+    "id": "124",
+    "title": "Binary Tree Maximum Path Sum",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum",
+    "statement": "Given a binary tree, find the maximum path sum where a path can start and end at any node. Use DFS tracking the maximum gain from each subtree while updating a global maximum.",
+    "master_id": 870,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "trees"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "recursion",
+      "stack-queue"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "trees"
+  },
+  {
+    "topic": "Trees",
+    "display_name": "Trees",
+    "id": "297",
+    "title": "Serialize and Deserialize Binary Tree",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/serialize-and-deserialize-binary-tree",
+    "statement": "Design algorithms to serialize a binary tree to a string and deserialize back. Use preorder traversal with null markers, then reconstruct using a queue of values.",
+    "master_id": 871,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "trees"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "recursion",
+      "stack-queue"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "trees"
+  },
+  {
+    "topic": "Trees",
+    "display_name": "Trees",
+    "id": "99",
+    "title": "Recover Binary Search Tree",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/recover-binary-search-tree",
+    "statement": "Two nodes of a BST are swapped by mistake. Recover the tree without changing its structure. Use inorder traversal to find the two out-of-order nodes, then swap their values.",
+    "master_id": 872,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "binary-search",
+      "trees"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting",
+      "recursion",
+      "stack-queue"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "trees"
+  },
+  {
+    "topic": "Two Pointers",
+    "display_name": "Two Pointers",
+    "id": "42",
+    "title": "Trapping Rain Water",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/trapping-rain-water",
+    "statement": "Given an elevation map as an array, compute how much water can be trapped between the bars. Use two pointers with precomputed left and right maximum heights to determine water level at each position.",
+    "master_id": 883,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "two-pointers"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "two-pointers"
+  },
+  {
+    "topic": "Two Pointers",
+    "display_name": "Two Pointers",
+    "id": "407",
+    "title": "Trapping Rain Water II",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/trapping-rain-water-ii",
+    "statement": "Given an m\u00d7n height matrix, compute the total volume of trapped rainwater in 3D. Use a min-heap BFS from the boundary, processing cells in increasing height order and tracking the water level.",
+    "master_id": 884,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "two-pointers"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "two-pointers"
+  },
+  {
+    "topic": "Stack & Queue",
+    "display_name": "Stack & Queue",
+    "id": "84",
+    "title": "Largest Rectangle in Histogram",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/largest-rectangle-in-histogram",
+    "statement": "Given an array of bar heights, find the largest rectangular area in the histogram. Use a monotonic increasing stack tracking bars whose rectangles are still expandable.",
+    "master_id": 885,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "stack-queue"
+  },
+  {
+    "topic": "Stack & Queue",
+    "display_name": "Stack & Queue",
+    "id": "32",
+    "title": "Longest Valid Parentheses",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/longest-valid-parentheses",
+    "statement": "Given a string of '(' and ')', find the length of the longest valid parentheses substring. Use a stack storing indices of unmatched characters, computing the longest gap between unmatched positions.",
+    "master_id": 886,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue",
+      "backtracking"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics",
+      "recursion"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "stack-queue"
+  },
+  {
+    "topic": "Heap & Priority Queue",
+    "display_name": "Heap & Priority Queue",
+    "id": "295",
+    "title": "Find Median from Data Stream",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/find-median-from-data-stream",
+    "statement": "Design a data structure to find the median of a stream of integers. Maintain a max-heap for the lower half and a min-heap for the upper half, balancing sizes after each insertion.",
+    "master_id": 894,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "stack-queue",
+      "heap"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "arrays-basics",
+      "sorting"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "heap-priority-queue"
+  },
+  {
+    "topic": "Greedy",
+    "display_name": "Greedy",
+    "id": "3414",
+    "title": "Maximum Score of Non-overlapping Intervals",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/maximum-score-of-non-overlapping-intervals",
+    "statement": "Given intervals with weights, select a maximum-weight set of non-overlapping intervals. Sort by end time and use DP with binary search to find the latest compatible interval for each choice.",
+    "master_id": 902,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "greedy"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "sorting",
+      "arrays-basics"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "greedy"
+  },
+  {
+    "topic": "Greedy",
+    "display_name": "Greedy",
+    "id": "2402",
+    "title": "Meeting Rooms III",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/meeting-rooms-iii",
+    "statement": "Given n rooms and meeting intervals, assign each meeting to the lowest-numbered available room (waiting if all are busy). Use two min-heaps: one for available rooms and one for ongoing meetings by end time.",
+    "master_id": 903,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "greedy"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "sorting",
+      "arrays-basics"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "greedy"
+  },
+  {
+    "topic": "Greedy",
+    "display_name": "Greedy",
+    "id": "135",
+    "title": "Candy",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/candy",
+    "statement": "Give candies to children rated in an array so that each child has at least one candy and children with higher ratings than neighbors get more. Use two passes: left-to-right and right-to-left, taking the max at each position.",
+    "master_id": 904,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "greedy"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "sorting",
+      "arrays-basics"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "greedy"
+  },
+  {
+    "topic": "Graphs",
+    "display_name": "Graphs",
+    "id": "127",
+    "title": "Word Ladder",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/word-ladder",
+    "statement": "Given begin and end words and a word list, find the shortest transformation sequence changing one letter at a time where each intermediate word must be in the list. Use BFS where each level represents one transformation.",
+    "master_id": 909,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "graphs"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "arrays-basics",
+      "queue-stack",
+      "trees-basics"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "graphs"
+  },
+  {
+    "topic": "Graphs",
+    "display_name": "Graphs",
+    "id": "630",
+    "title": "Course Schedule III",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/course-schedule-iii",
+    "statement": "Given courses with durations and deadlines, find the maximum number of courses you can take. Use a greedy approach with a max-heap: take each course sorted by deadline, dropping the longest course taken if the schedule exceeds the deadline.",
+    "master_id": 910,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "graphs"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "arrays-basics",
+      "queue-stack",
+      "trees-basics"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "graphs"
+  },
+  {
+    "topic": "Graphs",
+    "display_name": "Graphs",
+    "id": "778",
+    "title": "Swim in Rising Water",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/swim-in-rising-water",
+    "statement": "Given an n\u00d7n grid where value represents elevation, find the earliest time t when you can swim from top-left to bottom-right (swimming through cells with value \u2264 t). Use binary search with BFS/DFS or Dijkstra's algorithm.",
+    "master_id": 911,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "graphs"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "arrays-basics",
+      "queue-stack",
+      "trees-basics"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "graphs"
+  },
+  {
+    "topic": "Strings",
+    "display_name": "Strings",
+    "id": "336",
+    "title": "Palindrome Pairs",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/palindrome-pairs",
+    "statement": "Given a list of unique words, find all pairs (i,j) where words[i]+words[j] is a palindrome. Use a Trie or hash map: for each word, check if any prefix or suffix that is a palindrome has a reverse in the list.",
+    "master_id": 943,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "strings"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "arrays-basics"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "strings"
+  },
+  {
+    "topic": "Backtracking",
+    "display_name": "Backtracking",
+    "id": "51",
+    "title": "N-Queens",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/n-queens",
+    "statement": "Place n queens on an n\u00d7n chessboard so that no two queens threaten each other. Use backtracking tracking which columns and diagonals are under attack.",
+    "master_id": 964,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "backtracking"
+    ],
+    "study_priority": "must-do",
+    "prerequisites": [
+      "recursion"
+    ],
+    "interview_relevance": "very-common-pattern",
+    "topic_slug": "backtracking"
+  },
+  {
+    "topic": "Backtracking",
+    "display_name": "Backtracking",
+    "id": "212",
+    "title": "Word Search II",
+    "difficulty": "hard",
+    "url": "https://leetcode.com/problems/word-search-ii",
+    "statement": "Given a board of characters and a list of words, find all words on the board. Build a Trie from the word list and use DFS backtracking on the board, pruning branches not in the Trie.",
+    "master_id": 965,
+    "source": "Striver A2Z / additional free-platform classic",
+    "tags": [
+      "backtracking"
+    ],
+    "study_priority": "advanced",
+    "prerequisites": [
+      "recursion"
+    ],
+    "interview_relevance": "advanced-pattern",
+    "topic_slug": "backtracking"
+  }
+]

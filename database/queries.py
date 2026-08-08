@@ -172,7 +172,7 @@ async def get_problem(
     async with conn.cursor(row_factory=dict_row) as cur:
         await cur.execute(
             """
-            SELECT id, title, statement, difficulty, topic_id, source, url, created_at
+            SELECT id, title, statement, difficulty, topic_id, source, url, study_priority, tags, prerequisites, interview_relevance, master_id, created_at
             FROM problems
             WHERE id = %s
             """,
@@ -188,7 +188,7 @@ async def get_problem_by_title(
     async with conn.cursor(row_factory=dict_row) as cur:
         await cur.execute(
             """
-            SELECT id, title, statement, difficulty, topic_id, source, url, created_at
+            SELECT id, title, statement, difficulty, topic_id, source, url, study_priority, tags, prerequisites, interview_relevance, master_id, created_at
             FROM problems
             WHERE title = %s
             """,
@@ -206,13 +206,18 @@ async def create_problem(
     topic_id: Optional[UUID | str] = None,
     source: Optional[str] = None,
     url: Optional[str] = None,
+    study_priority: Optional[str] = None,
+    tags: Optional[list[str]] = None,
+    prerequisites: Optional[list[str]] = None,
+    interview_relevance: Optional[str] = None,
+    master_id: Optional[int] = None,
 ) -> Problem:
     async with conn.cursor(row_factory=dict_row) as cur:
         await cur.execute(
             """
-            INSERT INTO problems (title, statement, difficulty, topic_id, source, url)
-            VALUES (%s, %s, %s, %s, %s, %s)
-            RETURNING id, title, statement, difficulty, topic_id, source, url, created_at
+            INSERT INTO problems (title, statement, difficulty, topic_id, source, url, study_priority, tags, prerequisites, interview_relevance, master_id)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id, title, statement, difficulty, topic_id, source, url, study_priority, tags, prerequisites, interview_relevance, master_id, created_at
             """,
             (
                 title,
@@ -221,6 +226,11 @@ async def create_problem(
                 str(topic_id) if topic_id else None,
                 source,
                 url,
+                study_priority,
+                tags,
+                prerequisites,
+                interview_relevance,
+                master_id,
             ),
         )
         row = await cur.fetchone()
@@ -287,7 +297,7 @@ async def get_unattempted_problem_for_topic(
     async with conn.cursor(row_factory=dict_row) as cur:
         await cur.execute(
             """
-            SELECT p.id, p.title, p.statement, p.difficulty, p.topic_id, p.source, p.url, p.created_at
+            SELECT p.id, p.title, p.statement, p.difficulty, p.topic_id, p.source, p.url, p.study_priority, p.tags, p.prerequisites, p.interview_relevance, p.master_id, p.created_at
             FROM problems p
             WHERE p.topic_id = %s
               AND p.difficulty = ANY(%s)
@@ -306,7 +316,7 @@ async def get_unattempted_problem_for_topic(
         # Fallback: any unattempted problem in topic regardless of difficulty
         await cur.execute(
             """
-            SELECT p.id, p.title, p.statement, p.difficulty, p.topic_id, p.source, p.url, p.created_at
+            SELECT p.id, p.title, p.statement, p.difficulty, p.topic_id, p.source, p.url, p.study_priority, p.tags, p.prerequisites, p.interview_relevance, p.master_id, p.created_at
             FROM problems p
             WHERE p.topic_id = %s
               AND p.id NOT IN (

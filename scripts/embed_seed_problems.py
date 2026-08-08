@@ -1,5 +1,11 @@
 import asyncio
 import logging
+import os
+import sys
+from pathlib import Path
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from database.connection import get_db_connection, close_pool
 from database.queries import (
     get_all_problems_with_topics,
@@ -52,4 +58,6 @@ async def main():
 
 
 if __name__ == "__main__":
+    if sys.platform == "win32":
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(main())

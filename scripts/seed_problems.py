@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 async def seed_problems():
-    data_file = Path(__file__).parent / "seed_data.json"
+    data_file = Path(__file__).parent / "seed_final.json"
     if not data_file.exists():
         logger.error(f"Seed data file not found: {data_file}")
         return
@@ -36,9 +36,10 @@ async def seed_problems():
     topic_cache = {}
 
     async with get_db_connection() as conn:
+        await conn.set_autocommit(True)
         for item in problems_data:
-            slug = item["section"]
-            display_name = item.get("display_name")
+            slug = item.get("topic_slug") or item.get("section")
+            display_name = item.get("display_name") or item.get("topic")
 
             if slug not in topic_cache:
                 existing_topic = await get_topic_by_slug(conn, slug)
@@ -50,7 +51,6 @@ async def seed_problems():
                         display_name or slug.replace("-", " ").title()
                     )
                     new_topic = await create_topic(conn, slug, derived_display_name)
-                    await conn.commit()
                     topic_cache[slug] = new_topic
                     topics_created += 1
 
@@ -60,7 +60,7 @@ async def seed_problems():
             if existing_problem:
                 problems_existed += 1
             else:
-                slug = item["section"]
+                slug = item.get("topic_slug") or item.get("section")
                 topic = topic_cache[slug]
                 await create_problem(
                     conn=conn,
@@ -70,8 +70,12 @@ async def seed_problems():
                     topic_id=topic.id,
                     source=item.get("source"),
                     url=item.get("url"),
+                    study_priority=item.get("study_priority"),
+                    tags=item.get("tags"),
+                    prerequisites=item.get("prerequisites"),
+                    interview_relevance=item.get("interview_relevance"),
+                    master_id=item.get("master_id"),
                 )
-                await conn.commit()
                 problems_created += 1
 
         print("==================================================")
