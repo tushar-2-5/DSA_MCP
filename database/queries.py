@@ -324,3 +324,57 @@ async def get_unattempted_problem_for_topic(
         return None, False
 
 
+async def get_all_problems_with_topics(
+    conn: psycopg.AsyncConnection,
+) -> List[dict]:
+    """Fetch all problems along with their topic slug."""
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(
+            """
+            SELECT p.id, p.title, p.statement, p.difficulty, p.topic_id, t.slug as topic_slug
+            FROM problems p
+            JOIN topics t ON p.topic_id = t.id
+            ORDER BY p.created_at ASC
+            """
+        )
+        return await cur.fetchall()
+
+
+async def get_embedding_by_source(
+    conn: psycopg.AsyncConnection, source_type: str, source_id: UUID | str
+) -> Optional[dict]:
+    """Fetch existing embedding row by source_type and source_id."""
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(
+            """
+            SELECT id, source_type, source_id, embedding, created_at
+            FROM embeddings
+            WHERE source_type = %s AND source_id = %s
+            """,
+            (source_type, str(source_id)),
+        )
+        return await cur.fetchone()
+
+
+async def insert_embedding(
+    conn: psycopg.AsyncConnection,
+    source_type: str,
+    source_id: UUID | str,
+    embedding_vector: list[float],
+) -> dict:
+    """Insert a new vector embedding for a source entity."""
+    vec_str = str(embedding_vector)
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(
+            """
+            INSERT INTO embeddings (source_type, source_id, embedding)
+            VALUES (%s, %s, %s)
+            RETURNING id, source_type, source_id, embedding, created_at
+            """,
+            (source_type, str(source_id), vec_str),
+        )
+        row = await cur.fetchone()
+        return row
+
+
+
