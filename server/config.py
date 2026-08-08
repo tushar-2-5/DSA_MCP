@@ -6,7 +6,7 @@ try:
 
     class Settings(BaseSettings):
         database_url: str = "postgresql://root@localhost:26257/recall?sslmode=disable"
-        aws_region: str = "us-east-1"
+        gemini_api_key: str = ""
 
         model_config = SettingsConfigDict(
             env_file=".env", env_file_encoding="utf-8", extra="ignore"
@@ -14,11 +14,10 @@ try:
 
     settings = Settings()
     DATABASE_URL = settings.database_url
-    AWS_REGION = settings.aws_region
+    GEMINI_API_KEY = settings.gemini_api_key
 except ImportError:
     load_dotenv()
     DATABASE_URL = os.getenv(
         "DATABASE_URL", "postgresql://root@localhost:26257/recall?sslmode=disable"
     )
-    AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
-
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
