@@ -1,0 +1,62 @@
+from typing import Dict, Any
+from uuid import UUID
+from database.connection import get_db_connection
+from database.queries import get_user, find_similar_past_mistakes
+from embeddings.gemini_client import GeminiEmbedder
+
+SIMILARITY_THRESHOLD: float = 0.35
+
+
+async def flag_recurring_mistake(
+    user_id: str, code_in_progress: str
+) -> Dict[str, Any]:
+    """Analyze code currently being written against past mistake embeddings to warn of recurring mistakes.
+
+    Use this tool when a user is writing or editing code for a problem to proactively check if they are
+    repeating a mistake pattern from their history.
+
+    Args:
+        user_id: The UUID string of the registered user.
+        code_in_progress: The source code currently being written by the user.
+
+    Returns:
+        Dict matching contract:
+        {"flagged": [{"summary": str, "category": str, "distance": float, "occurrences": int}], "checked": True}
+    """
+    try:
+        UUID(user_id)
+    except (ValueError, TypeError):
+        raise ValueError("user_id must be a valid UUID string.")
+
+    if not code_in_progress or not isinstance(code_in_progress, str) or not code_in_progress.strip():
+        raise ValueError("code_in_progress must be a non-empty string.")
+
+    async with get_db_connection() as conn:
+        user = await get_user(conn, user_id)
+        if not user:
+            raise ValueError(
+                f"No user found for user_id {user_id}. Call get_or_create_user first to register."
+            )
+
+        embedder = GeminiEmbedder()
+        query_vector = embedder.embed(code_in_progress)
+
+        mistakes_raw = await find_similar_past_mistakes(
+            conn,
+            user_id=user_id,
+            query_vector=query_vector,
+            threshold=SIMILARITY_THRESHOLD,
+            limit=3,
+        )
+
+    flagged = [
+        {
+            "summary": m["summary"],
+            "category": m["category"],
+            "distance": round(float(m["distance"]), 4),
+            "occurrences": m["occurrences"],
+        }
+        for m in mistakes_raw
+    ]
+
+    return {"flagged": flagged, "checked": True}

@@ -8,8 +8,11 @@ from database.queries import (
     get_problem,
     get_mastery_row,
     upsert_mastery,
+    insert_embedding,
+    insert_mistake,
 )
 from memory.mastery import decayed_mastery, update_base_score
+from embeddings.gemini_client import GeminiEmbedder
 
 
 async def log_attempt(
@@ -19,6 +22,8 @@ async def log_attempt(
     outcome: str,
     complexity_achieved: Optional[str] = None,
     time_taken_seconds: Optional[int] = None,
+    mistake_summary: Optional[str] = None,
+    mistake_category: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Log a user's DSA problem solution attempt and update their topic mastery score.
 
@@ -32,14 +37,16 @@ async def log_attempt(
         outcome: Outcome of the attempt. Must be 'pass', 'fail', or 'partial'.
         complexity_achieved: Optional time/space complexity achieved (e.g., 'O(N)').
         time_taken_seconds: Optional time taken to solve the problem in seconds.
+        mistake_summary: Optional summary of mistake made (for 'fail' or 'partial' outcomes).
+        mistake_category: Optional category of mistake (e.g. 'sliding_window_off_by_one', 'logic_error').
 
     Returns:
         Dict confirming attempt was logged and showing updated mastery score:
         {"attempt_id": str, "status": "logged", "mastery_score_after": float}
     """
     try:
-        UUID(user_id)
-        UUID(problem_id)
+        UUID(str(user_id))
+        UUID(str(problem_id))
     except (ValueError, TypeError):
         raise ValueError("user_id and problem_id must be valid UUID strings.")
 
@@ -49,6 +56,15 @@ async def log_attempt(
             raise ValueError(
                 f"No user found for user_id {user_id}. Call get_or_create_user first to register."
             )
+
+        problem = await get_problem(conn, problem_id)
+        if not problem or not problem.topic_id:
+            raise ValueError(
+                f"Problem '{problem_id}' not found or missing topic association."
+            )
+
+        embedder = GeminiEmbedder()
+        code_vector = embedder.embed(code)
 
         async with conn.transaction():
             attempt = await insert_attempt(
@@ -61,11 +77,24 @@ async def log_attempt(
                 time_taken_seconds=time_taken_seconds,
             )
 
-            problem = await get_problem(conn, problem_id)
-            if not problem or not problem.topic_id:
-                raise ValueError(
-                    f"Problem '{problem_id}' not found or missing topic association."
+            # Store code submission embedding
+            await insert_embedding(conn, "code_submission", attempt.id, code_vector)
+
+            # If failed or partial attempt, log mistake & mistake embedding
+            if outcome in ("fail", "partial"):
+                summary = (
+                    mistake_summary
+                    or f"Incorrect or sub-optimal solution for '{problem.title}'"
                 )
+                category = mistake_category or "logic_error"
+                mistake_row = await insert_mistake(
+                    conn,
+                    user_id=user_id,
+                    attempt_id=attempt.id,
+                    summary=summary,
+                    category=category,
+                )
+                await insert_embedding(conn, "mistake", mistake_row["id"], code_vector)
 
             now = datetime.now(timezone.utc)
             mastery_row = await get_mastery_row(conn, user_id, problem.topic_id)

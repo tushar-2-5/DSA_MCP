@@ -416,5 +416,95 @@ async def find_similar_past_attempts(
         ]
 
 
+async def insert_mistake(
+    conn: psycopg.AsyncConnection,
+    user_id: UUID | str,
+    attempt_id: UUID | str,
+    summary: str,
+    category: Optional[str] = None,
+) -> dict:
+    """Insert a new mistake record for a failed or partial attempt."""
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(
+            """
+            INSERT INTO mistakes (user_id, attempt_id, summary, category)
+            VALUES (%s, %s, %s, %s)
+            RETURNING id, user_id, attempt_id, summary, category, created_at
+            """,
+            (str(user_id), str(attempt_id), summary, category or "logic_error"),
+        )
+        return await cur.fetchone()
+
+
+async def find_similar_past_mistakes(
+    conn: psycopg.AsyncConnection,
+    user_id: UUID | str,
+    query_vector: list[float],
+    threshold: float = 0.35,
+    limit: int = 3,
+) -> list[dict]:
+    """Find the user's past mistakes whose embeddings are most similar
+    to the query vector (the code currently being written), using cosine distance (<->).
+    Deduplicates by mistake category, selecting the closest mistake per category.
+    """
+    vec_str = str(query_vector)
+    query = """
+        WITH category_counts AS (
+            SELECT category, COUNT(*) AS occurrences
+            FROM mistakes
+            WHERE user_id = %s
+            GROUP BY category
+        ),
+        ranked_mistakes AS (
+            SELECT 
+                m.summary,
+                m.category,
+                (e.embedding <-> %s) AS distance,
+                cc.occurrences,
+                ROW_NUMBER() OVER (
+                    PARTITION BY m.category 
+                    ORDER BY (e.embedding <-> %s) ASC
+                ) AS rn
+            FROM embeddings e
+            JOIN mistakes m ON e.source_id = m.id
+            JOIN category_counts cc ON m.category = cc.category
+            WHERE e.source_type = 'mistake'
+              AND m.user_id = %s
+        )
+        SELECT 
+            summary,
+            category,
+            distance,
+            occurrences
+        FROM ranked_mistakes
+        WHERE rn = 1 AND distance < %s
+        ORDER BY distance ASC
+        LIMIT %s;
+    """
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(
+            query,
+            (
+                str(user_id),
+                vec_str,
+                vec_str,
+                str(user_id),
+                threshold,
+                limit,
+            ),
+        )
+        rows = await cur.fetchall()
+        return [
+            {
+                "summary": r["summary"],
+                "category": r["category"],
+                "distance": float(r["distance"]),
+                "occurrences": int(r["occurrences"]),
+            }
+            for r in rows
+        ]
+
+
+
 
 

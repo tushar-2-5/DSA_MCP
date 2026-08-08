@@ -4,6 +4,7 @@ from tools.log_attempt import log_attempt
 from tools.suggest_next_problem import suggest_next_problem
 from tools.get_or_create_user import get_or_create_user
 from tools.get_problem_context import get_problem_context
+from tools.flag_recurring_mistake import flag_recurring_mistake
 
 mcp = FastMCP("recall")
 
@@ -21,6 +22,7 @@ mcp.tool()(log_attempt)
 mcp.tool()(suggest_next_problem)
 mcp.tool()(get_or_create_user)
 mcp.tool()(get_problem_context)
+mcp.tool()(flag_recurring_mistake)
 
 
 def main():
