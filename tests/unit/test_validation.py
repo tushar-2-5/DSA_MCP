@@ -7,6 +7,7 @@ from tools.get_mastery_report import get_mastery_report
 from tools.log_attempt import log_attempt
 from tools.suggest_next_problem import suggest_next_problem
 from tools.get_or_create_user import get_or_create_user
+from tools.get_problem_context import get_problem_context
 
 
 @pytest_asyncio.fixture(autouse=True)
@@ -105,3 +106,30 @@ async def test_log_attempt_malformed_problem_id():
 async def test_suggest_next_problem_malformed_user_id():
     with pytest.raises(ValueError, match="user_id must be a valid UUID string"):
         await suggest_next_problem(user_id="not-a-uuid")
+
+
+@pytest.mark.asyncio
+async def test_get_problem_context_malformed_user_id():
+    with pytest.raises(ValueError, match="user_id must be a valid UUID string"):
+        await get_problem_context(user_id="not-a-uuid", problem_statement="Find target sum in array")
+
+
+@pytest.mark.asyncio
+async def test_get_problem_context_empty_problem_statement():
+    valid_user_id = str(uuid.uuid4())
+    with pytest.raises(ValueError, match="problem_statement must be a non-empty string"):
+        await get_problem_context(user_id=valid_user_id, problem_statement="")
+
+    with pytest.raises(ValueError, match="problem_statement must be a non-empty string"):
+        await get_problem_context(user_id=valid_user_id, problem_statement="   ")
+
+    with pytest.raises(ValueError, match="problem_statement must be a non-empty string"):
+        await get_problem_context(user_id=valid_user_id, problem_statement=None)
+
+
+@pytest.mark.asyncio
+async def test_get_problem_context_unregistered_user_id():
+    random_user_id = str(uuid.uuid4())
+    with pytest.raises(ValueError, match="Call get_or_create_user first to register"):
+        await get_problem_context(user_id=random_user_id, problem_statement="Find target sum in array")
+

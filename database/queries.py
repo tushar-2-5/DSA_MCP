@@ -377,4 +377,44 @@ async def insert_embedding(
         return row
 
 
+async def find_similar_past_attempts(
+    conn: psycopg.AsyncConnection,
+    user_id: UUID | str,
+    query_vector: list[float],
+    limit: int = 5,
+) -> list[dict]:
+    """Find the user's past attempts whose code embeddings are most similar
+    to the query vector, using cosine distance (<->).
+    """
+    vec_str = str(query_vector)
+    query = """
+        SELECT 
+            a.id AS attempt_id,
+            a.outcome,
+            a.complexity_achieved,
+            m.summary AS mistake_summary,
+            (e.embedding <-> %s) AS distance
+        FROM embeddings e
+        JOIN attempts a ON e.source_id = a.id
+        LEFT JOIN mistakes m ON m.attempt_id = a.id
+        WHERE e.source_type = 'code_submission' AND a.user_id = %s
+        ORDER BY distance ASC
+        LIMIT %s
+    """
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(query, (vec_str, str(user_id), limit))
+        rows = await cur.fetchall()
+        return [
+            {
+                "attempt_id": str(r["attempt_id"]),
+                "outcome": r["outcome"],
+                "complexity_achieved": r["complexity_achieved"],
+                "mistake_summary": r["mistake_summary"],
+                "distance": float(r["distance"]),
+            }
+            for r in rows
+        ]
+
+
+
 
