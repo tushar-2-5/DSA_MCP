@@ -515,6 +515,84 @@ async def find_similar_past_mistakes(
         ]
 
 
+async def find_most_recent_mistake_embedding(
+    conn: psycopg.AsyncConnection, user_id: UUID | str, topic_id: UUID | str
+) -> Optional[list[float]]:
+    """
+    Find the embedding vector of the most recent mistake for this user 
+    in problems belonging to this topic. Returns None if no mistakes exist.
+    """
+    query = """
+        SELECT e.embedding
+        FROM mistakes m
+        JOIN attempts a ON m.attempt_id = a.id
+        JOIN problems p ON a.problem_id = p.id
+        JOIN embeddings e ON e.source_id = m.id AND e.source_type = 'mistake'
+        WHERE m.user_id = %s AND p.topic_id = %s
+        ORDER BY m.created_at DESC
+        LIMIT 1
+    """
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(query, (str(user_id), str(topic_id)))
+        row = await cur.fetchone()
+        if not row or row["embedding"] is None:
+            return None
+        emb = row["embedding"]
+        if isinstance(emb, str):
+            import json
+            emb = json.loads(emb)
+        elif not isinstance(emb, list):
+            emb = list(emb)
+        return [float(x) for x in emb]
+
+
+async def find_similar_unattempted_problems(
+    conn: psycopg.AsyncConnection,
+    user_id: UUID | str,
+    topic_id: UUID | str,
+    allowed_difficulties: list[str],
+    query_vector: list[float],
+    limit: int = 5,
+) -> list[dict]:
+    """
+    Among unattempted problems in this topic+difficulty band, rank by 
+    similarity to the query vector (cosine distance ASC).
+    Returns list of {id, title, difficulty, distance}.
+    """
+    vec_str = str(query_vector)
+    query = """
+        SELECT 
+            p.id,
+            p.title,
+            p.difficulty,
+            (e.embedding <-> %s) AS distance
+        FROM problems p
+        JOIN embeddings e ON e.source_id = p.id AND e.source_type = 'problem'
+        LEFT JOIN attempts a ON a.problem_id = p.id AND a.user_id = %s AND a.outcome = 'pass'
+        WHERE p.topic_id = %s
+          AND p.difficulty = ANY(%s)
+          AND a.id IS NULL
+        ORDER BY distance ASC
+        LIMIT %s
+    """
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(
+            query,
+            (vec_str, str(user_id), str(topic_id), allowed_difficulties, limit),
+        )
+        rows = await cur.fetchall()
+        return [
+            {
+                "id": str(r["id"]),
+                "title": r["title"],
+                "difficulty": r["difficulty"],
+                "distance": float(r["distance"]),
+            }
+            for r in rows
+        ]
+
+
+
 
 
 

@@ -5,13 +5,15 @@ from database.queries import (
     get_user,
     get_user_topic_masteries,
     get_unattempted_problem_for_topic,
+    find_most_recent_mistake_embedding,
+    find_similar_unattempted_problems,
 )
 from memory.recommendation import pick_weak_topic, difficulty_band
 
 
 async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
-    """Suggest the next DSA problem for a user based on their topic mastery scores
-    and target difficulty band.
+    """Suggest the next DSA problem for a user based on their topic mastery scores,
+    target difficulty band, and similarity to past mistakes.
 
     Use this tool when the user asks for a problem recommendation, what to practice next,
     or next steps (e.g., 'what problem should I solve next?', 'give me a practice problem').
@@ -50,6 +52,33 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
             }
 
         chosen_topic = pick_weak_topic(topic_masteries, epsilon=0.2)
+        chosen_topic_id = chosen_topic["topic_id"]
+        chosen_slug = chosen_topic["slug"]
+        chosen_mastery = chosen_topic["mastery_score"]
+        chosen_bands = difficulty_band(chosen_mastery)
+
+        # 1. Check if a mistake embedding exists for the user in this weak topic
+        mistake_vector = await find_most_recent_mistake_embedding(
+            conn, user_id, chosen_topic_id
+        )
+        if mistake_vector:
+            similar_problems = await find_similar_unattempted_problems(
+                conn, user_id, chosen_topic_id, chosen_bands, mistake_vector, limit=5
+            )
+            if similar_problems:
+                top_cand = similar_problems[0]
+                return {
+                    "recommendation": {
+                        "id": top_cand["id"],
+                        "title": top_cand["title"],
+                        "difficulty": top_cand["difficulty"],
+                    },
+                    "targeted_topic": chosen_slug,
+                    "mastery_score": chosen_mastery,
+                    "reason": f"Selected based on similarity to your recent mistake in {chosen_slug} and your current mastery level",
+                }
+
+        # 2. Fall back to structured behavior if no mistake embeddings exist or no similar unattempted candidates
         ordered_topics = [chosen_topic] + [
             t for t in topic_masteries if t["topic_id"] != chosen_topic.get("topic_id")
         ]
@@ -108,3 +137,4 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
         "mastery_score": mastery_score,
         "reason": reason,
     }
+
