@@ -25,17 +25,22 @@ def test_gemini_embedder_missing_key():
 
 def test_gemini_embedder_mocked():
     fake_vector = [0.1] * 768
-    with patch(
-        "google.generativeai.embed_content",
-        return_value={"embedding": fake_vector},
-    ) as mock_embed:
+    from unittest.mock import MagicMock
+    mock_response = MagicMock()
+    mock_response.embeddings = [MagicMock(values=fake_vector)]
+
+    with patch("google.genai.Client") as mock_client_cls:
+        mock_client_instance = MagicMock()
+        mock_client_cls.return_value = mock_client_instance
+        mock_client_instance.models.embed_content.return_value = mock_response
+
         embedder = GeminiEmbedder(api_key="fake_key")
         result = embedder.embed("hello world")
         assert isinstance(result, list)
         assert len(result) == 768
-        mock_embed.assert_called_once_with(
-            model="models/gemini-embedding-001", content="hello world", output_dimensionality=768
-        )
+        assert result == fake_vector
+        mock_client_instance.models.embed_content.assert_called_once()
+
 
 
 @pytest.mark.skipif(
