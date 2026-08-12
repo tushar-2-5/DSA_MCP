@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Progress & Analytics — Recall{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+     x-data="{
+        masteryTrends: [],
+        recentAttempts: [],
+        topMistakes: [],
+        loading: true,
+
+        async init() {
+            await this.fetchProgressData();
+        },
+
+        async fetchProgressData() {
+            this.loading = true;
+            try {
+                const res = await fetch('/api/progress-data');
+                if (res.ok) {
+                    const data = await res.json();
+                    this.masteryTrends = data.mastery_trends || [];
+                    this.recentAttempts = data.recent_attempts || [];
+                    this.topMistakes = data.top_mistakes || [];
+                }
+            } catch (e) {
+                console.error(e);
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        formatDate(isoStr) {
+            if (!isoStr) return 'N/A';
+            const d = new Date(isoStr);
+            return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+     }">
+
+    <!-- Page Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold text-white tracking-tight">Progress & Mastery Analytics</h1>
+        <p class="text-gray-400 text-sm mt-1">Detailed analysis of topic mastery trends, attempt history, and mistake patterns.</p>
+    </div>
+
+    <!-- Section 1: Mastery Trend Bar Chart (Inline SVG) -->
+    <div class="p-8 rounded-3xl bg-gray-950/60 border border-gray-800 mb-10">
+        <h2 class="text-xl font-bold text-white mb-2">Topic Mastery Bar Chart</h2>
+        <p class="text-xs text-gray-400 mb-6">Normalized mastery scores across all topics (0.0 to 1.0 scale)</p>
+
+        <template x-if="loading">
+            <div class="h-64 bg-gray-900 animate-pulse rounded-2xl flex items-center justify-center text-gray-500 text-sm">
+                Loading analytics charts...
+            </div>
+        </template>
+
+        <template x-if="!loading && masteryTrends.length > 0">
+            <div class="space-y-4">
+                <template x-for="item in masteryTrends" :key="item.slug">
+                    <div class="space-y-1">
+                        <div class="flex items-center justify-between text-xs font-semibold">
+                            <span class="text-gray-300 capitalize" x-text="item.slug.replace(/-/g, ' ')"></span>
+                            <span class="font-mono text-gray-400" x-text="`${Math.round(item.mastery_score * 100)}%`"></span>
+                        </div>
+                        <div class="w-full bg-gray-900 h-4 rounded-lg overflow-hidden flex items-center">
+                            <!-- Inline SVG Bar Representation -->
+                            <svg class="h-full w-full" preserveAspectRatio="none" viewBox="0 0 100 10">
+                                <rect x="0" y="0" :width="Math.round(item.mastery_score * 100)" height="10"
+                                      :fill="item.mastery_score < 0.3 ? '#f43f5e' : (item.mastery_score <= 0.6 ? '#f59e0b' : '#10b981')"
+                                      rx="2" />
+                            </svg>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </template>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Section 2: Recent Attempts Table (2 Columns) -->
+        <div class="lg:col-span-2 p-8 rounded-3xl bg-gray-950/60 border border-gray-800">
+            <h2 class="text-xl font-bold text-white mb-2">Recent Solution Attempts</h2>
+            <p class="text-xs text-gray-400 mb-6">Last 20 problem attempts logged in your memory database</p>
+
+            <template x-if="loading">
+                <div class="animate-pulse space-y-3">
+                    <div class="h-10 bg-gray-900 rounded"></div>
+                    <div class="h-10 bg-gray-900 rounded"></div>
+                    <div class="h-10 bg-gray-900 rounded"></div>
+                </div>
+            </template>
+
+            <template x-if="!loading && recentAttempts.length === 0">
+                <div class="text-center py-12 text-gray-500 text-sm">
+                    No attempts logged yet. Solve a problem and log your outcome!
+                </div>
+            </template>
+
+            <template x-if="!loading && recentAttempts.length > 0">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-gray-300">
+                        <thead class="text-gray-400 border-b border-gray-800 uppercase tracking-wider text-[10px]">
+                            <tr>
+                                <th class="pb-3 font-semibold">Problem Title</th>
+                                <th class="pb-3 font-semibold">Outcome</th>
+                                <th class="pb-3 font-semibold">Complexity</th>
+                                <th class="pb-3 font-semibold">Time</th>
+                                <th class="pb-3 font-semibold text-right">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-900">
+                            <template x-for="att in recentAttempts" :key="att.id">
+                                <tr>
+                                    <td class="py-3.5 font-bold text-white" x-text="att.problem_title"></td>
+                                    <td class="py-3.5">
+                                        <span class="px-2 py-0.5 rounded-md font-bold uppercase text-[10px]"
+                                              :class="{
+                                                'bg-emerald-500/20 text-emerald-400': att.outcome === 'pass',
+                                                'bg-amber-500/20 text-amber-400': att.outcome === 'partial',
+                                                'bg-rose-500/20 text-rose-400': att.outcome === 'fail'
+                                              }"
+                                              x-text="att.outcome">
+                                        </span>
+                                    </td>
+                                    <td class="py-3.5 font-mono text-gray-400" x-text="att.complexity_achieved || 'N/A'"></td>
+                                    <td class="py-3.5 text-gray-400" x-text="att.time_taken_seconds ? `${Math.round(att.time_taken_seconds / 60)} min` : 'N/A'"></td>
+                                    <td class="py-3.5 text-right text-gray-500" x-text="formatDate(att.created_at)"></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </template>
+        </div>
+
+        <!-- Section 3: Top Recurring Mistake Patterns (1 Column) -->
+        <div class="p-8 rounded-3xl bg-gray-950/60 border border-gray-800">
+            <h2 class="text-xl font-bold text-white mb-2">Recurring Mistake Patterns</h2>
+            <p class="text-xs text-gray-400 mb-6">Top historical mistake categories detected by vector memory</p>
+
+            <template x-if="loading">
+                <div class="animate-pulse space-y-3">
+                    <div class="h-12 bg-gray-900 rounded"></div>
+                    <div class="h-12 bg-gray-900 rounded"></div>
+                </div>
+            </template>
+
+            <template x-if="!loading && topMistakes.length === 0">
+                <div class="text-center py-12 text-gray-500 text-sm">
+                    No mistake patterns recorded yet. Clean streak!
+                </div>
+            </template>
+
+            <template x-if="!loading && topMistakes.length > 0">
+                <div class="space-y-4">
+                    <template x-for="m in topMistakes" :key="m.category">
+                        <div class="p-4 rounded-2xl bg-gray-900 border border-gray-800 flex items-center justify-between">
+                            <div>
+                                <div class="font-bold text-white text-sm capitalize" x-text="m.category.replace(/_/g, ' ')"></div>
+                                <div class="text-xs text-gray-400">Recurring bug classification</div>
+                            </div>
+                            <div class="px-3 py-1 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 font-extrabold text-xs" x-text="`${m.count} ${m.count === 1 ? 'time' : 'times'}`"></div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+        </div>
+    </div>
+</div>
+{% endblock %}

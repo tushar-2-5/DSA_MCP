@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Recall — Persistent Memory for DSA Practice{% endblock %}
+
+{% block content %}
+<div class="relative overflow-hidden pt-12 pb-24" x-data="{ showAuthModal: false, authMode: 'signup', email: '', displayName: '' }" x-init="if (new URLSearchParams(window.location.search).get('action')) { showAuthModal = true; authMode = new URLSearchParams(window.location.search).get('action'); }">
+    
+    <!-- Hero Background Glow -->
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-indigo-600/20 blur-[120px] rounded-full pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <!-- Hero Section -->
+        <div class="text-center max-w-3xl mx-auto mt-8 mb-16">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-xs font-semibold text-indigo-400 mb-6">
+                <span class="flex h-2 w-2 rounded-full bg-indigo-400 animate-pulse"></span>
+                <span>Persistent Memory MCP Server for Developers</span>
+            </div>
+            
+            <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-tight">
+                Your AI coding practice has amnesia. <br>
+                <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Recall fixes that.</span>
+            </h1>
+            
+            <p class="mt-6 text-lg text-gray-400 leading-relaxed">
+                Connect your interview practice to a dual-layer memory backend built on CockroachDB and Gemini embeddings. Track mastery decay, flag recurring mistakes, and receive smart recommendations.
+            </p>
+
+            <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button @click="showAuthModal = true; authMode = 'signup'" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold shadow-xl shadow-indigo-600/30 transition transform hover:-translate-y-0.5">
+                    Get Started Free
+                </button>
+                <button @click="showAuthModal = true; authMode = 'login'" class="w-full sm:w-auto px-8 py-3.5 rounded-xl border border-gray-700 bg-gray-800/80 hover:bg-gray-800 text-gray-200 font-semibold transition">
+                    Sign In
+                </button>
+            </div>
+        </div>
+
+        <!-- 3 Feature Cards -->
+        <div class="grid md:grid-cols-3 gap-8 mt-16">
+            <!-- Feature 1: Mastery Decay -->
+            <div class="p-8 rounded-2xl border border-gray-800 bg-gray-950/60 backdrop-blur hover:border-indigo-500/40 transition">
+                <div class="h-12 w-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mb-6">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Mastery Decay Engine</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Models human memory with a 14-day exponential decay half-life. Unpracticed topics gradually decay so you review what matters most.
+                </p>
+            </div>
+
+            <!-- Feature 2: Recurring Mistakes -->
+            <div class="p-8 rounded-2xl border border-gray-800 bg-gray-950/60 backdrop-blur hover:border-purple-500/40 transition">
+                <div class="h-12 w-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-6">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Recurring Mistake Detector</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Uses 768-dimensional Gemini vector embeddings to catch logic flaws, boundary errors, and sliding window bugs before you submit.
+                </p>
+            </div>
+
+            <!-- Feature 3: Smart Recommendations -->
+            <div class="p-8 rounded-2xl border border-gray-800 bg-gray-950/60 backdrop-blur hover:border-pink-500/40 transition">
+                <div class="h-12 w-12 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 mb-6">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Vector Recommendations</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Epsilon-greedy topic selection coupled with cosine distance matching delivers personalized problem recommendations.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal (Sign Up / Login) -->
+    <div x-show="showAuthModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center px-4">
+        <div @click="showAuthModal = false" class="fixed inset-0 bg-black/70 backdrop-blur-sm"></div>
+        
+        <div class="relative w-full max-w-md p-8 bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl z-10">
+            <button @click="showAuthModal = false" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+
+            <h2 class="text-2xl font-bold text-white mb-2" x-text="authMode === 'signup' ? 'Create Your Account' : 'Welcome Back'"></h2>
+            <p class="text-sm text-gray-400 mb-6">Enter your email to instantly access your Recall memory dashboard.</p>
+
+            <form action="/login" method="POST" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Email Address</label>
+                    <input type="email" name="email" required x-model="email" placeholder="alex@example.com" class="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition">
+                </div>
+
+                <template x-if="authMode === 'signup'">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Display Name (Optional)</label>
+                        <input type="text" name="display_name" x-model="displayName" placeholder="Alex Dev" class="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+                </template>
+
+                <button type="submit" class="w-full py-3.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-lg shadow-indigo-600/30 transition">
+                    <span x-text="authMode === 'signup' ? 'Sign Up & Continue' : 'Sign In'"></span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

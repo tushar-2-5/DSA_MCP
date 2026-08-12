@@ -1,0 +1,397 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — Recall{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+     x-data="{
+        masteryData: [],
+        recommendation: null,
+        loadingMastery: true,
+        loadingSuggest: true,
+        stats: { totalAttempts: 0, topicsPracticed: 0, streakDays: 0 },
+        // Modal state
+        showModal: false,
+        logForm: {
+            problem_id: '',
+            problem_title: '',
+            outcome: 'pass',
+            complexity_achieved: '',
+            time_taken_minutes: 15,
+            mistake_summary: '',
+            mistake_category: 'logic_error'
+        },
+        submitting: false,
+        toastMessage: '',
+        
+        async init() {
+            await Promise.all([this.fetchMastery(), this.fetchSuggest(), this.fetchStats()]);
+        },
+
+        async fetchMastery() {
+            this.loadingMastery = true;
+            try {
+                const res = await fetch('/api/mastery');
+                if (res.ok) {
+                    const data = await res.json();
+                    this.masteryData = data.topics || [];
+                    this.calculateStats();
+                }
+            } catch (e) {
+                console.error(e);
+            } finally {
+                this.loadingMastery = false;
+            }
+        },
+
+        async fetchSuggest() {
+            this.loadingSuggest = true;
+            try {
+                const res = await fetch('/api/suggest');
+                if (res.ok) {
+                    const data = await res.json();
+                    this.recommendation = data;
+                }
+            } catch (e) {
+                console.error(e);
+            } finally {
+                this.loadingSuggest = false;
+            }
+        },
+
+        async fetchStats() {
+            try {
+                const res = await fetch('/api/progress-data');
+                if (res.ok) {
+                    const data = await res.json();
+                    this.stats.totalAttempts = (data.recent_attempts || []).length;
+                }
+            } catch (e) {}
+        },
+
+        calculateStats() {
+            this.stats.topicsPracticed = this.masteryData.filter(t => t.mastery_score > 0.05).length;
+            // Simple active streak calculation based on recent practice
+            const hasRecent = this.masteryData.some(t => {
+                if (!t.last_practiced_at) return false;
+                const days = (new Date() - new Date(t.last_practiced_at)) / (1000*60*60*24);
+                return days <= 3;
+            });
+            this.stats.streakDays = hasRecent ? 3 : (this.masteryData.length > 0 ? 1 : 0);
+        },
+
+        calcDaysAgo(dateStr) {
+            if (!dateStr) return 'Never';
+            const days = Math.floor((new Date() - new Date(dateStr)) / (1000 * 60 * 60 * 24));
+            if (days <= 0) return 'Today';
+            if (days === 1) return 'Yesterday';
+            return `${days} days ago`;
+        },
+
+        openLogModal(prob) {
+            if (prob) {
+                this.logForm.problem_id = prob.id || prob.problem_id || '';
+                this.logForm.problem_title = prob.title || prob.name || 'Selected Problem';
+            } else {
+                this.logForm.problem_id = '';
+                this.logForm.problem_title = '';
+            }
+            this.logForm.outcome = 'pass';
+            this.logForm.complexity_achieved = 'O(N)';
+            this.logForm.time_taken_minutes = 15;
+            this.logForm.mistake_summary = '';
+            this.logForm.mistake_category = 'logic_error';
+            this.showModal = true;
+        },
+
+        async submitLog() {
+            if (!this.logForm.problem_id) {
+                alert('Please select or specify a problem ID.');
+                return;
+            }
+            this.submitting = true;
+            try {
+                const res = await fetch('/api/log-attempt', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(this.logForm)
+                });
+                if (res.ok) {
+                    const resData = await res.json();
+                    this.showModal = false;
+                    this.toastMessage = 'Attempt logged successfully! Mastery updated.';
+                    setTimeout(() => this.toastMessage = '', 4000);
+                    await this.fetchMastery();
+                    await this.fetchSuggest();
+                } else {
+                    const err = await res.json();
+                    alert(err.detail || 'Failed to log attempt.');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error logging attempt.');
+            } finally {
+                this.submitting = false;
+            }
+        }
+     }">
+
+    <!-- Toast Notification -->
+    <div x-show="toastMessage" x-cloak class="fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl bg-emerald-600 text-white font-semibold shadow-2xl flex items-center space-x-3 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+        <span x-text="toastMessage"></span>
+    </div>
+
+    <!-- Header Section -->
+    <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold text-white tracking-tight">Welcome back, {{ user.display_name }} 👋</h1>
+            <p class="text-gray-400 text-sm mt-1">Here is your live DSA mastery decay report and practice overview.</p>
+        </div>
+        <div>
+            <button @click="openLogModal(null)" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-lg shadow-indigo-600/30 transition flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                <span>Quick Log Attempt</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Quick Stats Bar -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+        <div class="p-6 rounded-2xl bg-gray-950/60 border border-gray-800 flex items-center space-x-4">
+            <div class="h-12 w-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+            </div>
+            <div>
+                <div class="text-2xl font-extrabold text-white" x-text="stats.totalAttempts">0</div>
+                <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Attempts</div>
+            </div>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-gray-950/60 border border-gray-800 flex items-center space-x-4">
+            <div class="h-12 w-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                </svg>
+            </div>
+            <div>
+                <div class="text-2xl font-extrabold text-white" x-text="stats.topicsPracticed">0</div>
+                <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Topics Practiced</div>
+            </div>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-gray-950/60 border border-gray-800 flex items-center space-x-4">
+            <div class="h-12 w-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>
+                </svg>
+            </div>
+            <div>
+                <div class="text-2xl font-extrabold text-white" x-text="`${stats.streakDays} Days`">0 Days</div>
+                <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Active Practice Streak</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Today's Recommendation Card -->
+    <div class="mb-10 p-8 rounded-3xl bg-gradient-to-r from-indigo-950/70 via-purple-950/50 to-gray-900 border border-indigo-500/30 relative overflow-hidden shadow-xl">
+        <div class="absolute top-0 right-0 p-8 opacity-10 pointer-events-none text-white">
+            <svg class="w-48 h-48" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+        </div>
+
+        <div class="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-indigo-400 mb-3">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            <span>Today's Smart Recommendation</span>
+        </div>
+
+        <template x-if="loadingSuggest">
+            <div class="animate-pulse space-y-3">
+                <div class="h-6 bg-gray-800 rounded w-1/3"></div>
+                <div class="h-4 bg-gray-800 rounded w-1/2"></div>
+            </div>
+        </template>
+
+        <template x-if="!loadingSuggest && recommendation && recommendation.recommendation">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                <div>
+                    <div class="flex items-center space-x-3 mb-2">
+                        <h2 class="text-2xl font-bold text-white" x-text="recommendation.recommendation.title"></h2>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase"
+                              :class="{
+                                'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30': recommendation.recommendation.difficulty === 'Easy',
+                                'bg-amber-500/20 text-amber-400 border border-amber-500/30': recommendation.recommendation.difficulty === 'Medium',
+                                'bg-rose-500/20 text-rose-400 border border-rose-500/30': recommendation.recommendation.difficulty === 'Hard'
+                              }"
+                              x-text="recommendation.recommendation.difficulty">
+                        </span>
+                    </div>
+                    <p class="text-gray-300 text-sm" x-text="recommendation.reason || 'Selected based on your mastery level and past mistake patterns.'"></p>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <button @click="openLogModal(recommendation.recommendation)" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-lg shadow-indigo-600/30 transition flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                        <span>Log Attempt Now</span>
+                    </button>
+                </div>
+            </div>
+        </template>
+
+        <template x-if="!loadingSuggest && (!recommendation || !recommendation.recommendation)">
+            <div class="text-gray-400 text-sm">
+                No active recommendation available right now. Keep practicing!
+            </div>
+        </template>
+    </div>
+
+    <!-- Topic Mastery Score Cards -->
+    <div class="mb-6 flex items-center justify-between">
+        <div>
+            <h2 class="text-2xl font-bold text-white">DSA Topic Mastery Scores</h2>
+            <p class="text-xs text-gray-400">Mastery scores naturally decay over a 14-day exponential half-life.</p>
+        </div>
+        <div class="flex items-center space-x-4 text-xs font-semibold">
+            <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span><span class="text-gray-400">&lt; 30% (Novice)</span></span>
+            <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span><span class="text-gray-400">30 - 60% (Competent)</span></span>
+            <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span class="text-gray-400">&gt; 60% (Proficient)</span></span>
+        </div>
+    </div>
+
+    <template x-if="loadingMastery">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <template x-for="i in 6">
+                <div class="p-6 rounded-2xl bg-gray-950/40 border border-gray-800 animate-pulse space-y-4">
+                    <div class="h-5 bg-gray-800 rounded w-1/2"></div>
+                    <div class="h-4 bg-gray-800 rounded w-full"></div>
+                </div>
+            </template>
+        </div>
+    </template>
+
+    <template x-if="!loadingMastery">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <template x-for="topic in masteryData" :key="topic.slug">
+                <div class="p-6 rounded-2xl bg-gray-950/60 border border-gray-800 hover:border-gray-700 transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-bold text-white text-base capitalize" x-text="topic.slug.replace(/-/g, ' ')"></h3>
+                            <span class="text-sm font-extrabold"
+                                  :class="{
+                                    'text-rose-400': topic.mastery_score < 0.3,
+                                    'text-amber-400': topic.mastery_score >= 0.3 && topic.mastery_score <= 0.6,
+                                    'text-emerald-400': topic.mastery_score > 0.6
+                                  }"
+                                  x-text="`${Math.round(topic.mastery_score * 100)}%`">
+                            </span>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-gray-800 h-2.5 rounded-full overflow-hidden mb-4">
+                            <div class="h-full rounded-full transition-all duration-500"
+                                 :style="`width: ${Math.round(topic.mastery_score * 100)}%`"
+                                 :class="{
+                                    'bg-rose-500': topic.mastery_score < 0.3,
+                                    'bg-amber-500': topic.mastery_score >= 0.3 && topic.mastery_score <= 0.6,
+                                    'bg-emerald-500': topic.mastery_score > 0.6
+                                 }">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-3 border-t border-gray-900 text-xs text-gray-400">
+                        <span>Last practiced:</span>
+                        <span class="font-medium text-gray-300" x-text="calcDaysAgo(topic.last_practiced_at)"></span>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </template>
+
+    <!-- Log Attempt Modal -->
+    <div x-show="showModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center px-4">
+        <div @click="showModal = false" class="fixed inset-0 bg-black/75 backdrop-blur-sm"></div>
+
+        <div class="relative w-full max-w-lg p-8 bg-gray-900 border border-gray-800 rounded-3xl shadow-2xl z-10 space-y-5">
+            <button @click="showModal = false" class="absolute top-5 right-5 text-gray-400 hover:text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+
+            <h3 class="text-xl font-bold text-white">Log Solution Attempt</h3>
+            
+            <div>
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Problem Title / ID</label>
+                <input type="text" x-model="logForm.problem_title" placeholder="Problem Title" class="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500">
+                <input type="hidden" x-model="logForm.problem_id">
+            </div>
+
+            <div class="grid grid-cols-3 gap-3">
+                <button type="button" @click="logForm.outcome = 'pass'"
+                        class="py-2.5 rounded-xl font-bold text-xs border transition"
+                        :class="logForm.outcome === 'pass' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50' : 'bg-gray-800 text-gray-400 border-gray-700'">
+                    PASS
+                </button>
+                <button type="button" @click="logForm.outcome = 'partial'"
+                        class="py-2.5 rounded-xl font-bold text-xs border transition"
+                        :class="logForm.outcome === 'partial' ? 'bg-amber-500/20 text-amber-400 border-amber-500/50' : 'bg-gray-800 text-gray-400 border-gray-700'">
+                    PARTIAL
+                </button>
+                <button type="button" @click="logForm.outcome = 'fail'"
+                        class="py-2.5 rounded-xl font-bold text-xs border transition"
+                        :class="logForm.outcome === 'fail' ? 'bg-rose-500/20 text-rose-400 border-rose-500/50' : 'bg-gray-800 text-gray-400 border-gray-700'">
+                    FAIL
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Complexity Achieved</label>
+                    <input type="text" x-model="logForm.complexity_achieved" placeholder="e.g. O(N)" class="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-gray-700 text-white text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Time Taken (min)</label>
+                    <input type="number" x-model="logForm.time_taken_minutes" min="1" class="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-gray-700 text-white text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+
+            <template x-if="logForm.outcome !== 'pass'">
+                <div class="space-y-4 pt-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Mistake Category</label>
+                        <select x-model="logForm.mistake_category" class="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-gray-700 text-white text-sm focus:outline-none focus:border-indigo-500">
+                            <option value="sliding_window_off_by_one">Sliding Window Off-By-One</option>
+                            <option value="logic_error">Logic Error</option>
+                            <option value="boundary_condition">Boundary Condition Error</option>
+                            <option value="time_limit_exceeded">Time Limit Exceeded (TLE)</option>
+                            <option value="syntax_error">Syntax / Implementation Error</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Mistake Summary</label>
+                        <textarea x-model="logForm.mistake_summary" rows="2" placeholder="Brief explanation of what went wrong..." class="w-full px-4 py-2 rounded-xl bg-gray-800 border border-gray-700 text-white text-sm focus:outline-none focus:border-indigo-500"></textarea>
+                    </div>
+                </div>
+            </template>
+
+            <div class="pt-3">
+                <button @click="submitLog()" :disabled="submitting" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-lg shadow-indigo-600/30 transition">
+                    <span x-text="submitting ? 'Submitting...' : 'Save Attempt & Update Mastery'"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

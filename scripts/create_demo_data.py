@@ -43,13 +43,13 @@ async def create_demo_data():
         day_7 = now - timedelta(days=7)
         day_3 = now - timedelta(days=3)
 
-        # Baseline unpracticed topics to 0.50 so Alex Chen's practiced topics reflect his relative progress
+        # Baseline unpracticed topics to 0.0 so Alex Chen's practiced topics reflect his relative progress
         async with get_db_connection() as conn:
             async with conn.cursor() as cur:
                 await cur.execute(
                     """
                     INSERT INTO mastery (user_id, topic_id, mastery_score, last_practiced_at)
-                    SELECT %s, id, 0.50, NULL
+                    SELECT %s, id, 0.0, NULL
                     FROM topics
                     ON CONFLICT (user_id, topic_id) DO NOTHING
                     """,
