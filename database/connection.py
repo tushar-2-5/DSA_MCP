@@ -17,18 +17,18 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL environment variable is not set")
-
 _pool: AsyncConnectionPool | None = None
 
 
 async def get_pool() -> AsyncConnectionPool:
     global _pool
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise ValueError("DATABASE_URL environment variable is not set")
+
     if _pool is None or _pool.closed:
         _pool = AsyncConnectionPool(
-            conninfo=DATABASE_URL,
+            conninfo=database_url,
             open=False,
             min_size=1,
             max_size=10,

@@ -106,7 +106,7 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
                 "recommendation": None,
                 "targeted_topic": chosen_topic.get("slug", ""),
                 "mastery_score": chosen_topic.get("mastery_score", 0.0),
-                "reason": "No unattempted problems remaining across any topics. Note: Vector/embedding-based similarity filtering is not yet enabled.",
+                "reason": "No unattempted problems remaining across any topics.",
             }
 
         targeted_slug = found_topic["slug"]
@@ -122,13 +122,12 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
         if not fallback_used:
             reason = (
                 f"Selected weak topic '{targeted_slug}' (mastery score: {mastery_score:.2f}) "
-                f"with target difficulty band {bands}. Note: Vector/embedding-based similarity filtering is not yet enabled."
+                f"with target difficulty band {bands}."
             )
         else:
             reason = (
                 f"Selected weak topic '{targeted_slug}' (mastery score: {mastery_score:.2f}). "
-                f"Target difficulty band {bands} had no unattempted problems, so fell back to problem with difficulty '{found_problem.difficulty}'. "
-                f"Note: Vector/embedding-based similarity filtering is not yet enabled."
+                f"Target difficulty band {bands} had no unattempted problems, so fell back to problem with difficulty '{found_problem.difficulty}'."
             )
 
     return {
