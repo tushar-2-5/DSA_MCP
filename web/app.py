@@ -43,7 +43,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Recall Web Dashboard", lifespan=lifespan)
 
 # Add session middleware for simple session auth
-SECRET_KEY = os.environ.get("SECRET_KEY", secrets.token_hex(32))
+SECRET_KEY = os.environ.get("SECRET_KEY") or os.environ.get("SESSION_SECRET_KEY") or secrets.token_hex(32)
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 
 # Jinja2 Templates
