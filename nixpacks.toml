@@ -1,0 +1,11 @@
+[variables]
+PYTHON_VERSION = "3.11"
+
+[phases.setup]
+nixPkgs = ["python311", "uv"]
+
+[phases.install]
+cmds = ["uv sync"]
+
+[start]
+cmd = "uv run python -m server.main --transport streamable-http"
