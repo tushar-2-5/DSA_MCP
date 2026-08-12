@@ -2,6 +2,7 @@ import os
 import sys
 import asyncio
 import logging
+import secrets
 
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -42,7 +43,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Recall Web Dashboard", lifespan=lifespan)
 
 # Add session middleware for simple session auth
-SECRET_KEY = os.getenv("SESSION_SECRET_KEY", "recall-secret-key-change-in-prod-12345")
+SECRET_KEY = os.environ.get("SECRET_KEY", secrets.token_hex(32))
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 
 # Jinja2 Templates
@@ -64,6 +65,8 @@ async def landing_page(request: Request):
     return templates.TemplateResponse(request=request, name="landing.html", context={"user": user})
 
 
+port = int(os.environ.get("PORT", 8000))
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("web.app:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("web.app:app", host="0.0.0.0", port=port, reload=False)

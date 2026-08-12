@@ -164,6 +164,30 @@ $env:PYTHONPATH="."; uv run pytest -v
 
 ---
 
+## Railway Deployment (Remote MCP Server)
+
+Recall can be deployed to [Railway](https://railway.app) as a public remote MCP server running over HTTP/HTTPS (Streamable-HTTP transport):
+
+1. **Deploy to Railway**: Connect your GitHub repository (`DSA_MCP`).
+2. **Environment Variables**: Add `DATABASE_URL`, `GEMINI_API_KEY`, and `MCP_TRANSPORT=streamable-http`.
+3. **Public Endpoint**: Generate a public domain under Railway Settings. Your public MCP endpoint will be:
+   `https://<YOUR_RAILWAY_DOMAIN>/mcp`
+4. **Connect Cursor**: Add the remote URL to Cursor MCP settings:
+   ```json
+   {
+     "mcpServers": {
+       "recall-remote": {
+         "url": "https://<YOUR_RAILWAY_DOMAIN>/mcp"
+       }
+     }
+   }
+   ```
+
+For full details, database initialization, and troubleshooting, see [DEPLOY_RAILWAY.md](file:///c:/Users/KIIT/OneDrive/Desktop/DSA%20PROJECT%20MCP/DEPLOY_RAILWAY.md).
+
+---
+
+
 ## Usage Examples
 
 Once registered, you can interact with Recall naturally inside your IDE chat:
