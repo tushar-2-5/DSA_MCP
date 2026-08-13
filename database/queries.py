@@ -592,6 +592,92 @@ async def find_similar_unattempted_problems(
         ]
 
 
+async def get_problems_by_company(
+    conn: psycopg.AsyncConnection, company_name: str, limit: int = 20
+) -> List[dict]:
+    """Get top problems asked by a specific company, ordered by company_count desc"""
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(
+            """
+            SELECT p.id, p.title, p.statement, p.difficulty, p.topic_id, p.url,
+                   p.company_tags, p.company_count, p.acceptance_rate, p.leetcode_id,
+                   t.slug as topic_slug
+            FROM problems p
+            LEFT JOIN topics t ON p.topic_id = t.id
+            WHERE %s = ANY(p.company_tags)
+            ORDER BY p.company_count DESC, p.acceptance_rate DESC
+            LIMIT %s
+            """,
+            (company_name.lower().strip(), limit),
+        )
+        return await cur.fetchall()
+
+
+async def get_top_companies(
+    conn: psycopg.AsyncConnection, limit: int = 30
+) -> List[dict]:
+    """Get list of unique companies sorted by total problem count"""
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(
+            """
+            SELECT unnest(company_tags) AS company, COUNT(*) AS problem_count
+            FROM problems
+            WHERE company_tags IS NOT NULL AND array_length(company_tags, 1) > 0
+            GROUP BY company
+            ORDER BY problem_count DESC
+            LIMIT %s
+            """,
+            (limit,),
+        )
+        return await cur.fetchall()
+
+
+async def get_problems_filtered(
+    conn: psycopg.AsyncConnection,
+    topic: Optional[str] = None,
+    difficulty: Optional[str] = None,
+    company: Optional[str] = None,
+    search: Optional[str] = None,
+    limit: int = 200,
+) -> List[dict]:
+    """Extended version of existing get_all_problems_with_topics 
+    that also supports company filter, topic, difficulty, search."""
+    query = """
+        SELECT p.id, p.title, p.statement, p.difficulty, p.topic_id, p.url,
+               p.company_tags, p.company_count, p.acceptance_rate, p.leetcode_id, p.study_priority,
+               t.slug as topic_slug
+        FROM problems p
+        LEFT JOIN topics t ON p.topic_id = t.id
+        WHERE 1=1
+    """
+    params: List[Any] = []
+
+    if topic and topic.lower() != "all":
+        query += " AND LOWER(t.slug) = %s"
+        params.append(topic.lower())
+
+    if difficulty and difficulty.lower() != "all":
+        query += " AND LOWER(p.difficulty) = %s"
+        params.append(difficulty.lower())
+
+    if company and company.lower() != "all":
+        query += " AND %s = ANY(p.company_tags)"
+        params.append(company.lower().strip())
+
+    if search:
+        query += " AND (LOWER(p.title) LIKE %s OR LOWER(p.statement) LIKE %s)"
+        s = f"%{search.lower().strip()}%"
+        params.extend([s, s])
+
+    query += " ORDER BY p.company_count DESC, p.created_at ASC LIMIT %s"
+    params.append(limit)
+
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(query, params)
+        return await cur.fetchall()
+
+
+
 
 
 

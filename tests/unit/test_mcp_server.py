@@ -3,7 +3,7 @@ from server.main import mcp
 
 
 def test_mcp_tools_registration():
-    """Verify all 7 expected tools are registered on the FastMCP server instance."""
+    """Verify all expected tools are registered on the FastMCP server instance."""
     tool_names = [tool.name for tool in mcp._tool_manager.list_tools()]
     expected_tools = {
         "say_hello",
@@ -13,6 +13,7 @@ def test_mcp_tools_registration():
         "get_or_create_user",
         "get_problem_context",
         "flag_recurring_mistake",
+        "study_plan",
     }
     for expected in expected_tools:
         assert expected in tool_names, f"Missing tool: {expected}"

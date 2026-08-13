@@ -15,6 +15,7 @@ from tools.get_mastery_report import get_mastery_report
 from tools.get_or_create_user import get_or_create_user
 from tools.get_problem_context import get_problem_context
 from tools.log_attempt import log_attempt
+from tools.study_plan import study_plan
 from tools.suggest_next_problem import suggest_next_problem
 from web.app import app as web_app
 
@@ -51,6 +52,7 @@ mcp.tool()(suggest_next_problem)
 mcp.tool()(get_or_create_user)
 mcp.tool()(get_problem_context)
 mcp.tool()(flag_recurring_mistake)
+mcp.tool()(study_plan)
 
 
 # Build combined lifespan managing both database connection pool and FastMCP session manager

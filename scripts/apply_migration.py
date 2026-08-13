@@ -43,8 +43,6 @@ async def main():
 
             logger.info(f"Applying migration {filename}...")
             sql_content = migration_file.read_text(encoding="utf-8")
-            await conn.commit()
-            await conn.set_autocommit(True)
             for stmt in sql_content.split(";"):
                 stmt = stmt.strip()
                 # Ignore empty statements or comments-only statements
@@ -53,7 +51,6 @@ async def main():
                 if clean_stmt:
                     async with conn.cursor() as cur:
                         await cur.execute(clean_stmt)
-            await conn.set_autocommit(False)
             async with conn.cursor() as cur:
                 await cur.execute(
                     "INSERT INTO schema_migrations (filename) VALUES (%s);",

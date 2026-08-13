@@ -3,7 +3,12 @@ from fastapi import APIRouter, Request, HTTPException, status, Body
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from web.auth import get_current_user
 from database.connection import get_db_connection
-from database.queries import get_all_problems_with_topics, get_problem
+from database.queries import (
+    get_all_problems_with_topics,
+    get_problem,
+    get_problems_filtered,
+    get_top_companies,
+)
 from psycopg.rows import dict_row
 from tools.log_attempt import log_attempt
 
@@ -25,38 +30,39 @@ async def api_get_problems(
     request: Request,
     topic: Optional[str] = None,
     difficulty: Optional[str] = None,
+    company: Optional[str] = None,
     search: Optional[str] = None,
 ):
     async with get_db_connection() as conn:
-        all_problems = await get_all_problems_with_topics(conn)
+        problems = await get_problems_filtered(
+            conn, topic=topic, difficulty=difficulty, company=company, search=search
+        )
 
     results = []
-    for p in all_problems:
-        # Filter topic
-        if topic and topic.lower() != "all" and p.get("topic_slug", "").lower() != topic.lower():
-            continue
-        # Filter difficulty
-        if difficulty and difficulty.lower() != "all" and p.get("difficulty", "").lower() != difficulty.lower():
-            continue
-        # Filter search query
-        if search:
-            q = search.lower()
-            title = p.get("title", "").lower()
-            statement = p.get("statement", "").lower()
-            if q not in title and q not in statement:
-                continue
-
+    for p in problems:
+        tags = p.get("company_tags") or []
         results.append({
             "id": str(p["id"]),
             "title": p["title"],
-            "difficulty": p["difficulty"],
+            "difficulty": p.get("difficulty", "medium"),
             "topic_slug": p.get("topic_slug", ""),
             "statement": p.get("statement", ""),
             "url": p.get("url") or f"https://leetcode.com/problemset/all/?search={p['title'].replace(' ', '%20')}",
             "study_priority": p.get("study_priority", "medium"),
+            "company_tags": tags,
+            "company_count": p.get("company_count", len(tags)),
+            "acceptance_rate": p.get("acceptance_rate", 0.0),
+            "leetcode_id": p.get("leetcode_id", 0),
         })
 
     return {"problems": results, "total": len(results)}
+
+
+@router.get("/api/companies")
+async def api_get_companies(request: Request, limit: int = 30):
+    async with get_db_connection() as conn:
+        companies = await get_top_companies(conn, limit=limit)
+    return {"companies": companies}
 
 
 @router.post("/api/log-attempt")

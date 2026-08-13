@@ -33,7 +33,10 @@ class Problem(BaseModel):
     tags: Optional[list[str]] = None
     prerequisites: Optional[list[str]] = None
     interview_relevance: Optional[str] = None
-    master_id: Optional[int] = None
+    company_tags: Optional[list[str]] = None
+    company_count: Optional[int] = 0
+    acceptance_rate: Optional[float] = 0.0
+    leetcode_id: Optional[int] = 0
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)

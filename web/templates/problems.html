@@ -6,10 +6,12 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
      x-data="{
         problems: [],
+        companies: [],
         loading: true,
         searchQuery: '',
         selectedTopic: 'all',
         selectedDifficulty: 'all',
+        selectedCompany: 'all',
         selectedPriority: 'all',
         
         // Modal state
@@ -27,7 +29,20 @@
         toastMessage: '',
 
         async init() {
+            await this.fetchCompanies();
             await this.fetchProblems();
+        },
+
+        async fetchCompanies() {
+            try {
+                const res = await fetch('/api/companies?limit=40');
+                if (res.ok) {
+                    const data = await res.json();
+                    this.companies = data.companies || [];
+                }
+            } catch (e) {
+                console.error(e);
+            }
         },
 
         async fetchProblems() {
@@ -36,6 +51,7 @@
                 const params = new URLSearchParams();
                 if (this.selectedTopic !== 'all') params.append('topic', this.selectedTopic);
                 if (this.selectedDifficulty !== 'all') params.append('difficulty', this.selectedDifficulty);
+                if (this.selectedCompany !== 'all') params.append('company', this.selectedCompany);
                 if (this.searchQuery.trim()) params.append('search', this.searchQuery.trim());
 
                 const res = await fetch(`/api/problems?${params.toString()}`);
@@ -158,6 +174,16 @@
             </select>
         </div>
 
+        <!-- Company Filter -->
+        <div>
+            <select x-model="selectedCompany" @change="fetchProblems()" class="w-full md:w-48 px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-indigo-500">
+                <option value="all">All Companies</option>
+                <template x-for="c in companies" :key="c.company">
+                    <option :value="c.company" x-text="`${c.company.toUpperCase()} (${c.problem_count})`"></option>
+                </template>
+            </select>
+        </div>
+
         <!-- Priority Filter -->
         <div>
             <select x-model="selectedPriority" class="w-full md:w-40 px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-indigo-500">
@@ -184,7 +210,7 @@
     <template x-if="!loading && filteredProblems.length === 0">
         <div class="text-center py-16 bg-gray-950/40 border border-gray-800 rounded-3xl">
             <div class="text-gray-400 text-base mb-2">No problems match your current search/filters.</div>
-            <button @click="searchQuery = ''; selectedTopic = 'all'; selectedDifficulty = 'all'; selectedPriority = 'all'; fetchProblems()" class="text-sm font-semibold text-indigo-400 hover:text-indigo-300">Reset Filters</button>
+            <button @click="searchQuery = ''; selectedTopic = 'all'; selectedDifficulty = 'all'; selectedCompany = 'all'; selectedPriority = 'all'; fetchProblems()" class="text-sm font-semibold text-indigo-400 hover:text-indigo-300">Reset Filters</button>
         </div>
     </template>
 
@@ -197,21 +223,33 @@
                         <div class="flex items-center justify-between gap-2 mb-3">
                             <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase"
                                   :class="{
-                                    'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30': p.difficulty === 'Easy',
-                                    'bg-amber-500/20 text-amber-400 border border-amber-500/30': p.difficulty === 'Medium',
-                                    'bg-rose-500/20 text-rose-400 border border-rose-500/30': p.difficulty === 'Hard'
+                                    'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30': (p.difficulty || '').toLowerCase() === 'easy',
+                                    'bg-amber-500/20 text-amber-400 border border-amber-500/30': (p.difficulty || '').toLowerCase() === 'medium',
+                                    'bg-rose-500/20 text-rose-400 border border-rose-500/30': (p.difficulty || '').toLowerCase() === 'hard'
                                   }"
                                   x-text="p.difficulty">
                             </span>
-                            <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-800 text-gray-300 capitalize" x-text="p.topic_slug.replace(/-/g, ' ')"></span>
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-800 text-gray-300 capitalize" x-text="(p.topic_slug || '').replace(/-/g, ' ')"></span>
                         </div>
 
                         <!-- Title -->
                         <h3 class="font-bold text-white text-lg mb-2 group-hover:text-indigo-400 transition" x-text="p.title"></h3>
                         
+                        <!-- Company Badges & Count -->
+                        <div class="mb-4" x-show="p.company_tags && p.company_tags.length > 0">
+                            <div class="flex flex-wrap gap-1.5 mb-1.5">
+                                <template x-for="c in p.company_tags.slice(0, 3)" :key="c">
+                                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-indigo-950/80 text-indigo-300 border border-indigo-800/50 uppercase" x-text="c.replace(/-/g, ' ')"></span>
+                                </template>
+                            </div>
+                            <div class="text-[11px] text-gray-400 font-medium">
+                                Asked by <span class="text-white font-bold" x-text="p.company_count || p.company_tags.length"></span> companies
+                            </div>
+                        </div>
+
                         <div class="flex items-center space-x-2 text-xs text-gray-400 mb-6">
-                            <span>Study Priority:</span>
-                            <span class="font-semibold text-indigo-300 uppercase" x-text="p.study_priority || 'Medium'"></span>
+                            <span>Acceptance:</span>
+                            <span class="font-semibold text-emerald-400" x-text="`${p.acceptance_rate || 0}%`"></span>
                         </div>
                     </div>
 

@@ -41,3 +41,12 @@ async def api_suggest(request: Request, user_id: str = None):
 
     recommendation = await suggest_next_problem(user_id=target_user_id)
     return recommendation
+
+
+@router.get("/api/target-company-problems")
+async def api_target_company_problems(request: Request, company: str = "amazon"):
+    from database.connection import get_db_connection
+    from database.queries import get_problems_by_company
+    async with get_db_connection() as conn:
+        problems = await get_problems_by_company(conn, company_name=company, limit=5)
+    return {"company": company, "problems": problems}

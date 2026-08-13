@@ -66,11 +66,11 @@ def test_api_suggest(mock_suggest_next_problem, client):
 
 
 @patch("web.routes.problems.get_db_connection")
-@patch("web.routes.problems.get_all_problems_with_topics", new_callable=AsyncMock)
-def test_api_problems(mock_get_all_problems, mock_get_db_connection, client):
+@patch("web.routes.problems.get_problems_filtered", new_callable=AsyncMock)
+def test_api_problems(mock_get_problems_filtered, mock_get_db_connection, client):
     mock_conn = AsyncMock()
     mock_get_db_connection.return_value.__aenter__.return_value = mock_conn
-    mock_get_all_problems.return_value = [
+    mock_get_problems_filtered.return_value = [
         {
             "id": "p1",
             "title": "Two Sum",
@@ -78,6 +78,10 @@ def test_api_problems(mock_get_all_problems, mock_get_db_connection, client):
             "difficulty": "Easy",
             "topic_slug": "arrays-hashing",
             "study_priority": "high",
+            "company_tags": ["google", "amazon"],
+            "company_count": 2,
+            "acceptance_rate": 50.0,
+            "leetcode_id": 1,
         }
     ]
     response = client.get("/api/problems?search=Two")
