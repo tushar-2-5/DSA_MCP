@@ -2,6 +2,7 @@ from typing import Optional
 from fastapi import APIRouter, Request, HTTPException, status
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from web.auth import get_current_user
+from web.rate_limit import limiter
 from database.connection import get_db_connection
 from database.queries import (
     get_recent_attempts,
@@ -25,6 +26,7 @@ async def render_progress(request: Request):
 
 
 @router.get("/api/progress-data")
+@limiter.limit("30/minute")
 async def api_get_progress_data(request: Request, user_id: Optional[str] = None):
     user = await get_current_user(request)
     target_user_id = user_id or (user["user_id"] if user else None)

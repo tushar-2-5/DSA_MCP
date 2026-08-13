@@ -2,6 +2,7 @@ from typing import Optional
 from fastapi import APIRouter, Request, HTTPException, status, Body
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from web.auth import get_current_user
+from web.rate_limit import limiter
 from database.connection import get_db_connection
 from database.queries import (
     get_all_problems_with_topics,
@@ -26,6 +27,7 @@ async def render_problems(request: Request):
 
 
 @router.get("/api/problems")
+@limiter.limit("60/minute")
 async def api_get_problems(
     request: Request,
     topic: Optional[str] = None,
@@ -59,6 +61,7 @@ async def api_get_problems(
 
 
 @router.get("/api/companies")
+@limiter.limit("60/minute")
 async def api_get_companies(request: Request, limit: int = 30):
     async with get_db_connection() as conn:
         companies = await get_top_companies(conn, limit=limit)
@@ -66,6 +69,7 @@ async def api_get_companies(request: Request, limit: int = 30):
 
 
 @router.post("/api/log-attempt")
+@limiter.limit("20/minute")
 async def api_log_attempt(
     request: Request,
     payload: dict = Body(...)

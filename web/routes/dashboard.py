@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from web.auth import get_current_user
+from web.rate_limit import limiter
 from tools.get_mastery_report import get_mastery_report
 from tools.suggest_next_problem import suggest_next_problem
 
@@ -18,6 +19,7 @@ async def render_dashboard(request: Request):
 
 
 @router.get("/api/mastery")
+@limiter.limit("30/minute")
 async def api_get_mastery(request: Request, user_id: str = None):
     user = await get_current_user(request)
     target_user_id = user_id or (user["user_id"] if user else None)
@@ -33,6 +35,7 @@ async def api_get_mastery(request: Request, user_id: str = None):
 
 
 @router.get("/api/suggest")
+@limiter.limit("20/minute")
 async def api_suggest(request: Request, user_id: str = None):
     user = await get_current_user(request)
     target_user_id = user_id or (user["user_id"] if user else None)
