@@ -1,59 +1,61 @@
-import asyncio
-import csv
-import logging
 import os
 import sys
+import pandas as pd
+import psycopg
+from dotenv import load_dotenv
 from pathlib import Path
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from database.connection import get_db_connection, close_pool
 from embeddings.gemini_client import GeminiEmbedder
-from psycopg.rows import dict_row
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-logger = logging.getLogger(__name__)
+load_dotenv()
 
 
 def map_topic_from_title(title: str) -> tuple[str, str]:
     t = title.lower()
 
-    if any(k in t for k in ["window", "substring"]):
+    # 1. Sliding Window: "window", "substring", "sliding"
+    if any(k in t for k in ["window", "substring", "sliding"]):
         return ("sliding-window", "Sliding Window")
 
-    if any(k in t for k in ["lru cache", "merge two sorted lists", "linked list", "list node", "reverse list", "flatten a multilevel"]):
+    # 2. Linked Lists: "linked", "list", "lru", "merge sorted"
+    if any(k in t for k in ["linked", "list", "lru", "merge sorted"]):
         return ("linked-list", "Linked List")
 
-    if any(k in t for k in ["search in rotated", "koko eating", "binary search", "search a 2d", "first and last position", "search insert", "median of two sorted"]):
+    # 3. Binary Search: "search", "binary", "koko", "rotated"
+    if any(k in t for k in ["search", "binary", "koko", "rotated"]):
         return ("binary-search", "Binary Search")
 
-    if any(k in t for k in ["tree", "bst", "binary tree", "inorder", "preorder", "postorder", "ancestor", "depth of", "invert", "serialize"]):
+    # 4. Trees: "tree", "bst", "trie", "leaf", "root", "node"
+    if any(k in t for k in ["tree", "bst", "trie", "leaf", "root", "node"]):
         return ("trees", "Trees")
 
-    if any(k in t for k in ["dp", "coin change", "house robber", "climbing stairs", "longest common", "knapsack", "decode ways", "partition", "jump game", "edit distance", "maximum subarray"]):
+    # 5. Dynamic Programming: "dp", "coin", "house robber", "climbing", "jump", "knapsack"
+    if any(k in t for k in ["dp", "coin", "house robber", "climbing", "jump", "knapsack"]):
         return ("dynamic-programming", "Dynamic Programming")
 
-    if any(k in t for k in ["graph", "islands", "course schedule", "word ladder", "network", "dijkstra", "bipartite", "clone graph", "cheapest flights"]):
+    # 6. Graphs: "graph", "island", "course", "word ladder", "clone"
+    if any(k in t for k in ["graph", "island", "course", "word ladder", "clone"]):
         return ("graphs", "Graphs")
 
-    if any(k in t for k in ["stack", "queue", "parentheses", "expression", "histogram", "next greater"]):
+    # 7. Stack & Queue: "stack", "queue", "parenthes", "bracket"
+    if any(k in t for k in ["stack", "queue", "parenthes", "bracket"]):
         return ("stack-queue", "Stack & Queue")
 
-    if any(k in t for k in ["heap", "median", "k frequent", "priority", "kth largest", "kth smallest"]):
+    # 8. Heap: "heap", "median", "frequent", "kth largest"
+    if any(k in t for k in ["heap", "median", "frequent", "kth largest"]):
         return ("heap-priority-queue", "Heap & Priority Queue")
 
-    if any(k in t for k in ["permutation", "combination", "subset", "n-queens", "sudoku", "word search"]):
+    # 9. Backtracking: "permut", "combination", "subset", "backtrack"
+    if any(k in t for k in ["permut", "combination", "subset", "backtrack"]):
         return ("backtracking", "Backtracking")
 
-    if any(k in t for k in ["two sum", "3sum", "4sum", "trapping rain water", "container with most water"]):
-        return ("two-pointers", "Two Pointers")
-
-    if any(k in t for k in ["move zeroes", "array", "subarray", "duplicate", "matrix", "product of", "rotate image", "sort colors"]):
+    # 10. Arrays: "sum", "array", "subarray", "matrix", "rotate", "spiral"
+    if any(k in t for k in ["sum", "array", "subarray", "matrix", "rotate", "spiral"]):
         return ("arrays-hashing", "Arrays & Hashing")
 
-    if any(k in t for k in ["string", "anagram", "palindrome", "valid ip"]):
-        return ("strings", "Strings")
-
+    # Default -> Arrays
     return ("arrays-hashing", "Arrays & Hashing")
 
 
@@ -70,72 +72,103 @@ def find_csv_file() -> Path:
     raise FileNotFoundError("Could not locate all_company_leetcode_questions_deduplicated.csv in Downloads or project root.")
 
 
-async def main():
-    csv_path = find_csv_file()
-    logger.info(f"Loading LeetCode company problems from CSV: {csv_path}")
+def main():
+    db_url = os.getenv("DATABASE_URL")
+    if not db_url:
+        raise ValueError("DATABASE_URL environment variable is not set.")
 
-    embedder = None
-    try:
-        embedder = GeminiEmbedder()
-    except Exception as e:
-        logger.warning(f"GeminiEmbedder disabled: {e}")
+    csv_path = find_csv_file()
+    print(f"Reading CSV from: {csv_path}", flush=True)
+
+    df = pd.read_csv(csv_path)
+    total_rows = len(df)
 
     updated_count = 0
     inserted_count = 0
     embedded_count = 0
+    error_count = 0
 
-    async with get_db_connection() as conn:
-        # Pre-cache topics into memory
-        async with conn.cursor(row_factory=dict_row) as cur:
-            await cur.execute("SELECT id, slug FROM topics;")
-            topic_rows = await cur.fetchall()
-            topic_cache = {r["slug"]: str(r["id"]) for r in topic_rows}
+    with psycopg.connect(db_url, autocommit=True) as conn:
+        with conn.cursor() as cur:
+            # Pre-cache topics from database
+            cur.execute("SELECT slug, id FROM topics;")
+            topic_rows = cur.fetchall()
+            topic_map = {r[0]: str(r[1]) for r in topic_rows}
 
-        # Pre-cache existing problem titles -> id into memory for speed
-        async with conn.cursor(row_factory=dict_row) as cur:
-            await cur.execute("SELECT id, title FROM problems;")
-            existing_rows = await cur.fetchall()
-            existing_map = {r["title"].lower(): str(r["id"]) for r in existing_rows}
+            # Pre-cache existing problems title -> id for fast lookup
+            cur.execute("SELECT id, title FROM problems;")
+            existing_rows = cur.fetchall()
+            existing_map = {r[1].lower().strip(): str(r[0]) for r in existing_rows}
 
-        logger.info(f"Pre-cached {len(topic_cache)} topics and {len(existing_map)} existing problems.")
+            batch_updates = []
+            batch_inserts = []
 
-        with open(csv_path, "r", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-
-            for i, row in enumerate(reader, 1):
-                raw_id = row.get("ID", "").strip()
-                title = row.get("Title", "").strip()
-                raw_diff = row.get("Difficulty", "").strip()
-                raw_acc = row.get("Acceptance %", "").strip()
-                raw_count = row.get("Company Count", "").strip()
-                raw_companies = row.get("Companies Asking", "").strip()
-                url = row.get("URL", "").strip()
-
-                if not title:
-                    continue
-
-                leetcode_id = int(raw_id) if raw_id.isdigit() else 0
-                difficulty = raw_diff.lower() if raw_diff else "medium"
-                if difficulty not in ("easy", "medium", "hard"):
-                    difficulty = "medium"
-
+            for index, row in df.iterrows():
                 try:
-                    acceptance_rate = float(raw_acc.replace("%", "").strip())
-                except (ValueError, AttributeError):
-                    acceptance_rate = 0.0
+                    raw_id = str(row.get("ID", "")).strip()
+                    title = str(row.get("Title", "")).strip()
+                    raw_diff = str(row.get("Difficulty", "")).strip()
+                    raw_acc = str(row.get("Acceptance %", "")).strip()
+                    raw_count = str(row.get("Company Count", "")).strip()
+                    raw_companies = str(row.get("Companies Asking", "")).strip()
+                    url = str(row.get("URL", "")).strip()
 
-                try:
-                    company_count = int(raw_count)
-                except (ValueError, TypeError):
-                    company_count = 0
+                    if not title or title.lower() == "nan":
+                        continue
 
-                company_tags = [c.strip().lower() for c in raw_companies.split(",") if c.strip()]
+                    leetcode_id = int(float(raw_id)) if raw_id.replace('.', '', 1).isdigit() else 0
+                    
+                    difficulty = raw_diff.lower() if raw_diff and raw_diff.lower() != "nan" else "medium"
+                    if difficulty not in ("easy", "medium", "hard"):
+                        difficulty = "medium"
 
-                prob_id = existing_map.get(title.lower())
+                    try:
+                        acc_val = float(raw_acc.replace("%", "").strip())
+                        acceptance_rate = acc_val / 100.0 if acc_val > 1.0 else acc_val
+                    except (ValueError, AttributeError):
+                        acceptance_rate = 0.0
 
-                if prob_id:
-                    async with conn.cursor() as cur:
-                        await cur.execute(
+                    try:
+                        company_count = int(float(raw_count))
+                    except (ValueError, TypeError):
+                        company_count = 0
+
+                    if raw_companies and raw_companies.lower() != "nan":
+                        company_tags = [c.strip().lower() for c in raw_companies.split(",") if c.strip()]
+                    else:
+                        company_tags = []
+
+                    prob_id = existing_map.get(title.lower())
+
+                    if prob_id:
+                        batch_updates.append((company_tags, company_count, acceptance_rate, leetcode_id, url if url and url.lower() != "nan" else None, prob_id))
+                        updated_count += 1
+                    else:
+                        topic_slug, topic_display_name = map_topic_from_title(title)
+                        topic_id = topic_map.get(topic_slug)
+
+                        if not topic_id:
+                            cur.execute(
+                                "INSERT INTO topics (slug, display_name) VALUES (%s, %s) ON CONFLICT (slug) DO UPDATE SET display_name = EXCLUDED.display_name RETURNING id;",
+                                (topic_slug, topic_display_name),
+                            )
+                            row_t = cur.fetchone()
+                            topic_id = str(row_t[0])
+                            topic_map[topic_slug] = topic_id
+
+                        statement = f"LeetCode problem #{leetcode_id}: {title}. Practice problem frequently asked in technical interviews."
+                        prob_url = url if url and url.lower() != "nan" else f"https://leetcode.com/problems/{title.lower().replace(' ', '-')}"
+
+                        batch_inserts.append((title, statement, difficulty, topic_id, "leetcode", prob_url, company_tags, company_count, acceptance_rate, leetcode_id))
+                        inserted_count += 1
+
+                except Exception as e:
+                    error_count += 1
+
+                row_idx = index + 1
+                if row_idx % 50 == 0 or row_idx == total_rows:
+                    if batch_updates:
+                        cur.executemany(
                             """
                             UPDATE problems 
                             SET company_tags = %s,
@@ -145,75 +178,55 @@ async def main():
                                 url = COALESCE(%s, url)
                             WHERE id = %s;
                             """,
-                            (company_tags, company_count, acceptance_rate, leetcode_id, url or None, prob_id),
+                            batch_updates
                         )
-                    updated_count += 1
-                else:
-                    topic_slug, topic_display_name = map_topic_from_title(title)
-                    topic_id = topic_cache.get(topic_slug)
+                        batch_updates.clear()
 
-                    if not topic_id:
-                        async with conn.cursor(row_factory=dict_row) as cur:
-                            await cur.execute(
-                                "INSERT INTO topics (slug, display_name) VALUES (%s, %s) ON CONFLICT (slug) DO UPDATE SET display_name = EXCLUDED.display_name RETURNING id;",
-                                (topic_slug, topic_display_name),
-                            )
-                            row_t = await cur.fetchone()
-                            topic_id = str(row_t["id"])
-                            topic_cache[topic_slug] = topic_id
-
-                    statement = f"LeetCode problem #{leetcode_id}: {title}. Practice problem frequently asked in technical interviews."
-
-                    async with conn.cursor(row_factory=dict_row) as cur:
-                        await cur.execute(
+                    if batch_inserts:
+                        cur.executemany(
                             """
                             INSERT INTO problems (title, statement, difficulty, topic_id, source, url, company_tags, company_count, acceptance_rate, leetcode_id)
-                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                            RETURNING id;
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
                             """,
-                            (
-                                title,
-                                statement,
-                                difficulty,
-                                topic_id,
-                                "leetcode",
-                                url or f"https://leetcode.com/problems/{title.lower().replace(' ', '-')}",
-                                company_tags,
-                                company_count,
-                                acceptance_rate,
-                                leetcode_id,
-                            ),
+                            batch_inserts
                         )
-                        inserted_row = await cur.fetchone()
-                        prob_id = str(inserted_row["id"])
-                        existing_map[title.lower()] = prob_id
-                    inserted_count += 1
+                        batch_inserts.clear()
 
-                    # Generate Gemini embedding for newly inserted problems if embedder is active (limit first 50 to avoid hitting API rate limits)
-                    if embedder and embedder.api_key and embedded_count < 50:
-                        try:
-                            embed_text = f"{title} - {topic_slug} - {difficulty}"
-                            vector = embedder.embed(embed_text)
-                            async with conn.cursor() as cur:
-                                await cur.execute(
-                                    "INSERT INTO embeddings (source_type, source_id, embedding) VALUES ('problem', %s, %s);",
-                                    (prob_id, str(vector)),
-                                )
-                            embedded_count += 1
-                        except Exception as e:
-                            logger.debug(f"Skipping embedding for '{title}': {e}")
+                    print(f"Progress: {row_idx}/{total_rows} — Updated: {updated_count}, Inserted: {inserted_count}", flush=True)
 
-                if i % 250 == 0:
-                    await conn.commit()
-                    logger.info(f"Processed {i} problems so far... (Updated: {updated_count}, Inserted: {inserted_count})")
+            # Generate Gemini embeddings for missing problems
+            embedder = None
+            try:
+                embedder = GeminiEmbedder()
+            except Exception as e:
+                pass
 
-        await conn.commit()
+            if embedder and embedder.api_key:
+                cur.execute(
+                    """
+                    SELECT p.id, p.title, t.slug 
+                    FROM problems p
+                    LEFT JOIN topics t ON p.topic_id = t.id
+                    LEFT JOIN embeddings e ON e.source_id = p.id AND e.source_type = 'problem'
+                    WHERE e.id IS NULL
+                    LIMIT 50;
+                    """
+                )
+                unembedded = cur.fetchall()
+                for prob_id, prob_title, prob_slug in unembedded:
+                    try:
+                        embed_text = f"{prob_title} - {prob_slug or 'general'}"
+                        vector = embedder.embed(embed_text)
+                        cur.execute(
+                            "INSERT INTO embeddings (source_type, source_id, embedding) VALUES ('problem', %s, %s);",
+                            (str(prob_id), str(vector)),
+                        )
+                        embedded_count += 1
+                    except Exception as e:
+                        error_count += 1
 
-    await close_pool()
-    print(f"Updated {updated_count} problems, Inserted {inserted_count} new problems")
+    print(f"DONE! Updated: {updated_count}, Inserted: {inserted_count}, Embedded: {embedded_count}, Errors: {error_count}", flush=True)
 
 
 if __name__ == "__main__":
-    if sys.platform == "win32":
-        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-    asyncio.run(main())
+    main()

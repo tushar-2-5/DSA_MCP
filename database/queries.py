@@ -604,7 +604,7 @@ async def get_problems_by_company(
                    t.slug as topic_slug
             FROM problems p
             LEFT JOIN topics t ON p.topic_id = t.id
-            WHERE %s = ANY(p.company_tags)
+            WHERE %s::text = ANY(p.company_tags)
             ORDER BY p.company_count DESC, p.acceptance_rate DESC
             LIMIT %s
             """,
@@ -661,7 +661,7 @@ async def get_problems_filtered(
         params.append(difficulty.lower())
 
     if company and company.lower() != "all":
-        query += " AND %s = ANY(p.company_tags)"
+        query += " AND %s::text = ANY(p.company_tags)"
         params.append(company.lower().strip())
 
     if search:
