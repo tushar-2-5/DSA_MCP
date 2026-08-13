@@ -100,7 +100,7 @@ def main():
     parser.add_argument(
         "--transport",
         choices=["stdio", "sse", "streamable-http"],
-        default=os.environ.get("MCP_TRANSPORT", "streamable-http"),
+        default=os.environ.get("MCP_TRANSPORT", "stdio"),
         help="Transport protocol (stdio, sse, streamable-http)",
     )
     args = parser.parse_args()
