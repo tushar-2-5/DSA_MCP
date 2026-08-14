@@ -1,3 +1,5 @@
+import logging
+import time
 from typing import Dict, Any
 from uuid import UUID
 from database.connection import get_db_connection
@@ -9,6 +11,8 @@ from database.queries import (
     find_similar_unattempted_problems,
 )
 from memory.recommendation import pick_weak_topic, difficulty_band
+
+logger = logging.getLogger(__name__)
 
 
 async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
@@ -30,6 +34,10 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
             "reason": str or None
         }
     """
+    tool_name = "suggest_next_problem"
+    start = time.time()
+    logger.info(f"Tool called: {tool_name} for user {user_id}")
+
     try:
         UUID(user_id)
     except (ValueError, TypeError):
@@ -44,6 +52,8 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
 
         topic_masteries = await get_user_topic_masteries(conn, user_id)
         if not topic_masteries:
+            duration = round((time.time() - start) * 1000, 2)
+            logger.info(f"Tool completed: {tool_name} in {duration}ms")
             return {
                 "recommendation": None,
                 "targeted_topic": "",
@@ -67,6 +77,8 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
             )
             if similar_problems:
                 top_cand = similar_problems[0]
+                duration = round((time.time() - start) * 1000, 2)
+                logger.info(f"Tool completed: {tool_name} in {duration}ms")
                 return {
                     "recommendation": {
                         "id": top_cand["id"],
@@ -102,6 +114,8 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
                 break
 
         if not found_problem:
+            duration = round((time.time() - start) * 1000, 2)
+            logger.info(f"Tool completed: {tool_name} in {duration}ms")
             return {
                 "recommendation": None,
                 "targeted_topic": chosen_topic.get("slug", ""),
@@ -130,10 +144,14 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
                 f"Target difficulty band {bands} had no unattempted problems, so fell back to problem with difficulty '{found_problem.difficulty}'."
             )
 
+    duration = round((time.time() - start) * 1000, 2)
+    logger.info(f"Tool completed: {tool_name} in {duration}ms")
+
     return {
         "recommendation": rec,
         "targeted_topic": targeted_slug,
         "mastery_score": mastery_score,
         "reason": reason,
     }
+
 

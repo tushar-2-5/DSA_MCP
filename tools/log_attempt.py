@@ -1,3 +1,5 @@
+import logging
+import time
 from datetime import datetime, timezone
 from typing import Optional, Dict, Any
 from uuid import UUID
@@ -13,6 +15,8 @@ from database.queries import (
 )
 from memory.mastery import decayed_mastery, update_base_score
 from embeddings.gemini_client import GeminiEmbedder
+
+logger = logging.getLogger(__name__)
 
 
 async def log_attempt(
@@ -44,6 +48,10 @@ async def log_attempt(
         Dict confirming attempt was logged and showing updated mastery score:
         {"attempt_id": str, "status": "logged", "mastery_score_after": float}
     """
+    tool_name = "log_attempt"
+    start = time.time()
+    logger.info(f"Tool called: {tool_name} for user {user_id}")
+
     try:
         UUID(str(user_id))
         UUID(str(problem_id))
@@ -64,7 +72,11 @@ async def log_attempt(
             )
 
         embedder = GeminiEmbedder()
-        code_vector = embedder.embed(code)
+        try:
+            code_vector = embedder.embed(code)
+        except Exception as e:
+            logger.warning(f"Gemini embedding failed: {e}. Saving without embedding.")
+            code_vector = None
 
         async with conn.transaction():
             attempt = await insert_attempt(
@@ -77,8 +89,9 @@ async def log_attempt(
                 time_taken_seconds=time_taken_seconds,
             )
 
-            # Store code submission embedding
-            await insert_embedding(conn, "code_submission", attempt.id, code_vector)
+            # Store code submission embedding if available
+            if code_vector is not None:
+                await insert_embedding(conn, "code_submission", attempt.id, code_vector)
 
             # If failed or partial attempt, log mistake & mistake embedding
             if outcome in ("fail", "partial"):
@@ -94,7 +107,9 @@ async def log_attempt(
                     summary=summary,
                     category=category,
                 )
-                await insert_embedding(conn, "mistake", mistake_row["id"], code_vector)
+                if code_vector is not None:
+                    await insert_embedding(conn, "mistake", mistake_row["id"], code_vector)
+
 
             now = datetime.now(timezone.utc)
             mastery_row = await get_mastery_row(conn, user_id, problem.topic_id)
@@ -124,8 +139,12 @@ async def log_attempt(
                 last_practiced_at=now,
             )
 
+    duration = round((time.time() - start) * 1000, 2)
+    logger.info(f"Tool completed: {tool_name} in {duration}ms")
+
     return {
         "attempt_id": str(attempt.id),
         "status": "logged",
         "mastery_score_after": new_score,
     }
+

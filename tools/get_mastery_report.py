@@ -1,7 +1,11 @@
+import logging
+import time
 from typing import Optional, Dict, Any
 from uuid import UUID
 from database.connection import get_db_connection
 from database.queries import get_user_mastery_report_rows, get_user
+
+logger = logging.getLogger(__name__)
 
 
 async def get_mastery_report(
@@ -22,6 +26,10 @@ async def get_mastery_report(
         Dict with key 'topics' containing a list of topic mastery summaries:
         {"topics": [{"slug": str, "mastery_score": float, "last_practiced_at": str or None}]}
     """
+    tool_name = "get_mastery_report"
+    start = time.time()
+    logger.info(f"Tool called: {tool_name} for user {user_id}")
+
     try:
         UUID(user_id)
     except (ValueError, TypeError):
@@ -52,4 +60,8 @@ async def get_mastery_report(
             }
         )
 
+    duration = round((time.time() - start) * 1000, 2)
+    logger.info(f"Tool completed: {tool_name} in {duration}ms")
+
     return {"topics": topics_list}
+

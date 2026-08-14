@@ -18,9 +18,11 @@ from tools.log_attempt import log_attempt
 from tools.study_plan import study_plan
 from tools.suggest_next_problem import suggest_next_problem
 from web.app import app as web_app
+from web.middleware.logging_middleware import RequestLoggingMiddleware
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("recall_server")
+
 
 host = os.environ.get("HOST", "0.0.0.0")
 port = int(os.environ.get("PORT", 8000))
@@ -85,6 +87,8 @@ SECRET_KEY = (
     or secrets.token_hex(32)
 )
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
+app.add_middleware(RequestLoggingMiddleware)
+
 
 # Inherit state (Jinja2 templates) from web_app
 app.state.templates = web_app.state.templates

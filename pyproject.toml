@@ -32,4 +32,6 @@ dev = [
 asyncio_mode = "auto"
 testpaths = ["tests"]
 pythonpath = ["."]
+markers = ["integration: marks tests as integration tests"]
+
 

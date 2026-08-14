@@ -1,4 +1,5 @@
 import logging
+import time
 from typing import Optional
 from database.connection import get_db_connection
 from database.queries import (
@@ -21,9 +22,15 @@ COMPANY_TIPS = {
 
 async def study_plan(user_id: str, target_company: Optional[str] = None) -> str:
     """Generate a personalized DSA study plan for a user, optionally targeted for a specific company interview."""
+    tool_name = "study_plan"
+    start = time.time()
+    logger.info(f"Tool called: {tool_name} for user {user_id}")
+
     async with get_db_connection() as conn:
         user = await get_user(conn, user_id)
         if not user:
+            duration = round((time.time() - start) * 1000, 2)
+            logger.info(f"Tool completed: {tool_name} in {duration}ms")
             return f"Error: User with ID '{user_id}' not found."
 
         masteries = await get_user_topic_masteries(conn, user_id)
@@ -88,4 +95,8 @@ async def study_plan(user_id: str, target_company: Optional[str] = None) -> str:
             "💡 **Study Tip:** Focus on practicing 1-2 weak topics daily to prevent exponential mastery decay!",
         ])
 
+    duration = round((time.time() - start) * 1000, 2)
+    logger.info(f"Tool completed: {tool_name} in {duration}ms")
+
     return "\n".join(lines)
+

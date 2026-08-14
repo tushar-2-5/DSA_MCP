@@ -161,3 +161,37 @@ async def test_flag_recurring_mistake_unregistered_user_id():
         await flag_recurring_mistake(user_id=random_user_id, code_in_progress="def test(): pass")
 
 
+@pytest.mark.asyncio
+async def test_log_attempt_gemini_failure_fallback(monkeypatch):
+    test_email = f"pytest_gemini_fail_{uuid.uuid4().hex[:6]}@example.com"
+    user_res = await get_or_create_user(email=test_email, display_name="Gemini Fail User")
+    user_id = user_res["user_id"]
+
+    def mock_embed(self, text):
+        raise RuntimeError("Gemini API network timeout")
+
+    monkeypatch.setattr("embeddings.gemini_client.GeminiEmbedder.embed", mock_embed)
+
+    async with get_db_connection() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute("SELECT id FROM problems LIMIT 1;")
+            prob_row = await cur.fetchone()
+            prob_id = str(prob_row[0])
+
+    res = await log_attempt(
+        user_id=user_id,
+        problem_id=prob_id,
+        code="def solve(): pass",
+        outcome="pass",
+    )
+    assert res["status"] == "logged"
+
+    # Cleanup
+    async with get_db_connection() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute("DELETE FROM attempts WHERE id = %s", (res["attempt_id"],))
+            await cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
+        await conn.commit()
+
+
+
