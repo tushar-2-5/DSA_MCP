@@ -15,8 +15,10 @@ export class RecallApiClient {
 
     private get userEmail(): string {
         const config = vscode.workspace.getConfiguration('recall');
-        return config.get<string>('userEmail', '').trim();
+        const email = config.get<string>('userEmail', '').trim();
+        return email || 'alex@recall.dev';
     }
+
 
     public async getMastery(): Promise<MasteryTopic[] | null> {
         try {

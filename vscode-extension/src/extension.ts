@@ -7,8 +7,13 @@ export async function activate(context: vscode.ExtensionContext) {
     const apiClient = new RecallApiClient();
     const masteryProvider = new MasteryProvider(apiClient);
 
-    vscode.window.registerTreeDataProvider('recallMastery', masteryProvider);
+    const treeView = vscode.window.createTreeView('recallMastery', {
+        treeDataProvider: masteryProvider
+    });
+    context.subscriptions.push(treeView);
+
     registerCommands(context, apiClient, masteryProvider);
+
 
     const config = vscode.workspace.getConfiguration('recall');
     const notifyOnStartup = config.get<boolean>('notifyOnStartup', true);

@@ -76,12 +76,43 @@ async def api_log_attempt(
 ):
     user = await get_current_user(request)
     user_id = payload.get("user_id") or (user["user_id"] if user else None)
+    email = payload.get("email")
+    if not user_id and email:
+        async with get_db_connection() as conn:
+            from database.queries import get_user_by_email
+            user_obj = await get_user_by_email(conn, email)
+            if user_obj:
+                user_id = str(user_obj.id)
+            else:
+                from tools.get_or_create_user import get_or_create_user
+                created = await get_or_create_user(email=email)
+                user_id = created["user_id"]
+
     if not user_id:
         raise HTTPException(status_code=401, detail="Not authenticated")
 
     problem_id = payload.get("problem_id")
+    problem_title = payload.get("problem_title")
+    if not problem_id and problem_title:
+        async with get_db_connection() as conn:
+            from database.queries import get_problem_by_title, get_problems_filtered
+            prob = await get_problem_by_title(conn, problem_title.strip())
+            if not prob:
+                filtered = await get_problems_filtered(conn, search=problem_title.strip(), limit=1)
+                if filtered:
+                    problem_id = str(filtered[0]["id"])
+            else:
+                problem_id = str(prob.id)
+
+    if not problem_id:
+        async with get_db_connection() as conn:
+            from database.queries import get_problems_filtered
+            filtered = await get_problems_filtered(conn, limit=1)
+            if filtered:
+                problem_id = str(filtered[0]["id"])
+
     outcome = payload.get("outcome", "pass")
-    code = payload.get("code") or "# Submitted via Web Dashboard"
+    code = payload.get("code") or "# Submitted via Web Dashboard / API"
     complexity_achieved = payload.get("complexity_achieved")
     time_taken_seconds = payload.get("time_taken_seconds")
     if time_taken_seconds is None and payload.get("time_taken_minutes") is not None:
@@ -117,3 +148,4 @@ async def api_log_attempt(
                     result["topic"] = row["slug"]
 
     return result
+

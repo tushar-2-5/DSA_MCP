@@ -11,7 +11,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onStartupFinished"
+    "onStartupFinished",
+    "onView:recallMastery"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -20,10 +21,11 @@
         {
           "id": "recall-sidebar",
           "title": "Recall DSA",
-          "icon": "$(brain)"
+          "icon": "$(zap)"
         }
       ]
     },
+
     "views": {
       "recall-sidebar": [
         {
