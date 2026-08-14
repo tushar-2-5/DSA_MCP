@@ -1,0 +1,102 @@
+{
+  "name": "recall-dsa",
+  "displayName": "Recall DSA",
+  "description": "DSA practice memory assistant powered by Recall AI",
+  "version": "0.1.0",
+  "publisher": "recall-ai",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "recall-sidebar",
+          "title": "Recall DSA",
+          "icon": "$(brain)"
+        }
+      ]
+    },
+    "views": {
+      "recall-sidebar": [
+        {
+          "id": "recallMastery",
+          "name": "Topic Mastery"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "recall.showMastery",
+        "title": "Recall: Show Mastery"
+      },
+      {
+        "command": "recall.getStudyPlan",
+        "title": "Recall: Get Study Plan"
+      },
+      {
+        "command": "recall.logAttempt",
+        "title": "Recall: Log Attempt"
+      },
+      {
+        "command": "recall.setTargetCompany",
+        "title": "Recall: Set Target Company"
+      },
+      {
+        "command": "recall.refresh",
+        "title": "Recall: Refresh",
+        "icon": "$(refresh)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "recall.refresh",
+          "when": "view == recallMastery",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Recall DSA",
+      "properties": {
+        "recall.serverUrl": {
+          "type": "string",
+          "default": "https://web-production-54438.up.railway.app",
+          "description": "Recall server URL"
+        },
+        "recall.userEmail": {
+          "type": "string",
+          "default": "",
+          "description": "Your Recall account email"
+        },
+        "recall.targetCompany": {
+          "type": "string",
+          "default": "amazon",
+          "description": "Target company for interview prep"
+        },
+        "recall.notifyOnStartup": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show mastery notifications on VS Code startup"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

@@ -185,6 +185,12 @@ Recall can be deployed to [Railway](https://railway.app) as a public remote MCP 
 
 For full details, database initialization, and troubleshooting, see [DEPLOY_RAILWAY.md](file:///c:/Users/KIIT/OneDrive/Desktop/DSA%20PROJECT%20MCP/DEPLOY_RAILWAY.md).
 
+### Nightly Decay Cron (GitHub Actions)
+A GitHub Actions workflow runs `scripts/decay_handler.py` every night 
+at midnight UTC. This applies 14-day exponential mastery decay to all users.
+Triggered automatically via cron or manually via workflow_dispatch.
+
+
 ---
 
 
