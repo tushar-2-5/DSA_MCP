@@ -680,11 +680,12 @@ async def get_problems_filtered(
     difficulty: Optional[str] = None,
     company: Optional[str] = None,
     search: Optional[str] = None,
+    sort_by: Optional[str] = "company_count_desc",
     page: int = 1,
     limit: int = 50,
 ) -> tuple[List[dict], int]:
     """Extended version of get_problems_filtered supporting company, topic,
-    difficulty, search, and pagination. Returns (problems_list, total_count)."""
+    difficulty, search, sorting, and pagination. Returns (problems_list, total_count)."""
     base_where = " WHERE 1=1"
     params: List[Any] = []
 
@@ -705,6 +706,18 @@ async def get_problems_filtered(
         s = f"%{search.lower().strip()}%"
         params.extend([s, s])
 
+    order_clause = "ORDER BY p.company_count DESC, p.created_at ASC"
+    if sort_by == "difficulty_easy":
+        order_clause = "ORDER BY CASE LOWER(p.difficulty) WHEN 'easy' THEN 1 WHEN 'medium' THEN 2 WHEN 'hard' THEN 3 ELSE 4 END ASC, p.company_count DESC"
+    elif sort_by == "difficulty_hard":
+        order_clause = "ORDER BY CASE LOWER(p.difficulty) WHEN 'hard' THEN 1 WHEN 'medium' THEN 2 WHEN 'easy' THEN 3 ELSE 4 END ASC, p.company_count DESC"
+    elif sort_by == "acceptance_desc":
+        order_clause = "ORDER BY p.acceptance_rate DESC, p.company_count DESC"
+    elif sort_by == "acceptance_asc":
+        order_clause = "ORDER BY p.acceptance_rate ASC, p.company_count DESC"
+    elif sort_by == "company_count_desc":
+        order_clause = "ORDER BY p.company_count DESC, p.created_at ASC"
+
     count_query = f"""
         SELECT COUNT(*) as total_count
         FROM problems p
@@ -720,7 +733,7 @@ async def get_problems_filtered(
         FROM problems p
         LEFT JOIN topics t ON p.topic_id = t.id
         {base_where}
-        ORDER BY p.company_count DESC, p.created_at ASC
+        {order_clause}
         LIMIT %s OFFSET %s
     """
     data_params = params + [limit, offset]

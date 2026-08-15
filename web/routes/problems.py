@@ -34,6 +34,7 @@ async def api_get_problems(
     difficulty: Optional[str] = None,
     company: Optional[str] = None,
     search: Optional[str] = None,
+    sort_by: Optional[str] = "company_count_desc",
     page: int = 1,
     limit: int = 50,
 ):
@@ -47,6 +48,7 @@ async def api_get_problems(
             difficulty=difficulty,
             company=company,
             search=search,
+            sort_by=sort_by,
             page=page,
             limit=limit,
         )
