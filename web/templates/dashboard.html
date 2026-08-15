@@ -387,6 +387,118 @@
         </div>
     </template>
 
+    <!-- AI Study Assistant -->
+    <div class="mt-8 bg-gray-900 border border-purple-500/30 rounded-2xl p-6"
+         x-data="{
+           question: '',
+           answer: '',
+           loading: false,
+           async askRecall() {
+             if (!this.question.trim()) return;
+             this.loading = true;
+             this.answer = '';
+             try {
+               const resp = await fetch('/api/ask', {
+                 method: 'POST',
+                 headers: {'Content-Type': 'application/json'},
+                 body: JSON.stringify({question: this.question})
+               });
+               const data = await resp.json();
+               this.answer = data.answer || 'No response received.';
+             } catch(e) {
+               this.answer = 'Error connecting to Recall. Please try again.';
+             }
+             this.loading = false;
+           },
+           quickAsk(q) {
+             this.question = q;
+             this.askRecall();
+           }
+         }">
+      
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-2xl">🤖</span>
+        <div>
+          <h2 class="text-xl font-bold text-white">AI Study Assistant</h2>
+          <p class="text-gray-400 text-sm">Ask anything about your DSA practice</p>
+        </div>
+      </div>
+
+      <!-- Quick action chips -->
+      <div class="flex flex-wrap gap-2 mb-4">
+        <button @click="quickAsk('What should I practice today?')"
+                class="px-3 py-1.5 bg-purple-900/50 border border-purple-500/30 
+                       rounded-full text-sm text-purple-300 hover:bg-purple-800/50 
+                       transition-colors cursor-pointer">
+          📚 What to practice today?
+        </button>
+        <button @click="quickAsk('Show my progress and weak topics')"
+                class="px-3 py-1.5 bg-purple-900/50 border border-purple-500/30 
+                       rounded-full text-sm text-purple-300 hover:bg-purple-800/50 
+                       transition-colors cursor-pointer">
+          📊 My weak topics
+        </button>
+        <button @click="quickAsk('Give me an Amazon study plan')"
+                class="px-3 py-1.5 bg-purple-900/50 border border-purple-500/30 
+                       rounded-full text-sm text-purple-300 hover:bg-purple-800/50 
+                       transition-colors cursor-pointer">
+          🎯 Amazon study plan
+        </button>
+        <button @click="quickAsk('Give me a Google study plan')"
+                class="px-3 py-1.5 bg-purple-900/50 border border-purple-500/30 
+                       rounded-full text-sm text-purple-300 hover:bg-purple-800/50 
+                       transition-colors cursor-pointer">
+          🎯 Google study plan
+        </button>
+        <button @click="quickAsk('Show my recurring mistakes')"
+                class="px-3 py-1.5 bg-purple-900/50 border border-purple-500/30 
+                       rounded-full text-sm text-purple-300 hover:bg-purple-800/50 
+                       transition-colors cursor-pointer">
+          ⚠️ Recurring mistakes
+        </button>
+        <button @click="quickAsk('Give me a 7 day study plan')"
+                class="px-3 py-1.5 bg-purple-900/50 border border-purple-500/30 
+                       rounded-full text-sm text-purple-300 hover:bg-purple-800/50 
+                       transition-colors cursor-pointer">
+          📅 7-day plan
+        </button>
+      </div>
+
+      <!-- Input -->
+      <div class="flex gap-3">
+        <input type="text"
+               x-model="question"
+               @keydown.enter="askRecall()"
+               placeholder="e.g. What should I practice? / Amazon interview prep / My weak topics"
+               class="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 
+                      text-white placeholder-gray-500 focus:outline-none 
+                      focus:border-purple-500 transition-colors text-sm"/>
+        <button @click="askRecall()"
+                :disabled="loading || !question.trim()"
+                class="px-6 py-3 bg-purple-600 hover:bg-purple-700 
+                       disabled:opacity-50 disabled:cursor-not-allowed
+                       rounded-xl text-white font-medium transition-colors text-sm">
+          <span x-show="!loading">Ask ⚡</span>
+          <span x-show="loading">Thinking...</span>
+        </button>
+      </div>
+
+      <!-- Response -->
+      <div x-show="answer || loading" class="mt-4">
+        <div x-show="loading" 
+             class="flex items-center gap-2 text-purple-400 text-sm">
+          <div class="animate-spin w-4 h-4 border-2 border-purple-400 
+                      border-t-transparent rounded-full"></div>
+          Recall is analyzing your practice history...
+        </div>
+        <div x-show="answer && !loading"
+             class="bg-gray-800/50 border border-gray-700 rounded-xl p-4 
+                    text-gray-300 text-sm whitespace-pre-wrap leading-relaxed"
+             x-text="answer">
+        </div>
+      </div>
+    </div>
+
     <!-- Log Attempt Modal -->
     <div x-show="showModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center px-4">
         <div @click="showModal = false" class="fixed inset-0 bg-black/75 backdrop-blur-sm"></div>

@@ -92,3 +92,80 @@ async def api_target_company_problems(request: Request, company: str = "amazon")
         problems = await get_problems_by_company(conn, company_name=company, limit=5)
     return {"company": company, "problems": problems}
 
+
+@router.post("/api/ask")
+async def api_ask(request: Request, user=Depends(require_login)):
+    body = await request.json()
+    question = body.get("question", "").lower().strip()
+    user_id = str(user["user_id"])
+    
+    # First ALWAYS get mastery report to know weak topics
+    from tools.get_mastery_report import get_mastery_report
+    from tools.suggest_next_problem import suggest_next_problem
+    from tools.study_plan import study_plan
+    from tools.flag_recurring_mistake import flag_recurring_mistake
+    
+    # Detect company name in question
+    companies = ["amazon", "google", "microsoft", "meta", "apple", 
+                 "uber", "netflix", "adobe", "flipkart", "walmart",
+                 "goldman", "jpmorgan", "morgan stanley", "oracle"]
+    detected_company = None
+    for c in companies:
+        if c in question:
+            detected_company = c
+            break
+    
+    # CASE 1: Study plan with company
+    if detected_company and any(word in question for word in 
+        ["plan", "prepare", "study", "interview", "crack", "get into"]):
+        result = await study_plan(user_id=user_id, target_company=detected_company)
+    
+    # CASE 2: Just company mentioned (e.g. "amazon problems", "for google")
+    elif detected_company:
+        mastery = await get_mastery_report(user_id=user_id)
+        suggestion = await suggest_next_problem(user_id=user_id)
+        result = f"🎯 Preparing for {detected_company.title()} interviews:\n\n"
+        result += f"📊 Your Current Mastery:\n{mastery}\n\n"
+        result += f"💡 Recommended Next Problem:\n{suggestion}\n\n"
+        result += f"💡 Tip: Use 'Give me {detected_company} study plan' for a full 7-day plan!"
+    
+    # CASE 3: What to practice / recommend / suggest
+    elif any(word in question for word in 
+        ["practice", "what should", "recommend", "suggest", 
+         "next problem", "what to", "where to start",
+         "which problem", "what problem"]):
+        mastery = await get_mastery_report(user_id=user_id)
+        suggestion = await suggest_next_problem(user_id=user_id)
+        result = f"📊 Your Mastery Report:\n{mastery}\n\n"
+        result += f"💡 Recommended Next Problem:\n{suggestion}"
+    
+    # CASE 4: Mastery / progress / score check
+    elif any(word in question for word in 
+        ["mastery", "progress", "score", "how am i", 
+         "weak", "strong", "doing", "performance", "status"]):
+        result = await get_mastery_report(user_id=user_id)
+    
+    # CASE 5: Study plan without company
+    elif any(word in question for word in 
+        ["study plan", "7 day", "week plan", "weekly plan", "schedule"]):
+        result = await study_plan(user_id=user_id)
+    
+    # CASE 6: Mistakes / errors / bugs
+    elif any(word in question for word in 
+        ["mistake", "error", "bug", "recurring", "flag", 
+         "pattern", "keep making", "always fail"]):
+        result = await flag_recurring_mistake(
+            user_id=user_id,
+            code_in_progress="# Analyze my recurring mistake patterns"
+        )
+    
+    # CASE 7: Default — always show mastery + recommendation
+    else:
+        mastery = await get_mastery_report(user_id=user_id)
+        suggestion = await suggest_next_problem(user_id=user_id)
+        result = f"📊 Your Current Mastery:\n{mastery}\n\n"
+        result += f"💡 My Recommendation:\n{suggestion}"
+    
+    return {"answer": result}
+
+

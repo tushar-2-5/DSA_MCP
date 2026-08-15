@@ -148,3 +148,37 @@ def test_api_problems(mock_get_problems_filtered, mock_get_db_connection, client
     assert data["has_next"] is False
     assert data["has_prev"] is False
     assert data["problems"][0]["title"] == "Two Sum"
+
+
+@patch("tools.study_plan.study_plan", new_callable=AsyncMock)
+@patch("tools.get_mastery_report.get_mastery_report", new_callable=AsyncMock)
+@patch("tools.suggest_next_problem.suggest_next_problem", new_callable=AsyncMock)
+@patch("tools.flag_recurring_mistake.flag_recurring_mistake", new_callable=AsyncMock)
+def test_api_ask(
+    mock_flag_recurring_mistake,
+    mock_suggest_next_problem,
+    mock_get_mastery_report,
+    mock_study_plan,
+    client,
+):
+    from web.auth import require_login
+    mock_user = {"user_id": "12345678-1234-5678-1234-567812345678"}
+    app.dependency_overrides[require_login] = lambda: mock_user
+    try:
+        mock_study_plan.return_value = "7-Day Amazon Plan"
+        mock_get_mastery_report.return_value = {"topics": []}
+        mock_suggest_next_problem.return_value = {"recommendation": "Two Sum"}
+        mock_flag_recurring_mistake.return_value = "No mistakes found"
+
+        # Case 1: Company + study plan
+        res1 = client.post("/api/ask", json={"question": "Give me an Amazon study plan"})
+        assert res1.status_code == 200
+        assert res1.json()["answer"] == "7-Day Amazon Plan"
+
+        # Case 4: Mastery / progress
+        res2 = client.post("/api/ask", json={"question": "Show my progress"})
+        assert res2.status_code == 200
+        assert "topics" in str(res2.json()["answer"])
+    finally:
+        app.dependency_overrides.pop(require_login, None)
+
