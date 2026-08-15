@@ -124,7 +124,7 @@ def main():
 
                     try:
                         acc_val = float(raw_acc.replace("%", "").strip())
-                        acceptance_rate = acc_val / 100.0 if acc_val > 1.0 else acc_val
+                        acceptance_rate = acc_val * 100.0 if acc_val < 1.0 else acc_val
                     except (ValueError, AttributeError):
                         acceptance_rate = 0.0
 

@@ -283,7 +283,7 @@
 
                             <div class="flex items-center space-x-2 text-xs text-gray-400 mb-6">
                                 <span>Acceptance:</span>
-                                <span class="font-semibold text-emerald-400" x-text="`${p.acceptance_rate || 0}%`"></span>
+                                <span class="font-semibold text-emerald-400" x-text="`${(p.acceptance_rate || 0).toFixed(1)}%`"></span>
                             </div>
                         </div>
 
