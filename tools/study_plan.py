@@ -40,13 +40,13 @@ async def study_plan(user_id: str, target_company: Optional[str] = None) -> str:
         if company_str:
             problems = await get_problems_by_company(conn, company_name=company_str, limit=10)
             if not problems:
-                problems = await get_problems_filtered(conn, company=company_str, limit=10)
+                problems, _ = await get_problems_filtered(conn, company=company_str, limit=10)
         else:
             # Pick problems from lowest mastery topics
             weakest_topics = masteries[:3]
             problems = []
             for t in weakest_topics:
-                probs = await get_problems_filtered(conn, topic=t["slug"], limit=3)
+                probs, _ = await get_problems_filtered(conn, topic=t["slug"], limit=3)
                 problems.extend(probs)
 
     # Format Study Plan Output Markdown

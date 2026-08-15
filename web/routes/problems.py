@@ -1,3 +1,4 @@
+import math
 from typing import Optional
 from fastapi import APIRouter, Request, HTTPException, status, Body
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
@@ -36,10 +37,21 @@ async def api_get_problems(
     difficulty: Optional[str] = None,
     company: Optional[str] = None,
     search: Optional[str] = None,
+    page: int = 1,
+    limit: int = 50,
 ):
+    page = max(1, page)
+    limit = max(1, min(limit, 200))
+
     async with get_db_connection() as conn:
-        problems = await get_problems_filtered(
-            conn, topic=topic, difficulty=difficulty, company=company, search=search
+        problems, total = await get_problems_filtered(
+            conn,
+            topic=topic,
+            difficulty=difficulty,
+            company=company,
+            search=search,
+            page=page,
+            limit=limit,
         )
 
     results = []
@@ -59,10 +71,22 @@ async def api_get_problems(
             "leetcode_id": p.get("leetcode_id", 0),
         })
 
-    filter_str = f"topic={topic},difficulty={difficulty},company={company},search={search}"
+    total_pages = math.ceil(total / limit) if total > 0 else 1
+    has_next = page < total_pages
+    has_prev = page > 1
+
+    filter_str = f"topic={topic},difficulty={difficulty},company={company},search={search},page={page},limit={limit}"
     logger.info("problems_fetched", filter=filter_str, count=len(results))
 
-    return {"problems": results, "total": len(results)}
+    return {
+        "problems": results,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": total_pages,
+        "has_next": has_next,
+        "has_prev": has_prev,
+    }
 
 
 @router.get("/api/companies")
@@ -103,7 +127,7 @@ async def api_log_attempt(
             from database.queries import get_problem_by_title, get_problems_filtered
             prob = await get_problem_by_title(conn, problem_title.strip())
             if not prob:
-                filtered = await get_problems_filtered(conn, search=problem_title.strip(), limit=1)
+                filtered, _ = await get_problems_filtered(conn, search=problem_title.strip(), limit=1)
                 if filtered:
                     problem_id = str(filtered[0]["id"])
             else:
@@ -112,7 +136,7 @@ async def api_log_attempt(
     if not problem_id:
         async with get_db_connection() as conn:
             from database.queries import get_problems_filtered
-            filtered = await get_problems_filtered(conn, limit=1)
+            filtered, _ = await get_problems_filtered(conn, limit=1)
             if filtered:
                 problem_id = str(filtered[0]["id"])
 

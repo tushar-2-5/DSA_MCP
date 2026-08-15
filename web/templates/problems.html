@@ -13,6 +13,14 @@
         selectedDifficulty: 'all',
         selectedCompany: 'all',
         selectedPriority: 'all',
+
+        // Pagination state
+        currentPage: 1,
+        limit: 50,
+        totalPages: 1,
+        totalProblems: 0,
+        hasNext: false,
+        hasPrev: false,
         
         // Modal state
         showModal: false,
@@ -53,16 +61,41 @@
                 if (this.selectedDifficulty !== 'all') params.append('difficulty', this.selectedDifficulty);
                 if (this.selectedCompany !== 'all') params.append('company', this.selectedCompany);
                 if (this.searchQuery.trim()) params.append('search', this.searchQuery.trim());
+                params.append('page', this.currentPage);
+                params.append('limit', this.limit);
 
                 const res = await fetch(`/api/problems?${params.toString()}`);
                 if (res.ok) {
                     const data = await res.json();
                     this.problems = data.problems || [];
+                    this.totalProblems = data.total || 0;
+                    this.totalPages = data.total_pages || 1;
+                    this.hasNext = data.has_next || false;
+                    this.hasPrev = data.has_prev || false;
                 }
             } catch (e) {
                 console.error(e);
             } finally {
                 this.loading = false;
+            }
+        },
+
+        onFilterChange() {
+            this.currentPage = 1;
+            this.fetchProblems();
+        },
+
+        nextPage() {
+            if (this.hasNext) {
+                this.currentPage++;
+                this.fetchProblems();
+            }
+        },
+
+        prevPage() {
+            if (this.hasPrev) {
+                this.currentPage--;
+                this.fetchProblems();
             }
         },
 
@@ -124,10 +157,10 @@
     <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
             <h1 class="text-3xl font-extrabold text-white tracking-tight">DSA Problem Database</h1>
-            <p class="text-gray-400 text-sm mt-1">Browse 200+ curated problems, filter by difficulty, and log your practice.</p>
+            <p class="text-gray-400 text-sm mt-1">Browse 3,300+ company tagged LeetCode problems, filter by company/topic/difficulty, and log your practice.</p>
         </div>
         <div class="text-xs font-semibold text-gray-400 bg-gray-950/60 px-4 py-2 rounded-xl border border-gray-800">
-            Showing <span class="text-indigo-400 font-bold" x-text="filteredProblems.length"></span> problems
+            Showing <span class="text-indigo-400 font-bold" x-text="totalProblems > 0 ? `${(currentPage - 1) * limit + 1}-${Math.min(currentPage * limit, totalProblems)} of ${totalProblems}` : '0'"></span> problems
         </div>
     </div>
 
@@ -138,12 +171,12 @@
             <svg class="w-5 h-5 text-gray-400 absolute left-4 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
-            <input type="text" x-model="searchQuery" @input.debounce.300ms="fetchProblems()" placeholder="Search problems by title..." class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500">
+            <input type="text" x-model="searchQuery" @input.debounce.300ms="onFilterChange()" placeholder="Search problems by title..." class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500">
         </div>
 
         <!-- Topic Filter -->
         <div>
-            <select x-model="selectedTopic" @change="fetchProblems()" class="w-full md:w-48 px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-indigo-500">
+            <select x-model="selectedTopic" @change="onFilterChange()" class="w-full md:w-48 px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-indigo-500">
                 <option value="all">All Topics</option>
                 <option value="arrays-hashing">Arrays & Hashing</option>
                 <option value="two-pointers">Two Pointers</option>
@@ -166,7 +199,7 @@
 
         <!-- Difficulty Filter -->
         <div>
-            <select x-model="selectedDifficulty" @change="fetchProblems()" class="w-full md:w-40 px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-indigo-500">
+            <select x-model="selectedDifficulty" @change="onFilterChange()" class="w-full md:w-40 px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-indigo-500">
                 <option value="all">All Difficulties</option>
                 <option value="Easy">Easy</option>
                 <option value="Medium">Medium</option>
@@ -176,7 +209,7 @@
 
         <!-- Company Filter -->
         <div>
-            <select x-model="selectedCompany" @change="fetchProblems()" class="w-full md:w-48 px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-indigo-500">
+            <select x-model="selectedCompany" @change="onFilterChange()" class="w-full md:w-48 px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-indigo-500">
                 <option value="all">All Companies</option>
                 <template x-for="c in companies" :key="c.company">
                     <option :value="c.company" x-text="`${c.company.toUpperCase()} (${c.problem_count})`"></option>
@@ -210,63 +243,82 @@
     <template x-if="!loading && filteredProblems.length === 0">
         <div class="text-center py-16 bg-gray-950/40 border border-gray-800 rounded-3xl">
             <div class="text-gray-400 text-base mb-2">No problems match your current search/filters.</div>
-            <button @click="searchQuery = ''; selectedTopic = 'all'; selectedDifficulty = 'all'; selectedCompany = 'all'; selectedPriority = 'all'; fetchProblems()" class="text-sm font-semibold text-indigo-400 hover:text-indigo-300">Reset Filters</button>
+            <button @click="searchQuery = ''; selectedTopic = 'all'; selectedDifficulty = 'all'; selectedCompany = 'all'; selectedPriority = 'all'; onFilterChange()" class="text-sm font-semibold text-indigo-400 hover:text-indigo-300">Reset Filters</button>
         </div>
     </template>
 
     <template x-if="!loading && filteredProblems.length > 0">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <template x-for="p in filteredProblems" :key="p.id">
-                <div class="p-6 rounded-2xl bg-gray-950/60 border border-gray-800 hover:border-indigo-500/40 transition flex flex-col justify-between group">
-                    <div>
-                        <!-- Header Badges -->
-                        <div class="flex items-center justify-between gap-2 mb-3">
-                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase"
-                                  :class="{
-                                    'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30': (p.difficulty || '').toLowerCase() === 'easy',
-                                    'bg-amber-500/20 text-amber-400 border border-amber-500/30': (p.difficulty || '').toLowerCase() === 'medium',
-                                    'bg-rose-500/20 text-rose-400 border border-rose-500/30': (p.difficulty || '').toLowerCase() === 'hard'
-                                  }"
-                                  x-text="p.difficulty">
-                            </span>
-                            <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-800 text-gray-300 capitalize" x-text="(p.topic_slug || '').replace(/-/g, ' ')"></span>
+        <div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <template x-for="p in filteredProblems" :key="p.id">
+                    <div class="p-6 rounded-2xl bg-gray-950/60 border border-gray-800 hover:border-indigo-500/40 transition flex flex-col justify-between group">
+                        <div>
+                            <!-- Header Badges -->
+                            <div class="flex items-center justify-between gap-2 mb-3">
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase"
+                                      :class="{
+                                        'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30': (p.difficulty || '').toLowerCase() === 'easy',
+                                        'bg-amber-500/20 text-amber-400 border border-amber-500/30': (p.difficulty || '').toLowerCase() === 'medium',
+                                        'bg-rose-500/20 text-rose-400 border border-rose-500/30': (p.difficulty || '').toLowerCase() === 'hard'
+                                      }"
+                                      x-text="p.difficulty">
+                                </span>
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-800 text-gray-300 capitalize" x-text="(p.topic_slug || '').replace(/-/g, ' ')"></span>
+                            </div>
+
+                            <!-- Title -->
+                            <h3 class="font-bold text-white text-lg mb-2 group-hover:text-indigo-400 transition" x-text="p.title"></h3>
+                            
+                            <!-- Company Badges & Count -->
+                            <div class="mb-4" x-show="p.company_tags && p.company_tags.length > 0">
+                                <div class="flex flex-wrap gap-1.5 mb-1.5">
+                                    <template x-for="c in p.company_tags.slice(0, 3)" :key="c">
+                                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-indigo-950/80 text-indigo-300 border border-indigo-800/50 uppercase" x-text="c.replace(/-/g, ' ')"></span>
+                                    </template>
+                                </div>
+                                <div class="text-[11px] text-gray-400 font-medium">
+                                    Asked by <span class="text-white font-bold" x-text="p.company_count || p.company_tags.length"></span> companies
+                                </div>
+                            </div>
+
+                            <div class="flex items-center space-x-2 text-xs text-gray-400 mb-6">
+                                <span>Acceptance:</span>
+                                <span class="font-semibold text-emerald-400" x-text="`${p.acceptance_rate || 0}%`"></span>
+                            </div>
                         </div>
 
-                        <!-- Title -->
-                        <h3 class="font-bold text-white text-lg mb-2 group-hover:text-indigo-400 transition" x-text="p.title"></h3>
-                        
-                        <!-- Company Badges & Count -->
-                        <div class="mb-4" x-show="p.company_tags && p.company_tags.length > 0">
-                            <div class="flex flex-wrap gap-1.5 mb-1.5">
-                                <template x-for="c in p.company_tags.slice(0, 3)" :key="c">
-                                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-indigo-950/80 text-indigo-300 border border-indigo-800/50 uppercase" x-text="c.replace(/-/g, ' ')"></span>
-                                </template>
-                            </div>
-                            <div class="text-[11px] text-gray-400 font-medium">
-                                Asked by <span class="text-white font-bold" x-text="p.company_count || p.company_tags.length"></span> companies
-                            </div>
-                        </div>
-
-                        <div class="flex items-center space-x-2 text-xs text-gray-400 mb-6">
-                            <span>Acceptance:</span>
-                            <span class="font-semibold text-emerald-400" x-text="`${p.acceptance_rate || 0}%`"></span>
+                        <!-- Actions -->
+                        <div class="pt-4 border-t border-gray-900 flex items-center justify-between gap-3">
+                            <a :href="p.url" target="_blank" class="text-xs font-semibold text-gray-400 hover:text-white transition flex items-center space-x-1">
+                                <span>LeetCode</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                </svg>
+                            </a>
+                            <button @click="openLogModal(p)" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/20 transition">
+                                Log Attempt
+                            </button>
                         </div>
                     </div>
+                </template>
+            </div>
 
-                    <!-- Actions -->
-                    <div class="pt-4 border-t border-gray-900 flex items-center justify-between gap-3">
-                        <a :href="p.url" target="_blank" class="text-xs font-semibold text-gray-400 hover:text-white transition flex items-center space-x-1">
-                            <span>LeetCode</span>
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                            </svg>
-                        </a>
-                        <button @click="openLogModal(p)" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/20 transition">
-                            Log Attempt
-                        </button>
-                    </div>
+            <!-- Pagination Controls -->
+            <div x-show="totalProblems > 0" class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-gray-950/60 border border-gray-800">
+                <div class="text-sm text-gray-400">
+                    Page <span class="text-white font-bold" x-text="currentPage"></span> of <span class="text-white font-bold" x-text="totalPages"></span> (<span class="text-indigo-400 font-bold" x-text="totalProblems"></span> total problems)
                 </div>
-            </template>
+                <div class="flex items-center space-x-3">
+                    <button @click="prevPage()" :disabled="!hasPrev" :class="!hasPrev ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-800'" class="px-4 py-2 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm font-semibold transition flex items-center space-x-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                        <span>Previous</span>
+                    </button>
+                    <button @click="nextPage()" :disabled="!hasNext" :class="!hasNext ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-800'" class="px-4 py-2 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm font-semibold transition flex items-center space-x-1">
+                        <span>Next</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
         </div>
     </template>
 

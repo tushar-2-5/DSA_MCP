@@ -664,43 +664,60 @@ async def get_problems_filtered(
     difficulty: Optional[str] = None,
     company: Optional[str] = None,
     search: Optional[str] = None,
-    limit: int = 200,
-) -> List[dict]:
-    """Extended version of existing get_all_problems_with_topics 
-    that also supports company filter, topic, difficulty, search."""
-    query = """
+    page: int = 1,
+    limit: int = 50,
+) -> tuple[List[dict], int]:
+    """Extended version of get_problems_filtered supporting company, topic,
+    difficulty, search, and pagination. Returns (problems_list, total_count)."""
+    base_where = " WHERE 1=1"
+    params: List[Any] = []
+
+    if topic and topic.lower() != "all":
+        base_where += " AND LOWER(t.slug) = %s"
+        params.append(topic.lower())
+
+    if difficulty and difficulty.lower() != "all":
+        base_where += " AND LOWER(p.difficulty) = %s"
+        params.append(difficulty.lower())
+
+    if company and company.lower() != "all":
+        base_where += " AND %s::text = ANY(p.company_tags)"
+        params.append(company.lower().strip())
+
+    if search:
+        base_where += " AND (LOWER(p.title) LIKE %s OR LOWER(p.statement) LIKE %s)"
+        s = f"%{search.lower().strip()}%"
+        params.extend([s, s])
+
+    count_query = f"""
+        SELECT COUNT(*) as total_count
+        FROM problems p
+        LEFT JOIN topics t ON p.topic_id = t.id
+        {base_where}
+    """
+
+    offset = max(0, (page - 1) * limit)
+    data_query = f"""
         SELECT p.id, p.title, p.statement, p.difficulty, p.topic_id, p.url,
                p.company_tags, p.company_count, p.acceptance_rate, p.leetcode_id, p.study_priority,
                t.slug as topic_slug
         FROM problems p
         LEFT JOIN topics t ON p.topic_id = t.id
-        WHERE 1=1
+        {base_where}
+        ORDER BY p.company_count DESC, p.created_at ASC
+        LIMIT %s OFFSET %s
     """
-    params: List[Any] = []
-
-    if topic and topic.lower() != "all":
-        query += " AND LOWER(t.slug) = %s"
-        params.append(topic.lower())
-
-    if difficulty and difficulty.lower() != "all":
-        query += " AND LOWER(p.difficulty) = %s"
-        params.append(difficulty.lower())
-
-    if company and company.lower() != "all":
-        query += " AND %s::text = ANY(p.company_tags)"
-        params.append(company.lower().strip())
-
-    if search:
-        query += " AND (LOWER(p.title) LIKE %s OR LOWER(p.statement) LIKE %s)"
-        s = f"%{search.lower().strip()}%"
-        params.extend([s, s])
-
-    query += " ORDER BY p.company_count DESC, p.created_at ASC LIMIT %s"
-    params.append(limit)
+    data_params = params + [limit, offset]
 
     async with conn.cursor(row_factory=dict_row) as cur:
-        await cur.execute(query, params)
-        return await cur.fetchall()
+        await cur.execute(count_query, params)
+        count_row = await cur.fetchone()
+        total = count_row["total_count"] if count_row and "total_count" in count_row else 0
+
+        await cur.execute(data_query, data_params)
+        problems = await cur.fetchall()
+
+    return problems, total
 
 
 

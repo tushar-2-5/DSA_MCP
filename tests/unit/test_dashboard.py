@@ -97,22 +97,30 @@ def test_api_suggest(mock_suggest_next_problem, client):
 def test_api_problems(mock_get_problems_filtered, mock_get_db_connection, client):
     mock_conn = AsyncMock()
     mock_get_db_connection.return_value.__aenter__.return_value = mock_conn
-    mock_get_problems_filtered.return_value = [
-        {
-            "id": "p1",
-            "title": "Two Sum",
-            "statement": "Find target sum",
-            "difficulty": "Easy",
-            "topic_slug": "arrays-hashing",
-            "study_priority": "high",
-            "company_tags": ["google", "amazon"],
-            "company_count": 2,
-            "acceptance_rate": 50.0,
-            "leetcode_id": 1,
-        }
-    ]
-    response = client.get("/api/problems?search=Two")
+    mock_get_problems_filtered.return_value = (
+        [
+            {
+                "id": "p1",
+                "title": "Two Sum",
+                "statement": "Find target sum",
+                "difficulty": "Easy",
+                "topic_slug": "arrays-hashing",
+                "study_priority": "high",
+                "company_tags": ["google", "amazon"],
+                "company_count": 2,
+                "acceptance_rate": 50.0,
+                "leetcode_id": 1,
+            }
+        ],
+        1,
+    )
+    response = client.get("/api/problems?search=Two&page=1&limit=50")
     assert response.status_code == 200
     data = response.json()
     assert data["total"] == 1
+    assert data["page"] == 1
+    assert data["limit"] == 50
+    assert data["total_pages"] == 1
+    assert data["has_next"] is False
+    assert data["has_prev"] is False
     assert data["problems"][0]["title"] == "Two Sum"
