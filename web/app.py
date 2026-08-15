@@ -2,17 +2,14 @@ import os
 import sys
 import asyncio
 import logging
-import secrets
 
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-from database.connection import get_pool, close_pool
 from web.auth import get_current_user
 from web.rate_limit import limiter, custom_rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -29,23 +26,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("recall_web")
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    logger.info("Initializing database pool for Web Dashboard...")
-    try:
-        await get_pool()
-        logger.info("Database pool initialized successfully.")
-    except Exception as e:
-        logger.error(f"Error initializing database pool: {e}")
-    yield
-    logger.info("Closing database pool...")
-    try:
-        await close_pool()
-    except Exception as e:
-        logger.error(f"Error closing database pool: {e}")
-
-
-app = FastAPI(title="Recall Web Dashboard", lifespan=lifespan)
+app = FastAPI(title="Recall Web Dashboard")
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, custom_rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)

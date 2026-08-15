@@ -88,6 +88,8 @@ SECRET_KEY = (
     or os.environ.get("SESSION_SECRET_KEY")
     or secrets.token_hex(32)
 )
+if not os.environ.get("SECRET_KEY") and not os.environ.get("SESSION_SECRET_KEY"):
+    logger.warning("SECRET_KEY not set — using ephemeral key. All sessions will reset on restart.")
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 app.add_middleware(RequestLoggingMiddleware)
 

@@ -87,6 +87,7 @@ async def api_target_company_problems(request: Request, user=Depends(require_log
 
 
 @router.post("/api/ask")
+@limiter.limit("20/minute")
 async def api_ask(request: Request, user=Depends(require_login)):
     body = await request.json()
     question = body.get("question", "").lower().strip()
@@ -159,10 +160,15 @@ async def api_ask(request: Request, user=Depends(require_login)):
         result = f"📊 Your Current Mastery:\n{mastery}\n\n"
         result += f"💡 My Recommendation:\n{suggestion}"
     
+    if isinstance(result, dict):
+        import json
+        result = json.dumps(result, indent=2, default=str)
+
     return {"answer": result}
 
 
 @router.get("/api/streak")
+@limiter.limit("60/minute")
 async def api_streak(request: Request, user=Depends(require_login)):
     async with get_db_connection() as conn:
         streak = await get_user_streak(conn, str(user["user_id"]))
