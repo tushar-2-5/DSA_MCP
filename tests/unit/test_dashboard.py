@@ -318,6 +318,58 @@ def test_api_topic_detail(mock_get_topic_detail, mock_db_conn, client):
         web_app.dependency_overrides.pop(require_login, None)
 
 
+@patch("web.routes.history.get_db_connection")
+def test_api_problem_history(mock_db, client):
+    from web.auth import require_login
+    from unittest.mock import AsyncMock, MagicMock
+
+    mock_conn = AsyncMock()
+    mock_cursor = AsyncMock()
+    mock_cursor.__aenter__ = AsyncMock(return_value=mock_cursor)
+    mock_cursor.__aexit__ = AsyncMock(return_value=None)
+    mock_cursor.fetchall = AsyncMock(
+        side_effect=[
+            [
+                {
+                    "id": "att1",
+                    "outcome": "pass",
+                    "created_at": "2026-08-13T10:00:00+00:00",
+                    "time_taken_seconds": 900,
+                    "complexity_achieved": "O(N)",
+                    "mistake_summary": None,
+                    "mistake_category": None,
+                }
+            ],
+            [],  # topic row (fetchone via fetchall)
+            [],  # topic failures
+        ]
+    )
+    mock_cursor.fetchone = AsyncMock(return_value={"slug": "arrays-hashing"})
+    mock_conn.cursor = MagicMock(return_value=mock_cursor)
+    mock_db.return_value.__aenter__ = AsyncMock(return_value=mock_conn)
+    mock_db.return_value.__aexit__ = AsyncMock(return_value=None)
+    mock_user = {"user_id": "12345678-1234-5678-1234-567812345678"}
+    app.dependency_overrides[require_login] = lambda: mock_user
+    web_app.dependency_overrides[require_login] = lambda: mock_user
+    try:
+        res = client.get(
+            "/api/problem-history/ae8baba1-d36e-4707-91fd-00fff51409bf"
+        )
+        assert res.status_code == 200
+        data = res.json()
+        assert data["total_attempts"] == 1
+        assert data["solved"] == 1
+        assert data["badge"] == "solved"
+        assert "warning" in data
+        assert "tip" in data
+        assert "pattern_warning" in data
+        assert "review_nudge" in data
+    finally:
+        app.dependency_overrides.pop(require_login, None)
+        web_app.dependency_overrides.pop(require_login, None)
+
+
+
 
 
 

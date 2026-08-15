@@ -66,11 +66,11 @@ async def get_problem_context(
     elif failed > 0:
         if last_mistake:
             warning = (
-                f"⚠️ You've attempted similar problems {total} times — failed {failed} times. "
-                f"Watch out for: {last_mistake}"
+                f"⚠️ You've attempted this {failed} times before and failed. "
+                f"Last mistake: {last_mistake}"
             )
         else:
-            warning = f"⚠️ You've failed similar problems {failed} times before. Take your time!"
+            warning = f"⚠️ You've attempted this {failed} times before and failed."
     elif solved == total:
         warning = f"✅ Great news! You've solved all {total} similar problems before. You got this!"
     else:
@@ -85,6 +85,9 @@ async def get_problem_context(
     }
 
     res = {
+        "problem": {
+            "statement": problem_statement,
+        },
         "matches": matches,
         "past_attempts": past_attempts,
         "warning": warning,

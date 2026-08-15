@@ -4,17 +4,47 @@
 
 {% block content %}
 <style>
-  .prose h3 { font-size: 1rem; font-weight: 700; margin: 1rem 0 0.5rem; color: #e2e8f0; }
-  .prose strong { color: #f1f5f9; font-weight: 600; }
-  .prose a { color: #a78bfa; text-decoration: underline; }
-  .prose a:hover { color: #c4b5fd; }
-  .prose ol, .prose ul { padding-left: 1.25rem; margin: 0.5rem 0; }
-  .prose li { margin: 0.25rem 0; }
-  .prose p { margin: 0.5rem 0; }
-  .prose hr { border-color: #374151; margin: 1rem 0; }
+    .prose h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 1rem 0 0.5rem;
+        color: #e2e8f0;
+    }
+
+    .prose strong {
+        color: #f1f5f9;
+        font-weight: 600;
+    }
+
+    .prose a {
+        color: #a78bfa;
+        text-decoration: underline;
+    }
+
+    .prose a:hover {
+        color: #c4b5fd;
+    }
+
+    .prose ol,
+    .prose ul {
+        padding-left: 1.25rem;
+        margin: 0.5rem 0;
+    }
+
+    .prose li {
+        margin: 0.25rem 0;
+    }
+
+    .prose p {
+        margin: 0.5rem 0;
+    }
+
+    .prose hr {
+        border-color: #374151;
+        margin: 1rem 0;
+    }
 </style>
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
-     x-data="{
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="{
         masteryData: [],
         recommendation: null,
         companyProblems: [],
@@ -193,20 +223,18 @@
      }">
 
     <!-- Toast Notification -->
-    <div x-show="toastMessage" x-cloak class="fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl bg-emerald-600 text-white font-semibold shadow-2xl flex items-center space-x-3 transition">
+    <div x-show="toastMessage" x-cloak
+        class="fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl bg-emerald-600 text-white font-semibold shadow-2xl flex items-center space-x-3 transition">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
         </svg>
         <span x-text="toastMessage"></span>
     </div>
 
     <!-- Streak Toast Notification -->
-    <div x-show="streakMessage" 
-         x-transition
-         x-cloak
-         class="fixed bottom-4 right-4 px-4 py-3 rounded-xl text-sm font-medium z-50 shadow-2xl"
-         :class="streakToastColor"
-         x-text="streakMessage">
+    <div x-show="streakMessage" x-transition x-cloak
+        class="fixed bottom-4 right-4 px-4 py-3 rounded-xl text-sm font-medium z-50 shadow-2xl"
+        :class="streakToastColor" x-text="streakMessage">
     </div>
 
     <!-- Header Section -->
@@ -216,9 +244,10 @@
             <p class="text-gray-400 text-sm mt-1">Here is your live DSA mastery decay report and practice overview.</p>
         </div>
         <div>
-            <button @click="openLogModal(null)" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-lg shadow-indigo-600/30 transition flex items-center space-x-2">
+            <button @click="openLogModal(null)"
+                class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-lg shadow-indigo-600/30 transition flex items-center space-x-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
                 <span>Quick Log Attempt</span>
             </button>
@@ -228,9 +257,11 @@
     <!-- Quick Stats Bar -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
         <div class="p-6 rounded-2xl bg-gray-950/60 border border-gray-800 flex items-center space-x-4">
-            <div class="h-12 w-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+            <div
+                class="h-12 w-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
             </div>
             <div>
@@ -240,9 +271,11 @@
         </div>
 
         <div class="p-6 rounded-2xl bg-gray-950/60 border border-gray-800 flex items-center space-x-4">
-            <div class="h-12 w-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+            <div
+                class="h-12 w-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                 </svg>
             </div>
             <div>
@@ -252,44 +285,42 @@
         </div>
 
         <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800"
-             x-data="{streak: 0, longestStreak: 0, practicedToday: false}"
-             x-init="fetch('/api/streak', { credentials: 'same-origin' })
+            x-data="{streak: 0, longestStreak: 0, practicedToday: false}" x-init="fetch('/api/streak', { credentials: 'same-origin' })
                       .then(r => r.json())
                       .then(d => {
                         streak = d.current_streak;
                         longestStreak = d.longest_streak;
                         practicedToday = d.practiced_today;
                       })">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-3xl" x-text="practicedToday ? '🔥' : '💤'"></span>
-            <span class="text-xs text-gray-500 font-medium uppercase tracking-wider">
-              Practice Streak
-            </span>
-          </div>
-          <div class="text-4xl font-bold text-white mb-1" 
-               x-text="streak + (streak === 1 ? ' day' : ' days')">
-            0 days
-          </div>
-          <div class="text-sm text-gray-400" 
-               x-text="practicedToday ? '🟢 Practiced today!' : '⚠️ Practice today to keep streak!'">
-          </div>
-          <div class="mt-2 text-xs text-gray-600"
-               x-text="'Best: ' + longestStreak + ' days'">
-          </div>
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-3xl" x-text="practicedToday ? '🔥' : '💤'"></span>
+                <span class="text-xs text-gray-500 font-medium uppercase tracking-wider">
+                    Practice Streak
+                </span>
+            </div>
+            <div class="text-4xl font-bold text-white mb-1" x-text="streak + (streak === 1 ? ' day' : ' days')">
+                0 days
+            </div>
+            <div class="text-sm text-gray-400"
+                x-text="practicedToday ? '🟢 Practiced today!' : '⚠️ Practice today to keep streak!'">
+            </div>
+            <div class="mt-2 text-xs text-gray-600" x-text="'Best: ' + longestStreak + ' days'">
+            </div>
         </div>
     </div>
 
     <!-- Today's Recommendation Card -->
-    <div class="mb-10 p-8 rounded-3xl bg-gradient-to-r from-indigo-950/70 via-purple-950/50 to-gray-900 border border-indigo-500/30 relative overflow-hidden shadow-xl">
+    <div
+        class="mb-10 p-8 rounded-3xl bg-gradient-to-r from-indigo-950/70 via-purple-950/50 to-gray-900 border border-indigo-500/30 relative overflow-hidden shadow-xl">
         <div class="absolute top-0 right-0 p-8 opacity-10 pointer-events-none text-white">
             <svg class="w-48 h-48" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
             </svg>
         </div>
 
         <div class="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-indigo-400 mb-3">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
             <span>Today's Smart Recommendation</span>
         </div>
@@ -306,22 +337,24 @@
                 <div>
                     <div class="flex items-center space-x-3 mb-2">
                         <h2 class="text-2xl font-bold text-white" x-text="recommendation.recommendation.title"></h2>
-                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase"
-                              :class="{
+                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase" :class="{
                                 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30': recommendation.recommendation.difficulty === 'Easy',
                                 'bg-amber-500/20 text-amber-400 border border-amber-500/30': recommendation.recommendation.difficulty === 'Medium',
                                 'bg-rose-500/20 text-rose-400 border border-rose-500/30': recommendation.recommendation.difficulty === 'Hard'
-                              }"
-                              x-text="recommendation.recommendation.difficulty">
+                              }" x-text="recommendation.recommendation.difficulty">
                         </span>
                     </div>
-                    <p class="text-gray-300 text-sm" x-text="recommendation.reason || 'Selected based on your mastery level and past mistake patterns.'"></p>
+                    <p class="text-gray-300 text-sm"
+                        x-text="recommendation.reason || 'Selected based on your mastery level and past mistake patterns.'">
+                    </p>
                 </div>
 
                 <div class="flex items-center space-x-4">
-                    <button @click="openLogModal(recommendation.recommendation)" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-lg shadow-indigo-600/30 transition flex items-center space-x-2">
+                    <button @click="openLogModal(recommendation.recommendation)"
+                        class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-lg shadow-indigo-600/30 transition flex items-center space-x-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
                         <span>Log Attempt Now</span>
                     </button>
@@ -348,9 +381,9 @@
             <div class="flex items-center space-x-2">
                 <template x-for="comp in ['amazon', 'google', 'microsoft', 'meta']" :key="comp">
                     <button @click="selectedCompany = comp; fetchCompanyProblems()"
-                            class="px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase transition border"
-                            :class="selectedCompany === comp ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30' : 'bg-gray-900 text-gray-400 border-gray-800 hover:text-white'"
-                            x-text="comp">
+                        class="px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase transition border"
+                        :class="selectedCompany === comp ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30' : 'bg-gray-900 text-gray-400 border-gray-800 hover:text-white'"
+                        x-text="comp">
                     </button>
                 </template>
             </div>
@@ -358,30 +391,102 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <template x-for="p in companyProblems" :key="p.id">
-                <div class="p-5 rounded-2xl bg-gray-900/60 border border-gray-800 hover:border-indigo-500/40 transition flex flex-col justify-between">
+                <div
+                    class="p-5 rounded-2xl bg-gray-900/60 border border-gray-800 hover:border-indigo-500/40 transition flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase"
-                                  :class="{
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase" :class="{
                                     'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30': (p.difficulty || '').toLowerCase() === 'easy',
                                     'bg-amber-500/20 text-amber-400 border border-amber-500/30': (p.difficulty || '').toLowerCase() === 'medium',
                                     'bg-rose-500/20 text-rose-400 border border-rose-500/30': (p.difficulty || '').toLowerCase() === 'hard'
-                                  }"
-                                  x-text="p.difficulty">
+                                  }" x-text="p.difficulty">
                             </span>
-                            <span class="text-[11px] text-gray-400" x-text="`Asked by ${p.company_count || 0} companies`"></span>
+                            <span class="text-[11px] text-gray-400"
+                                x-text="`Asked by ${p.company_count || 0} companies`"></span>
                         </div>
                         <h4 class="font-bold text-white text-sm mb-1" x-text="p.title"></h4>
                     </div>
 
+                    <div x-data="{ hist: null }"
+                         x-init="fetch(`/api/problem-history/${p.id}`,
+                                       {credentials: 'same-origin'})
+                                  .then(r => r.json())
+                                  .then(d => hist = d)
+                                  .catch(() => {})">
+
+                      <template x-if="hist && hist.total_attempts > 0">
+                        <div class="mt-2 mb-2 space-y-1">
+
+                          <!-- Main badge -->
+                          <template x-if="hist.badge === 'solved'">
+                            <div class="flex items-center gap-1.5 text-xs text-green-400
+                                        bg-green-500/10 border border-green-500/20 
+                                        rounded-lg px-2 py-1.5">
+                              ✅ <span x-text="hist.warning"></span>
+                              <template x-if="hist.avg_time_mins">
+                                <span class="text-green-300/60 ml-1"
+                                      x-text="`· ⏱️ ${hist.avg_time_mins}m avg`"></span>
+                              </template>
+                            </div>
+                          </template>
+
+                          <template x-if="hist.badge === 'partial'">
+                            <div class="text-xs text-yellow-400 bg-yellow-500/10
+                                        border border-yellow-500/20 rounded-lg px-2 py-1.5">
+                              <div>⚡ <span x-text="hist.warning"></span></div>
+                              <template x-if="hist.tip">
+                                <div class="text-yellow-300/70 text-[11px] mt-0.5"
+                                     x-text="hist.tip"></div>
+                              </template>
+                            </div>
+                          </template>
+
+                          <template x-if="hist.badge === 'failed'">
+                            <div class="text-xs text-red-400 bg-red-500/10
+                                        border border-red-500/20 rounded-lg px-2 py-1.5">
+                              <div class="font-medium">⚠️ <span x-text="hist.warning"></span></div>
+                              <template x-if="hist.tip">
+                                <div class="text-red-300/70 text-[11px] mt-0.5"
+                                     x-text="hist.tip"></div>
+                              </template>
+                              <template x-if="hist.avg_time_mins">
+                                <div class="text-red-300/50 text-[11px]"
+                                     x-text="`⏱️ Avg time spent: ${hist.avg_time_mins} mins`"></div>
+                              </template>
+                            </div>
+                          </template>
+
+                          <!-- Spaced repetition review nudge -->
+                          <template x-if="hist.review_nudge">
+                            <div class="text-xs text-blue-400 bg-blue-500/10
+                                        border border-blue-500/20 rounded-lg px-2 py-1"
+                                 x-text="hist.review_nudge">
+                            </div>
+                          </template>
+
+                          <!-- Topic pattern warning -->
+                          <template x-if="hist.pattern_warning">
+                            <div class="text-xs text-orange-400 bg-orange-500/10
+                                        border border-orange-500/20 rounded-lg px-2 py-1"
+                                 x-text="hist.pattern_warning">
+                            </div>
+                          </template>
+
+                        </div>
+                      </template>
+                    </div>
+
                     <div class="pt-3 mt-3 border-t border-gray-800/80 flex items-center justify-between">
-                        <a :href="p.url || '#'" target="_blank" class="text-xs text-indigo-400 hover:underline flex items-center space-x-1">
+                        <a :href="p.url || '#'" target="_blank"
+                            class="text-xs text-indigo-400 hover:underline flex items-center space-x-1">
                             <span>LeetCode</span>
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                             </svg>
                         </a>
-                        <button @click="openLogModal(p)" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-sm">
+                        <button @click="openLogModal(p)"
+                            class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-sm">
                             Log Attempt
                         </button>
                     </div>
@@ -397,9 +502,13 @@
             <p class="text-xs text-gray-400">Mastery scores naturally decay over a 14-day exponential half-life.</p>
         </div>
         <div class="flex items-center space-x-4 text-xs font-semibold">
-            <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span><span class="text-gray-400">&lt; 30% (Novice)</span></span>
-            <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span><span class="text-gray-400">30 - 60% (Competent)</span></span>
-            <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span class="text-gray-400">&gt; 60% (Proficient)</span></span>
+            <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span><span
+                    class="text-gray-400">&lt; 30% (Novice)</span></span>
+            <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span><span
+                    class="text-gray-400">30 - 60% (Competent)</span></span>
+            <span class="flex items-center space-x-1.5"><span
+                    class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span class="text-gray-400">&gt; 60%
+                    (Proficient)</span></span>
         </div>
     </div>
 
@@ -414,39 +523,41 @@
         </div>
     </template>
 
-    <template x-if="!loadingMastery && (!masteryData || masteryData.length === 0 || masteryData.every(t => (t.mastery_score || 0) === 0))">
+    <template
+        x-if="!loadingMastery && (!masteryData || masteryData.length === 0 || masteryData.every(t => (t.mastery_score || 0) === 0))">
         <div class="text-center py-8 text-gray-400">
             <div class="text-4xl mb-3">🚀</div>
             <p class="font-medium text-white">No practice data yet!</p>
             <p class="text-sm mt-1">Log your first attempt to start tracking mastery.</p>
-            <a href="/problems" class="mt-4 inline-block bg-purple-600 hover:bg-purple-700 text-white text-sm px-4 py-2 rounded-lg transition">
+            <a href="/problems"
+                class="mt-4 inline-block bg-purple-600 hover:bg-purple-700 text-white text-sm px-4 py-2 rounded-lg transition">
                 Browse Problems →
             </a>
         </div>
     </template>
 
-    <template x-if="!loadingMastery && masteryData && masteryData.length > 0 && masteryData.some(t => (t.mastery_score || 0) > 0)">
+    <template
+        x-if="!loadingMastery && masteryData && masteryData.length > 0 && masteryData.some(t => (t.mastery_score || 0) > 0)">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <template x-for="topic in masteryData" :key="topic.slug">
-                <a :href="`/topic/${topic.slug}`" class="p-6 rounded-2xl bg-gray-950/60 border border-gray-800 hover:border-indigo-500/50 hover:bg-gray-900/60 transition flex flex-col justify-between group">
+                <a :href="`/topic/${topic.slug}`"
+                    class="p-6 rounded-2xl bg-gray-950/60 border border-gray-800 hover:border-indigo-500/50 hover:bg-gray-900/60 transition flex flex-col justify-between group">
                     <div>
                         <div class="flex items-center justify-between mb-3">
-                            <h3 class="font-bold text-white text-base capitalize group-hover:text-indigo-400 transition" x-text="topic.slug.replace(/-/g, ' ')"></h3>
-                            <span class="text-sm font-extrabold"
-                                  :class="{
+                            <h3 class="font-bold text-white text-base capitalize group-hover:text-indigo-400 transition"
+                                x-text="topic.slug.replace(/-/g, ' ')"></h3>
+                            <span class="text-sm font-extrabold" :class="{
                                     'text-rose-400': topic.mastery_score < 0.3,
                                     'text-amber-400': topic.mastery_score >= 0.3 && topic.mastery_score <= 0.6,
                                     'text-emerald-400': topic.mastery_score > 0.6
-                                  }"
-                                  x-text="`${Math.round(topic.mastery_score * 100)}%`">
+                                  }" x-text="`${Math.round(topic.mastery_score * 100)}%`">
                             </span>
                         </div>
 
                         <!-- Progress Bar -->
                         <div class="w-full bg-gray-800 h-2.5 rounded-full overflow-hidden mb-4">
                             <div class="h-full rounded-full transition-all duration-500"
-                                 :style="`width: ${Math.round(topic.mastery_score * 100)}%`"
-                                 :class="{
+                                :style="`width: ${Math.round(topic.mastery_score * 100)}%`" :class="{
                                     'bg-rose-500': topic.mastery_score < 0.3,
                                     'bg-amber-500': topic.mastery_score >= 0.3 && topic.mastery_score <= 0.6,
                                     'bg-emerald-500': topic.mastery_score > 0.6
@@ -465,8 +576,7 @@
     </template>
 
     <!-- AI Study Assistant -->
-    <div class="mt-8 bg-gray-900 border border-purple-500/30 rounded-2xl p-6"
-         x-data="{
+    <div class="mt-8 bg-gray-900 border border-purple-500/30 rounded-2xl p-6" x-data="{
            question: '',
            answer: '',
            loading: false,
@@ -493,144 +603,139 @@
              this.askRecall();
            }
          }">
-      
-      <div class="flex items-center gap-3 mb-4">
-        <span class="text-2xl">🤖</span>
-        <div>
-          <h2 class="text-xl font-bold text-white">AI Study Assistant</h2>
-          <p class="text-gray-400 text-sm">Ask anything about your DSA practice</p>
+
+        <div class="flex items-center gap-3 mb-4">
+            <span class="text-2xl">🤖</span>
+            <div>
+                <h2 class="text-xl font-bold text-white">AI Study Assistant</h2>
+                <p class="text-gray-400 text-sm">Ask anything about your DSA practice</p>
+            </div>
         </div>
-      </div>
 
-      <!-- Quick action chips -->
-      <div class="flex flex-wrap gap-2 mb-4">
-        <button @click="quickAsk('What should I practice today?')"
-                class="px-3 py-1.5 bg-purple-900/50 border border-purple-500/30 
+        <!-- Quick action chips -->
+        <div class="flex flex-wrap gap-2 mb-4">
+            <button @click="quickAsk('What should I practice today?')" class="px-3 py-1.5 bg-purple-900/50 border border-purple-500/30 
                        rounded-full text-sm text-purple-300 hover:bg-purple-800/50 
                        transition-colors cursor-pointer">
-          📚 What to practice today?
-        </button>
-        <button @click="quickAsk('Show my progress and weak topics')"
-                class="px-3 py-1.5 bg-purple-900/50 border border-purple-500/30 
+                📚 What to practice today?
+            </button>
+            <button @click="quickAsk('Show my progress and weak topics')" class="px-3 py-1.5 bg-purple-900/50 border border-purple-500/30 
                        rounded-full text-sm text-purple-300 hover:bg-purple-800/50 
                        transition-colors cursor-pointer">
-          📊 My weak topics
-        </button>
-        <button @click="quickAsk('Give me an Amazon study plan')"
-                class="px-3 py-1.5 bg-purple-900/50 border border-purple-500/30 
+                📊 My weak topics
+            </button>
+            <button @click="quickAsk('Give me an Amazon study plan')" class="px-3 py-1.5 bg-purple-900/50 border border-purple-500/30 
                        rounded-full text-sm text-purple-300 hover:bg-purple-800/50 
                        transition-colors cursor-pointer">
-          🎯 Amazon study plan
-        </button>
-        <button @click="quickAsk('Give me a Google study plan')"
-                class="px-3 py-1.5 bg-purple-900/50 border border-purple-500/30 
+                🎯 Amazon study plan
+            </button>
+            <button @click="quickAsk('Give me a Google study plan')" class="px-3 py-1.5 bg-purple-900/50 border border-purple-500/30 
                        rounded-full text-sm text-purple-300 hover:bg-purple-800/50 
                        transition-colors cursor-pointer">
-          🎯 Google study plan
-        </button>
-        <button @click="quickAsk('Show my recurring mistakes')"
-                class="px-3 py-1.5 bg-purple-900/50 border border-purple-500/30 
+                🎯 Google study plan
+            </button>
+            <button @click="quickAsk('Show my recurring mistakes')" class="px-3 py-1.5 bg-purple-900/50 border border-purple-500/30 
                        rounded-full text-sm text-purple-300 hover:bg-purple-800/50 
                        transition-colors cursor-pointer">
-          ⚠️ Recurring mistakes
-        </button>
-        <button @click="quickAsk('Give me a 7 day study plan')"
-                class="px-3 py-1.5 bg-purple-900/50 border border-purple-500/30 
+                ⚠️ Recurring mistakes
+            </button>
+            <button @click="quickAsk('Give me a 7 day study plan')" class="px-3 py-1.5 bg-purple-900/50 border border-purple-500/30 
                        rounded-full text-sm text-purple-300 hover:bg-purple-800/50 
                        transition-colors cursor-pointer">
-          📅 7-day plan
-        </button>
-      </div>
+                📅 7-day plan
+            </button>
+        </div>
 
-      <!-- Input -->
-      <div class="flex gap-3">
-        <input type="text"
-               x-model="question"
-               @keydown.enter="askRecall()"
-               placeholder="e.g. What should I practice? / Amazon interview prep / My weak topics"
-               class="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 
+        <!-- Input -->
+        <div class="flex gap-3">
+            <input type="text" x-model="question" @keydown.enter="askRecall()"
+                placeholder="e.g. What should I practice? / Amazon interview prep / My weak topics" class="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 
                       text-white placeholder-gray-500 focus:outline-none 
-                      focus:border-purple-500 transition-colors text-sm"/>
-        <button @click="askRecall()"
-                :disabled="loading || !question.trim()"
-                class="px-6 py-3 bg-purple-600 hover:bg-purple-700 
+                      focus:border-purple-500 transition-colors text-sm" />
+            <button @click="askRecall()" :disabled="loading || !question.trim()" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 
                        disabled:opacity-50 disabled:cursor-not-allowed
                        rounded-xl text-white font-medium transition-colors text-sm">
-          <span x-show="!loading">Ask ⚡</span>
-          <span x-show="loading">Thinking...</span>
-        </button>
-      </div>
+                <span x-show="!loading">Ask ⚡</span>
+                <span x-show="loading">Thinking...</span>
+            </button>
+        </div>
 
-      <!-- Response -->
-      <div x-show="answer || loading" class="mt-4">
-        <div x-show="loading" 
-             class="flex items-center gap-2 text-purple-400 text-sm">
-          <div class="animate-spin w-4 h-4 border-2 border-purple-400 
+        <!-- Response -->
+        <div x-show="answer || loading" class="mt-4">
+            <div x-show="loading" class="flex items-center gap-2 text-purple-400 text-sm">
+                <div class="animate-spin w-4 h-4 border-2 border-purple-400 
                       border-t-transparent rounded-full"></div>
-          Recall is analyzing your practice history...
+                Recall is analyzing your practice history...
+            </div>
+            <div x-show="answer && !loading" class="bg-gray-800/50 border border-gray-700 rounded-xl p-4 
+                    text-gray-300 text-sm prose prose-invert max-w-none" style="line-height:1.7"
+                x-html="answer ? marked.parse(answer) : ''">
+            </div>
         </div>
-        <div x-show="answer && !loading"
-             class="bg-gray-800/50 border border-gray-700 rounded-xl p-4 
-                    text-gray-300 text-sm prose prose-invert max-w-none"
-             style="line-height:1.7"
-             x-html="answer ? marked.parse(answer) : ''">
-        </div>
-      </div>
     </div>
 
     <!-- Log Attempt Modal -->
     <div x-show="showModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center px-4">
         <div @click="showModal = false" class="fixed inset-0 bg-black/75 backdrop-blur-sm"></div>
 
-        <div class="relative w-full max-w-lg p-8 bg-gray-900 border border-gray-800 rounded-3xl shadow-2xl z-10 space-y-5">
+        <div
+            class="relative w-full max-w-lg p-8 bg-gray-900 border border-gray-800 rounded-3xl shadow-2xl z-10 space-y-5">
             <button @click="showModal = false" class="absolute top-5 right-5 text-gray-400 hover:text-white">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
 
             <h3 class="text-xl font-bold text-white">Log Solution Attempt</h3>
-            
+
             <div>
-                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Problem Title / ID</label>
-                <input type="text" x-model="logForm.problem_title" placeholder="Problem Title" class="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500">
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Problem Title /
+                    ID</label>
+                <input type="text" x-model="logForm.problem_title" placeholder="Problem Title"
+                    class="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500">
                 <input type="hidden" x-model="logForm.problem_id">
             </div>
 
             <div class="grid grid-cols-3 gap-3">
                 <button type="button" @click="logForm.outcome = 'pass'"
-                        class="py-2.5 rounded-xl font-bold text-xs border transition"
-                        :class="logForm.outcome === 'pass' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50' : 'bg-gray-800 text-gray-400 border-gray-700'">
+                    class="py-2.5 rounded-xl font-bold text-xs border transition"
+                    :class="logForm.outcome === 'pass' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50' : 'bg-gray-800 text-gray-400 border-gray-700'">
                     PASS
                 </button>
                 <button type="button" @click="logForm.outcome = 'partial'"
-                        class="py-2.5 rounded-xl font-bold text-xs border transition"
-                        :class="logForm.outcome === 'partial' ? 'bg-amber-500/20 text-amber-400 border-amber-500/50' : 'bg-gray-800 text-gray-400 border-gray-700'">
+                    class="py-2.5 rounded-xl font-bold text-xs border transition"
+                    :class="logForm.outcome === 'partial' ? 'bg-amber-500/20 text-amber-400 border-amber-500/50' : 'bg-gray-800 text-gray-400 border-gray-700'">
                     PARTIAL
                 </button>
                 <button type="button" @click="logForm.outcome = 'fail'"
-                        class="py-2.5 rounded-xl font-bold text-xs border transition"
-                        :class="logForm.outcome === 'fail' ? 'bg-rose-500/20 text-rose-400 border-rose-500/50' : 'bg-gray-800 text-gray-400 border-gray-700'">
+                    class="py-2.5 rounded-xl font-bold text-xs border transition"
+                    :class="logForm.outcome === 'fail' ? 'bg-rose-500/20 text-rose-400 border-rose-500/50' : 'bg-gray-800 text-gray-400 border-gray-700'">
                     FAIL
                 </button>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Complexity Achieved</label>
-                    <input type="text" x-model="logForm.complexity_achieved" placeholder="e.g. O(N)" class="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-gray-700 text-white text-sm focus:outline-none focus:border-indigo-500">
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Complexity
+                        Achieved</label>
+                    <input type="text" x-model="logForm.complexity_achieved" placeholder="e.g. O(N)"
+                        class="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-gray-700 text-white text-sm focus:outline-none focus:border-indigo-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Time Taken (min)</label>
-                    <input type="number" x-model="logForm.time_taken_minutes" min="1" class="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-gray-700 text-white text-sm focus:outline-none focus:border-indigo-500">
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Time Taken
+                        (min)</label>
+                    <input type="number" x-model="logForm.time_taken_minutes" min="1"
+                        class="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-gray-700 text-white text-sm focus:outline-none focus:border-indigo-500">
                 </div>
             </div>
 
             <template x-if="logForm.outcome !== 'pass'">
                 <div class="space-y-4 pt-2">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Mistake Category</label>
-                        <select x-model="logForm.mistake_category" class="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-gray-700 text-white text-sm focus:outline-none focus:border-indigo-500">
+                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Mistake
+                            Category</label>
+                        <select x-model="logForm.mistake_category"
+                            class="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-gray-700 text-white text-sm focus:outline-none focus:border-indigo-500">
                             <option value="sliding_window_off_by_one">Sliding Window Off-By-One</option>
                             <option value="logic_error">Logic Error</option>
                             <option value="boundary_condition">Boundary Condition Error</option>
@@ -639,14 +744,18 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Mistake Summary</label>
-                        <textarea x-model="logForm.mistake_summary" rows="2" placeholder="Brief explanation of what went wrong..." class="w-full px-4 py-2 rounded-xl bg-gray-800 border border-gray-700 text-white text-sm focus:outline-none focus:border-indigo-500"></textarea>
+                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Mistake
+                            Summary</label>
+                        <textarea x-model="logForm.mistake_summary" rows="2"
+                            placeholder="Brief explanation of what went wrong..."
+                            class="w-full px-4 py-2 rounded-xl bg-gray-800 border border-gray-700 text-white text-sm focus:outline-none focus:border-indigo-500"></textarea>
                     </div>
                 </div>
             </template>
 
             <div class="pt-3">
-                <button @click="submitLog()" :disabled="submitting" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-lg shadow-indigo-600/30 transition">
+                <button @click="submitLog()" :disabled="submitting"
+                    class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-lg shadow-indigo-600/30 transition">
                     <span x-text="submitting ? 'Submitting...' : 'Save Attempt & Update Mastery'"></span>
                 </button>
             </div>
