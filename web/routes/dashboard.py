@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Request, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
-from web.auth import get_current_user
 from web.rate_limit import limiter
 from tools.get_mastery_report import get_mastery_report
 from tools.suggest_next_problem import suggest_next_problem
@@ -8,7 +7,6 @@ from database.connection import get_db_connection
 from database.queries import get_user_by_email, get_problems_by_company, get_user_streak
 
 from core.logging import logger
-
 from web.auth import get_current_user, require_login
 
 router = APIRouter()
@@ -25,7 +23,7 @@ async def render_dashboard(request: Request, user=Depends(require_login)):
 
 @router.get("/api/mastery")
 @limiter.limit("30/minute")
-async def api_get_mastery(request: Request, user_id: str = None, email: str = None):
+async def api_get_mastery(request: Request, user=Depends(require_login), user_id: str = None, email: str = None):
     target_user_id = user_id
     if not target_user_id and email:
         async with get_db_connection() as conn:
@@ -38,8 +36,7 @@ async def api_get_mastery(request: Request, user_id: str = None, email: str = No
                 target_user_id = created["user_id"]
 
     if not target_user_id:
-        user = await get_current_user(request)
-        target_user_id = user["user_id"] if user else None
+        target_user_id = str(user["user_id"]) if user else None
 
     if not target_user_id:
         raise HTTPException(status_code=401, detail="Not authenticated")
@@ -54,7 +51,7 @@ async def api_get_mastery(request: Request, user_id: str = None, email: str = No
 
 @router.get("/api/suggest")
 @limiter.limit("20/minute")
-async def api_suggest(request: Request, user_id: str = None, email: str = None, company: str = None):
+async def api_suggest(request: Request, user=Depends(require_login), user_id: str = None, email: str = None, company: str = None):
     target_user_id = user_id
     if not target_user_id and email:
         async with get_db_connection() as conn:
@@ -67,8 +64,7 @@ async def api_suggest(request: Request, user_id: str = None, email: str = None, 
                 target_user_id = created["user_id"]
 
     if not target_user_id:
-        user = await get_current_user(request)
-        target_user_id = user["user_id"] if user else None
+        target_user_id = str(user["user_id"]) if user else None
 
     if not target_user_id:
         raise HTTPException(status_code=401, detail="Not authenticated")
@@ -83,7 +79,8 @@ async def api_suggest(request: Request, user_id: str = None, email: str = None, 
 
 
 @router.get("/api/target-company-problems")
-async def api_target_company_problems(request: Request, company: str = "amazon"):
+@limiter.limit("10/minute")
+async def api_target_company_problems(request: Request, user=Depends(require_login), company: str = "amazon"):
     async with get_db_connection() as conn:
         problems = await get_problems_by_company(conn, company_name=company, limit=5)
     return {"company": company, "problems": problems}

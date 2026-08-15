@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request, Depends
 from fastapi.responses import HTMLResponse
 from web.auth import require_login
+from web.rate_limit import limiter
 from database.connection import get_db_connection
 from database.queries import get_topic_detail
 
@@ -20,6 +21,7 @@ async def render_topic_detail(
 
 
 @router.get("/api/topic/{topic_slug}")
+@limiter.limit("30/minute")
 async def api_topic_detail(
     request: Request, topic_slug: str, user=Depends(require_login)
 ):

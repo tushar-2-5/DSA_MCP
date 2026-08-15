@@ -100,10 +100,10 @@ async def api_get_companies(request: Request, limit: int = 30):
 @limiter.limit("20/minute")
 async def api_log_attempt(
     request: Request,
+    user=Depends(require_login),
     payload: dict = Body(...)
 ):
-    user = await get_current_user(request)
-    user_id = payload.get("user_id") or (user["user_id"] if user else None)
+    user_id = payload.get("user_id") or str(user["user_id"])
     email = payload.get("email")
     if not user_id and email:
         async with get_db_connection() as conn:

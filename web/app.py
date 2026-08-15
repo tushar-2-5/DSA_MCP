@@ -11,7 +11,6 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from starlette.middleware.sessions import SessionMiddleware
 
 from database.connection import get_pool, close_pool
 from web.auth import get_current_user
@@ -50,10 +49,6 @@ app = FastAPI(title="Recall Web Dashboard", lifespan=lifespan)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, custom_rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)
-
-# Add session middleware for simple session auth
-SECRET_KEY = os.environ.get("SECRET_KEY") or os.environ.get("SESSION_SECRET_KEY") or secrets.token_hex(32)
-app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 
 # Jinja2 Templates
 templates = Jinja2Templates(directory="web/templates")

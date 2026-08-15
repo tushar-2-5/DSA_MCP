@@ -10,7 +10,7 @@ from database.queries import (
     find_most_recent_mistake_embedding,
     find_similar_unattempted_problems,
 )
-from memory.recommendation import pick_weak_topic, difficulty_band, get_difficulty_band
+from memory.recommendation import pick_weak_topic, get_difficulty_band
 from core.logging import logger
 
 

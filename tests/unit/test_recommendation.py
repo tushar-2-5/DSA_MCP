@@ -1,4 +1,4 @@
-from memory.recommendation import pick_weak_topic, difficulty_band, get_difficulty_band
+from memory.recommendation import pick_weak_topic, get_difficulty_band
 
 
 def test_pick_weak_topic_epsilon_zero():
@@ -25,17 +25,6 @@ def test_pick_weak_topic_single_topic():
 
 def test_pick_weak_topic_empty_list():
     assert pick_weak_topic([], epsilon=0.2) == {}
-
-
-def test_difficulty_band_boundaries():
-    assert difficulty_band(0.0) == ["easy"]
-    assert difficulty_band(0.299) == ["easy"]
-    assert difficulty_band(0.3) == ["easy", "medium"]
-    assert difficulty_band(0.599) == ["easy", "medium"]
-    assert difficulty_band(0.6) == ["medium"]
-    assert difficulty_band(0.849) == ["medium"]
-    assert difficulty_band(0.85) == ["medium", "hard"]
-    assert difficulty_band(1.0) == ["medium", "hard"]
 
 
 def test_difficulty_progression_easy():

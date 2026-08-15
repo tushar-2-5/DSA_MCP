@@ -1,7 +1,8 @@
 import pytest
 from unittest.mock import AsyncMock, patch
 from fastapi.testclient import TestClient
-from web.app import app
+from server.main import app
+from web.app import app as web_app
 
 
 @pytest.fixture
@@ -91,29 +92,45 @@ def test_signup_flow(mock_create_user, mock_get_user, mock_get_db, client):
 
 @patch("web.routes.dashboard.get_mastery_report", new_callable=AsyncMock)
 def test_api_mastery(mock_get_mastery_report, client):
-    mock_get_mastery_report.return_value = {
-        "topics": [{"slug": "arrays-hashing", "mastery_score": 0.5, "last_practiced_at": None}]
-    }
-    response = client.get("/api/mastery?user_id=12345678-1234-5678-1234-567812345678")
-    assert response.status_code == 200
-    data = response.json()
-    assert "topics" in data
-    assert data["topics"][0]["slug"] == "arrays-hashing"
-    assert data["topics"][0]["mastery_score"] == 0.0
+    from web.auth import require_login
+    mock_user = {"user_id": "12345678-1234-5678-1234-567812345678"}
+    app.dependency_overrides[require_login] = lambda: mock_user
+    web_app.dependency_overrides[require_login] = lambda: mock_user
+    try:
+        mock_get_mastery_report.return_value = {
+            "topics": [{"slug": "arrays-hashing", "mastery_score": 0.5, "last_practiced_at": None}]
+        }
+        response = client.get("/api/mastery?user_id=12345678-1234-5678-1234-567812345678")
+        assert response.status_code == 200
+        data = response.json()
+        assert "topics" in data
+        assert data["topics"][0]["slug"] == "arrays-hashing"
+        assert data["topics"][0]["mastery_score"] == 0.0
+    finally:
+        app.dependency_overrides.pop(require_login, None)
+        web_app.dependency_overrides.pop(require_login, None)
 
 
 @patch("web.routes.dashboard.suggest_next_problem", new_callable=AsyncMock)
 def test_api_suggest(mock_suggest_next_problem, client):
-    mock_suggest_next_problem.return_value = {
-        "recommendation": {"id": "p1", "title": "Two Sum", "difficulty": "Easy"},
-        "targeted_topic": "arrays-hashing",
-        "mastery_score": 0.2,
-        "reason": "Weak topic test",
-    }
-    response = client.get("/api/suggest?user_id=12345678-1234-5678-1234-567812345678")
-    assert response.status_code == 200
-    data = response.json()
-    assert data["recommendation"]["title"] == "Two Sum"
+    from web.auth import require_login
+    mock_user = {"user_id": "12345678-1234-5678-1234-567812345678"}
+    app.dependency_overrides[require_login] = lambda: mock_user
+    web_app.dependency_overrides[require_login] = lambda: mock_user
+    try:
+        mock_suggest_next_problem.return_value = {
+            "recommendation": {"id": "p1", "title": "Two Sum", "difficulty": "Easy"},
+            "targeted_topic": "arrays-hashing",
+            "mastery_score": 0.2,
+            "reason": "Weak topic test",
+        }
+        response = client.get("/api/suggest?user_id=12345678-1234-5678-1234-567812345678")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["recommendation"]["title"] == "Two Sum"
+    finally:
+        app.dependency_overrides.pop(require_login, None)
+        web_app.dependency_overrides.pop(require_login, None)
 
 
 @patch("web.routes.problems.get_db_connection")
@@ -124,6 +141,7 @@ def test_api_problems(mock_get_problems_filtered, mock_get_db_connection, client
     mock_get_db_connection.return_value.__aenter__.return_value = mock_conn
     mock_user = {"user_id": "12345678-1234-5678-1234-567812345678"}
     app.dependency_overrides[require_login] = lambda: mock_user
+    web_app.dependency_overrides[require_login] = lambda: mock_user
     mock_get_problems_filtered.return_value = (
         [
             {
@@ -154,6 +172,7 @@ def test_api_problems(mock_get_problems_filtered, mock_get_db_connection, client
         assert data["problems"][0]["title"] == "Two Sum"
     finally:
         app.dependency_overrides.pop(require_login, None)
+        web_app.dependency_overrides.pop(require_login, None)
 
 
 @patch("tools.study_plan.study_plan", new_callable=AsyncMock)
@@ -170,6 +189,7 @@ def test_api_ask(
     from web.auth import require_login
     mock_user = {"user_id": "12345678-1234-5678-1234-567812345678"}
     app.dependency_overrides[require_login] = lambda: mock_user
+    web_app.dependency_overrides[require_login] = lambda: mock_user
     try:
         mock_study_plan.return_value = "7-Day Amazon Plan"
         mock_get_mastery_report.return_value = {"topics": []}
@@ -187,6 +207,7 @@ def test_api_ask(
         assert "topics" in str(res2.json()["answer"])
     finally:
         app.dependency_overrides.pop(require_login, None)
+        web_app.dependency_overrides.pop(require_login, None)
 
 
 @patch("web.routes.dashboard.get_db_connection")
@@ -197,6 +218,7 @@ def test_api_streak(mock_get_user_streak, mock_get_db_connection, client):
     mock_get_db_connection.return_value.__aenter__.return_value = mock_conn
     mock_user = {"user_id": "12345678-1234-5678-1234-567812345678"}
     app.dependency_overrides[require_login] = lambda: mock_user
+    web_app.dependency_overrides[require_login] = lambda: mock_user
     mock_get_user_streak.return_value = {
         "current_streak": 3,
         "longest_streak": 5,
@@ -216,6 +238,7 @@ def test_api_streak(mock_get_user_streak, mock_get_db_connection, client):
         assert data["practiced_today"] is True
     finally:
         app.dependency_overrides.pop(require_login, None)
+        web_app.dependency_overrides.pop(require_login, None)
 
 
 @patch("web.routes.history.get_db_connection")
@@ -226,6 +249,7 @@ def test_api_history(mock_get_history, mock_db_conn, client):
     mock_db_conn.return_value.__aenter__.return_value = mock_conn
     mock_user = {"user_id": "12345678-1234-5678-1234-567812345678"}
     app.dependency_overrides[require_login] = lambda: mock_user
+    web_app.dependency_overrides[require_login] = lambda: mock_user
     mock_get_history.return_value = [
         {
             "id": "att1",
@@ -251,6 +275,7 @@ def test_api_history(mock_get_history, mock_db_conn, client):
         assert data[0]["title"] == "Two Sum"
     finally:
         app.dependency_overrides.pop(require_login, None)
+        web_app.dependency_overrides.pop(require_login, None)
 
 
 @patch("web.routes.topics.get_db_connection")
@@ -261,6 +286,7 @@ def test_api_topic_detail(mock_get_topic_detail, mock_db_conn, client):
     mock_db_conn.return_value.__aenter__.return_value = mock_conn
     mock_user = {"user_id": "12345678-1234-5678-1234-567812345678"}
     app.dependency_overrides[require_login] = lambda: mock_user
+    web_app.dependency_overrides[require_login] = lambda: mock_user
     mock_get_topic_detail.return_value = {
         "topic": "Arrays & Hashing",
         "mastery_score": 0.74,
@@ -289,6 +315,7 @@ def test_api_topic_detail(mock_get_topic_detail, mock_db_conn, client):
         assert len(data["problems"]) == 1
     finally:
         app.dependency_overrides.pop(require_login, None)
+        web_app.dependency_overrides.pop(require_login, None)
 
 
 

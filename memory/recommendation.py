@@ -37,14 +37,3 @@ def get_difficulty_band(score: float) -> str:
         return "Hard"
 
 
-def difficulty_band(mastery_score: float) -> List[str]:
-    """Determine targeted problem difficulty band list based on mastery score."""
-    if mastery_score < 0.3:
-        return ["easy"]
-    elif mastery_score < 0.6:
-        return ["easy", "medium"]
-    elif mastery_score < 0.85:
-        return ["medium"]
-    else:
-        return ["medium", "hard"]
-
