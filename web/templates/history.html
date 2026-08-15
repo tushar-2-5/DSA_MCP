@@ -15,7 +15,7 @@
         async fetchHistory() {
             this.loading = true;
             try {
-                const res = await fetch('/api/history');
+                const res = await fetch('/api/history', { credentials: 'same-origin' });
                 if (res.ok) {
                     const data = await res.json();
                     this.attempts = Array.isArray(data) ? data : (data.attempts || []);

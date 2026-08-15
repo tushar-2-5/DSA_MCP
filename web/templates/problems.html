@@ -45,7 +45,9 @@
 
         async fetchCompanies() {
             try {
-                const res = await fetch('/api/companies?limit=40');
+                console.log('Fetching companies...');
+                const res = await fetch('/api/companies?limit=40', { credentials: 'same-origin' });
+                console.log('Companies API response status:', res.status);
                 if (res.ok) {
                     const data = await res.json();
                     this.companies = data.companies || [];
@@ -67,7 +69,7 @@
                 params.append('page', this.currentPage);
                 params.append('limit', this.limit);
 
-                const res = await fetch(`/api/problems?${params.toString()}`);
+                const res = await fetch(`/api/problems?${params.toString()}`, { credentials: 'same-origin' });
                 if (res.ok) {
                     const data = await res.json();
                     this.problems = data.problems || [];
@@ -128,6 +130,7 @@
                 const res = await fetch('/api/log-attempt', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
                     body: JSON.stringify(this.logForm)
                 });
                 if (res.ok) {

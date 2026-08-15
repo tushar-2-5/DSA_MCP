@@ -47,7 +47,7 @@
 
         async fetchStreak() {
             try {
-                const res = await fetch('/api/streak');
+                const res = await fetch('/api/streak', { credentials: 'same-origin' });
                 if (res.ok) {
                     const d = await res.json();
                     this.streak = d.current_streak;
@@ -73,7 +73,7 @@
 
         async fetchCompanyProblems() {
             try {
-                const res = await fetch(`/api/target-company-problems?company=${this.selectedCompany}`);
+                const res = await fetch(`/api/target-company-problems?company=${this.selectedCompany}`, { credentials: 'same-origin' });
                 if (res.ok) {
                     const data = await res.json();
                     this.companyProblems = data.problems || [];
@@ -86,7 +86,7 @@
         async fetchMastery() {
             this.loadingMastery = true;
             try {
-                const res = await fetch('/api/mastery');
+                const res = await fetch('/api/mastery', { credentials: 'same-origin' });
                 if (res.ok) {
                     const data = await res.json();
                     this.masteryData = data.topics || [];
@@ -102,7 +102,7 @@
         async fetchSuggest() {
             this.loadingSuggest = true;
             try {
-                const res = await fetch('/api/suggest');
+                const res = await fetch('/api/suggest', { credentials: 'same-origin' });
                 if (res.ok) {
                     const data = await res.json();
                     this.recommendation = data;
@@ -116,7 +116,7 @@
 
         async fetchStats() {
             try {
-                const res = await fetch('/api/progress-data');
+                const res = await fetch('/api/progress-data', { credentials: 'same-origin' });
                 if (res.ok) {
                     const data = await res.json();
                     this.stats.totalAttempts = (data.recent_attempts || []).length;
@@ -169,6 +169,7 @@
                 const res = await fetch('/api/log-attempt', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
                     body: JSON.stringify(this.logForm)
                 });
                 if (res.ok) {
@@ -252,7 +253,7 @@
 
         <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800"
              x-data="{streak: 0, longestStreak: 0, practicedToday: false}"
-             x-init="fetch('/api/streak')
+             x-init="fetch('/api/streak', { credentials: 'same-origin' })
                       .then(r => r.json())
                       .then(d => {
                         streak = d.current_streak;
@@ -477,6 +478,7 @@
                const resp = await fetch('/api/ask', {
                  method: 'POST',
                  headers: {'Content-Type': 'application/json'},
+                 credentials: 'same-origin',
                  body: JSON.stringify({question: this.question})
                });
                const data = await resp.json();

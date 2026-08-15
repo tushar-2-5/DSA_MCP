@@ -17,7 +17,7 @@
         async fetchProgressData() {
             this.loading = true;
             try {
-                const res = await fetch('/api/progress-data');
+                const res = await fetch('/api/progress-data', { credentials: 'same-origin' });
                 if (res.ok) {
                     const data = await res.json();
                     this.masteryTrends = data.mastery_trends || [];

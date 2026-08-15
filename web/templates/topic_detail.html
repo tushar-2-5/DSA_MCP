@@ -23,7 +23,7 @@
         async fetchTopicDetail() {
             this.loading = true;
             try {
-                const res = await fetch(`/api/topic/${this.topicSlug}`);
+                const res = await fetch(`/api/topic/${this.topicSlug}`, { credentials: 'same-origin' });
                 if (res.ok) {
                     this.topicData = await res.json();
                 }
