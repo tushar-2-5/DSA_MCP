@@ -662,9 +662,12 @@ async def get_top_companies(
     async with conn.cursor(row_factory=dict_row) as cur:
         await cur.execute(
             """
-            SELECT unnest(company_tags) AS company, COUNT(*) AS problem_count
-            FROM problems
-            WHERE company_tags IS NOT NULL AND array_length(company_tags, 1) > 0
+            SELECT company, COUNT(*) AS problem_count
+            FROM (
+                SELECT unnest(company_tags) AS company
+                FROM problems
+                WHERE company_tags IS NOT NULL AND array_length(company_tags, 1) > 0
+            ) sub
             GROUP BY company
             ORDER BY problem_count DESC
             LIMIT %s
