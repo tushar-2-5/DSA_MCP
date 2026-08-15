@@ -41,6 +41,7 @@ async def run_decay():
                     updated += 1
                 await conn.commit()
                 logger.info(f"Decay applied: {updated} mastery records updated")
+                logger.info(f"Cost note: decay handler uses 0 Gemini calls. CockroachDB RUs consumed for {updated} UPDATE queries.")
                 print(f"DONE! Updated {updated} mastery records out of {len(rows)} total")
     finally:
         await close_pool()

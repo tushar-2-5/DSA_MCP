@@ -31,7 +31,7 @@ async def get_pool() -> AsyncConnectionPool:
             conninfo=database_url,
             open=False,
             min_size=1,
-            max_size=10,
+            max_size=5,
         )
         await _pool.open()
         logger.info("Database connection pool initialized")

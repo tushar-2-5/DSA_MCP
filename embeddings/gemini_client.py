@@ -1,9 +1,47 @@
 import os
+import json
+import tempfile
+from datetime import date
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Rate limit counter file path
+default_path = "/tmp/gemini_daily_count.json"
+try:
+    os.makedirs(os.path.dirname(default_path), exist_ok=True)
+    GEMINI_LIMIT_FILE = default_path
+except Exception:
+    GEMINI_LIMIT_FILE = os.path.join(tempfile.gettempdir(), "gemini_daily_count.json")
+
+DAILY_LIMIT = 1400
+
+
+def _check_and_increment_daily_limit():
+    today = str(date.today())
+    try:
+        with open(GEMINI_LIMIT_FILE, 'r') as f:
+            data = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError, PermissionError, OSError):
+        data = {}
+
+    count = data.get(today, 0)
+    if count >= DAILY_LIMIT:
+        raise RuntimeError(
+            f"Gemini daily limit reached ({count}/{DAILY_LIMIT}). "
+            "Protecting free tier. Resets at midnight."
+        )
+
+    data = {today: count + 1}
+    try:
+        with open(GEMINI_LIMIT_FILE, 'w') as f:
+            json.dump(data, f)
+    except Exception:
+        pass
+
+    return count + 1
 
 
 class GeminiEmbedder:
@@ -24,7 +62,10 @@ class GeminiEmbedder:
         Raises:
             ValueError: If text is empty, None, or invalid string.
             ValueError: If GEMINI_API_KEY environment variable or api_key parameter is missing.
+            RuntimeError: If daily request count limit (1400) is reached.
         """
+        _check_and_increment_daily_limit()
+
         if not text or not isinstance(text, str) or not text.strip():
             raise ValueError("Text to embed must be a non-empty string.")
 
@@ -40,4 +81,5 @@ class GeminiEmbedder:
             config=types.EmbedContentConfig(output_dimensionality=768),
         )
         return list(response.embeddings[0].values)
+
 

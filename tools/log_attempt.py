@@ -72,6 +72,7 @@ async def log_attempt(
 
         embedder = GeminiEmbedder()
         try:
+            logger.info("gemini_embed_called", reason="log_attempt", note="counts against 1400/day free limit")
             code_vector = embedder.embed(code)
         except Exception as e:
             logger.warning(f"Gemini embedding failed: {e}. Saving without embedding.")
