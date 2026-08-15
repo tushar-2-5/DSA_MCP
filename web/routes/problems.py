@@ -11,11 +11,9 @@ from database.queries import (
     get_problem_by_title,
     get_problems_filtered,
     get_top_companies,
-    get_user_by_email,
 )
 from psycopg.rows import dict_row
 from tools.log_attempt import log_attempt
-from tools.get_or_create_user import get_or_create_user
 
 from core.logging import logger
 
@@ -93,7 +91,7 @@ async def api_get_problems(
 
 @router.get("/api/companies")
 @limiter.limit("60/minute")
-async def api_get_companies(request: Request, limit: int = 30):
+async def api_get_companies(request: Request, user=Depends(require_login), limit: int = 30):
     async with get_db_connection() as conn:
         companies = await get_top_companies(conn, limit=limit)
     return {"companies": companies}
@@ -107,18 +105,6 @@ async def api_log_attempt(
     payload: dict = Body(...)
 ):
     user_id = payload.get("user_id") or str(user["user_id"])
-    email = payload.get("email")
-    if not user_id and email:
-        async with get_db_connection() as conn:
-            user_obj = await get_user_by_email(conn, email)
-            if user_obj:
-                user_id = str(user_obj.id)
-            else:
-                created = await get_or_create_user(email=email)
-                user_id = created["user_id"]
-
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Not authenticated")
 
     problem_id = payload.get("problem_id")
     problem_title = payload.get("problem_title")

@@ -175,10 +175,10 @@ def test_api_problems(mock_get_problems_filtered, mock_get_db_connection, client
         web_app.dependency_overrides.pop(require_login, None)
 
 
-@patch("tools.study_plan.study_plan", new_callable=AsyncMock)
-@patch("tools.get_mastery_report.get_mastery_report", new_callable=AsyncMock)
-@patch("tools.suggest_next_problem.suggest_next_problem", new_callable=AsyncMock)
-@patch("tools.flag_recurring_mistake.flag_recurring_mistake", new_callable=AsyncMock)
+@patch("web.routes.dashboard.study_plan", new_callable=AsyncMock)
+@patch("web.routes.dashboard.get_mastery_report", new_callable=AsyncMock)
+@patch("web.routes.dashboard.suggest_next_problem", new_callable=AsyncMock)
+@patch("web.routes.dashboard.flag_recurring_mistake", new_callable=AsyncMock)
 def test_api_ask(
     mock_flag_recurring_mistake,
     mock_suggest_next_problem,

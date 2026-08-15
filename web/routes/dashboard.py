@@ -3,6 +3,8 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from web.rate_limit import limiter
 from tools.get_mastery_report import get_mastery_report
 from tools.suggest_next_problem import suggest_next_problem
+from tools.study_plan import study_plan
+from tools.flag_recurring_mistake import flag_recurring_mistake
 from database.connection import get_db_connection
 from database.queries import get_user_by_email, get_problems_by_company, get_user_streak
 
@@ -23,24 +25,8 @@ async def render_dashboard(request: Request, user=Depends(require_login)):
 
 @router.get("/api/mastery")
 @limiter.limit("30/minute")
-async def api_get_mastery(request: Request, user=Depends(require_login), user_id: str = None, email: str = None):
-    target_user_id = user_id
-    if not target_user_id and email:
-        async with get_db_connection() as conn:
-            user_obj = await get_user_by_email(conn, email)
-            if user_obj:
-                target_user_id = str(user_obj.id)
-            else:
-                from tools.get_or_create_user import get_or_create_user
-                created = await get_or_create_user(email=email)
-                target_user_id = created["user_id"]
-
-    if not target_user_id:
-        target_user_id = str(user["user_id"]) if user else None
-
-    if not target_user_id:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-
+async def api_get_mastery(request: Request, user=Depends(require_login)):
+    target_user_id = str(user["user_id"])
     report = await get_mastery_report(user_id=target_user_id)
     topics = report.get("topics", [])
     for topic in topics:
@@ -51,26 +37,9 @@ async def api_get_mastery(request: Request, user=Depends(require_login), user_id
 
 @router.get("/api/suggest")
 @limiter.limit("20/minute")
-async def api_suggest(request: Request, user=Depends(require_login), user_id: str = None, email: str = None, company: str = None):
-    target_user_id = user_id
-    if not target_user_id and email:
-        async with get_db_connection() as conn:
-            user_obj = await get_user_by_email(conn, email)
-            if user_obj:
-                target_user_id = str(user_obj.id)
-            else:
-                from tools.get_or_create_user import get_or_create_user
-                created = await get_or_create_user(email=email)
-                target_user_id = created["user_id"]
-
-    if not target_user_id:
-        target_user_id = str(user["user_id"]) if user else None
-
-    if not target_user_id:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-
+async def api_suggest(request: Request, user=Depends(require_login), company: str = None):
+    target_user_id = str(user["user_id"])
     if company:
-        from tools.study_plan import study_plan
         plan = await study_plan(user_id=target_user_id, target_company=company)
         return plan
 
@@ -92,12 +61,6 @@ async def api_ask(request: Request, user=Depends(require_login)):
     body = await request.json()
     question = body.get("question", "").lower().strip()
     user_id = str(user["user_id"])
-    
-    # First ALWAYS get mastery report to know weak topics
-    from tools.get_mastery_report import get_mastery_report
-    from tools.suggest_next_problem import suggest_next_problem
-    from tools.study_plan import study_plan
-    from tools.flag_recurring_mistake import flag_recurring_mistake
     
     # Detect company name in question
     companies = ["amazon", "google", "microsoft", "meta", "apple", 
