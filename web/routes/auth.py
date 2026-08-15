@@ -6,6 +6,7 @@ from database.connection import get_db_connection
 from database.queries import (
     get_user_with_password_by_email,
     create_user_with_password,
+    update_user_password_hash,
 )
 from web.auth import get_current_user
 from web.rate_limit import limiter
@@ -51,26 +52,43 @@ async def handle_login(
     email: str = Form(...),
     password: str = Form(...),
 ):
-    templates = request.app.state.templates
     email_clean = email.strip().lower()
 
     async with get_db_connection() as conn:
         user_row = await get_user_with_password_by_email(conn, email_clean)
 
-    if not user_row or not user_row.get("password_hash") or not verify_password(password, user_row["password_hash"]):
-        return templates.TemplateResponse(
-            request=request,
-            name="login.html",
-            context={"error": "Invalid email or password. Please try again."},
-            status_code=400,
-        )
+        if not user_row:
+            return RedirectResponse(
+                url="/?action=login&error=notfound", status_code=status.HTTP_303_SEE_OTHER
+            )
 
-    user_id = str(user_row["id"])
-    request.session["user_id"] = user_id
-    request.session["user_email"] = user_row["email"]
-    request.session["display_name"] = user_row["display_name"] or user_row["email"].split("@")[0]
+        # First-time password setup for existing users with password_hash = NULL
+        if not user_row.get("password_hash"):
+            if len(password) < 8:
+                return RedirectResponse(
+                    url="/?action=login&error=weak_password", status_code=status.HTTP_303_SEE_OTHER
+                )
+            hashed = hash_password(password)
+            user_id = str(user_row["id"])
+            await update_user_password_hash(conn, user_id, hashed)
 
-    return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+            request.session["user_id"] = user_id
+            request.session["user_email"] = user_row["email"]
+            request.session["display_name"] = user_row["display_name"] or user_row["email"].split("@")[0]
+            return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+
+        # Existing user with password_hash -> Verify password
+        if not verify_password(password, user_row["password_hash"]):
+            return RedirectResponse(
+                url="/?action=login&error=invalid", status_code=status.HTTP_303_SEE_OTHER
+            )
+
+        user_id = str(user_row["id"])
+        request.session["user_id"] = user_id
+        request.session["user_email"] = user_row["email"]
+        request.session["display_name"] = user_row["display_name"] or user_row["email"].split("@")[0]
+
+        return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @router.post("/signup")
@@ -82,54 +100,55 @@ async def handle_signup(
     confirm_password: Optional[str] = Form(None),
     display_name: Optional[str] = Form(None),
 ):
-    templates = request.app.state.templates
     email_clean = email.strip().lower()
 
     if not email_clean or not password:
-        return templates.TemplateResponse(
-            request=request,
-            name="signup.html",
-            context={"error": "Email and password are required."},
-            status_code=400,
+        return RedirectResponse(
+            url="/?action=signup&error=invalid", status_code=status.HTTP_303_SEE_OTHER
         )
 
     if len(password) < 8:
-        return templates.TemplateResponse(
-            request=request,
-            name="signup.html",
-            context={"error": "Password must be at least 8 characters."},
-            status_code=400,
+        return RedirectResponse(
+            url="/?action=signup&error=weak_password", status_code=status.HTTP_303_SEE_OTHER
         )
 
     if confirm_password is not None and password != confirm_password:
-        return templates.TemplateResponse(
-            request=request,
-            name="signup.html",
-            context={"error": "Passwords do not match."},
-            status_code=400,
+        return RedirectResponse(
+            url="/?action=signup&error=password_mismatch", status_code=status.HTTP_303_SEE_OTHER
         )
 
     async with get_db_connection() as conn:
         existing = await get_user_with_password_by_email(conn, email_clean)
-        if existing:
-            return templates.TemplateResponse(
-                request=request,
-                name="signup.html",
-                context={"error": "An account with this email already exists. Please sign in."},
-                status_code=400,
+
+        # Existing user without password -> set password & log in
+        if existing and not existing.get("password_hash"):
+            hashed = hash_password(password)
+            user_id = str(existing["id"])
+            await update_user_password_hash(conn, user_id, hashed, display_name)
+
+            request.session["user_id"] = user_id
+            request.session["user_email"] = existing["email"]
+            request.session["display_name"] = display_name or existing["display_name"] or existing["email"].split("@")[0]
+            return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+
+        # Existing user with password -> redirect to sign in
+        if existing and existing.get("password_hash"):
+            return RedirectResponse(
+                url="/?action=signup&error=exists", status_code=status.HTTP_303_SEE_OTHER
             )
 
+        # New user -> create account with password
         hashed = hash_password(password)
         new_user = await create_user_with_password(
             conn, email=email_clean, password_hash=hashed, display_name=display_name
         )
 
-    user_id = str(new_user["id"])
-    request.session["user_id"] = user_id
-    request.session["user_email"] = new_user["email"]
-    request.session["display_name"] = new_user["display_name"] or new_user["email"].split("@")[0]
+        user_id = str(new_user["id"])
+        request.session["user_id"] = user_id
+        request.session["user_email"] = new_user["email"]
+        request.session["display_name"] = new_user["display_name"] or new_user["email"].split("@")[0]
 
-    return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+        return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @router.get("/logout")

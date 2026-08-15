@@ -16,7 +16,9 @@
         init() {
             const params = new URLSearchParams(window.location.search);
             const err = params.get('error');
-            if (err === 'invalid') this.errorMessage = 'Invalid email or password';
+            if (err === 'notfound') this.errorMessage = 'No account found with this email. Please sign up.';
+            else if (err === 'exists') this.errorMessage = 'Account already exists. Please sign in instead.';
+            else if (err === 'invalid') this.errorMessage = 'Invalid email or password';
             else if (err === 'weak_password') this.errorMessage = 'Password must be at least 8 characters';
             else if (err === 'password_mismatch') this.errorMessage = 'Passwords do not match';
             
@@ -170,11 +172,12 @@
                 <div>
                     <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Email Address</label>
                     <input type="email" name="email" required x-model="email" placeholder="alex@recall.dev" class="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500 transition">
+                    <p class="text-[11px] text-indigo-400 font-medium mt-1.5">First time signing in? Enter your email and create a new password below.</p>
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Password</label>
-                    <input type="password" name="password" required x-model="password" placeholder="Password" class="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500 transition">
+                    <input type="password" name="password" required x-model="password" placeholder="Enter password or create new one" class="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500 transition">
                 </div>
 
                 <button type="submit" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold shadow-lg shadow-indigo-600/30 transition">

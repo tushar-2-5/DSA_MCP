@@ -57,6 +57,22 @@ async def create_user_with_password(
         return await cur.fetchone()
 
 
+async def update_user_password_hash(
+    conn: psycopg.AsyncConnection, user_id: str, password_hash: str, display_name: Optional[str] = None
+) -> None:
+    async with conn.cursor() as cur:
+        if display_name and display_name.strip():
+            await cur.execute(
+                "UPDATE users SET password_hash = %s, display_name = %s WHERE id = %s",
+                (password_hash, display_name.strip(), str(user_id)),
+            )
+        else:
+            await cur.execute(
+                "UPDATE users SET password_hash = %s WHERE id = %s",
+                (password_hash, str(user_id)),
+            )
+
+
 async def create_user(
     conn: psycopg.AsyncConnection, email: str, display_name: Optional[str] = None
 ) -> User:

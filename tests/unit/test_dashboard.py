@@ -44,6 +44,30 @@ def test_login_flow(mock_get_user_with_password, mock_get_db_connection, client)
 
 @patch("web.routes.auth.get_db_connection")
 @patch("web.routes.auth.get_user_with_password_by_email", new_callable=AsyncMock)
+@patch("web.routes.auth.update_user_password_hash", new_callable=AsyncMock)
+def test_login_flow_null_password(mock_update_pass, mock_get_user, mock_get_db, client):
+    mock_conn = AsyncMock()
+    mock_get_db.return_value.__aenter__.return_value = mock_conn
+    mock_get_user.return_value = {
+        "id": "12345678-1234-5678-1234-567812345678",
+        "email": "olduser@example.com",
+        "display_name": "Old User",
+        "password_hash": None,
+    }
+
+    response = client.post(
+        "/login",
+        data={"email": "olduser@example.com", "password": "newpassword123"},
+        follow_redirects=False,
+    )
+    assert response.status_code == 303
+    assert response.headers["location"] == "/dashboard"
+    assert "session" in response.headers.get("set-cookie", "").lower()
+    mock_update_pass.assert_called_once()
+
+
+@patch("web.routes.auth.get_db_connection")
+@patch("web.routes.auth.get_user_with_password_by_email", new_callable=AsyncMock)
 @patch("web.routes.auth.create_user_with_password", new_callable=AsyncMock)
 def test_signup_flow(mock_create_user, mock_get_user, mock_get_db, client):
     mock_conn = AsyncMock()
