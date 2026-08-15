@@ -44,12 +44,6 @@ async def get_problem_context(
             conn, user_id=user_id, query_vector=query_vector, limit=5
         )
 
-    if not matches_raw:
-        return {
-            "matches": [],
-            "note": "No similar past attempts found. Keep practicing to build your history!",
-        }
-
     matches = [
         {
             "attempt_id": m["attempt_id"],
@@ -61,4 +55,42 @@ async def get_problem_context(
         for m in matches_raw
     ]
 
-    return {"matches": matches}
+    total = len(matches_raw)
+    solved = sum(1 for m in matches_raw if m.get("outcome") == "pass")
+    failed = sum(1 for m in matches_raw if m.get("outcome") in ("fail", "partial"))
+    last_outcome = matches_raw[0]["outcome"] if matches_raw else None
+    last_mistake = matches_raw[0]["mistake_summary"] if matches_raw else None
+
+    if total == 0:
+        warning = None
+    elif failed > 0:
+        if last_mistake:
+            warning = (
+                f"⚠️ You've attempted similar problems {total} times — failed {failed} times. "
+                f"Watch out for: {last_mistake}"
+            )
+        else:
+            warning = f"⚠️ You've failed similar problems {failed} times before. Take your time!"
+    elif solved == total:
+        warning = f"✅ Great news! You've solved all {total} similar problems before. You got this!"
+    else:
+        warning = None
+
+    past_attempts = {
+        "total": total,
+        "solved": solved,
+        "failed": failed,
+        "last_outcome": last_outcome,
+        "last_mistake": last_mistake,
+    }
+
+    res = {
+        "matches": matches,
+        "past_attempts": past_attempts,
+        "warning": warning,
+    }
+
+    if not matches_raw:
+        res["note"] = "No similar past attempts found. Keep practicing to build your history!"
+
+    return res

@@ -1,3 +1,4 @@
+from collections import Counter
 from typing import Dict, Any
 from uuid import UUID
 from database.connection import get_db_connection
@@ -21,7 +22,7 @@ async def flag_recurring_mistake(
 
     Returns:
         Dict matching contract:
-        {"flagged": [{"summary": str, "category": str, "distance": float, "occurrences": int}], "checked": True}
+        {"flagged": [...], "checked": True, "summary": str, "tip": str|None}
     """
     try:
         UUID(user_id)
@@ -59,4 +60,27 @@ async def flag_recurring_mistake(
         for m in mistakes_raw
     ]
 
-    return {"flagged": flagged, "checked": True}
+    if not flagged:
+        return {
+            "flagged": [],
+            "checked": True,
+            "summary": "✅ No recurring mistakes detected. Clean code!",
+            "tip": None,
+        }
+
+    n = len(flagged)
+    summary = f"Found {n} recurring mistake pattern{'s' if n > 1 else ''} in your history."
+
+    categories = [m["category"] for m in flagged if m.get("category")]
+    if categories:
+        most_common_category = Counter(categories).most_common(1)[0][0]
+        tip = f"💡 Most common mistake: {most_common_category}. Focus on this pattern."
+    else:
+        tip = None
+
+    return {
+        "flagged": flagged,
+        "checked": True,
+        "summary": summary,
+        "tip": tip,
+    }
