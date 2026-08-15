@@ -61,6 +61,16 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
 
         topic_masteries = await get_user_topic_masteries(conn, user_id)
         if not topic_masteries:
+            from psycopg.rows import dict_row
+            async with conn.cursor(row_factory=dict_row) as cur:
+                await cur.execute("SELECT id AS topic_id, slug FROM topics ORDER BY slug ASC")
+                rows = await cur.fetchall()
+                topic_masteries = [
+                    {"topic_id": str(r["topic_id"]), "slug": r["slug"], "mastery_score": 0.0}
+                    for r in rows
+                ]
+
+        if not topic_masteries:
             duration = round((time.time() - start) * 1000, 2)
             logger.info(f"Tool completed: {tool_name} in {duration}ms")
             return {
@@ -111,6 +121,10 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
         fallback_used = False
 
         for topic in ordered_topics:
+            # Skip micro-topics
+            if topic.get('problem_count', 999) < 5 and topic.get('mastery_score', 0) == 0:
+                continue
+
             topic_id = topic["topic_id"]
             mastery_score = topic["mastery_score"]
             cur_diff_band = get_difficulty_band(mastery_score)

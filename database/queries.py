@@ -304,13 +304,14 @@ async def get_user_mastery_report_rows(
 async def get_user_topic_masteries(
     conn: psycopg.AsyncConnection, user_id: UUID | str
 ) -> List[dict]:
-    """Get topic masteries for all topics in the database for a given user,
-    sorted by mastery_score ascending. Topics without a mastery row default to 0.0.
+    """Get topic masteries for topics with actual practice for a given user,
+    sorted by mastery_score ascending.
     """
     query = """
         SELECT t.id AS topic_id, t.slug, COALESCE(m.mastery_score, 0.0) AS mastery_score
         FROM topics t
         LEFT JOIN mastery m ON t.id = m.topic_id AND m.user_id = %s
+        WHERE m.mastery_score > 0.0
         ORDER BY mastery_score ASC, t.slug ASC
     """
     async with conn.cursor(row_factory=dict_row) as cur:
