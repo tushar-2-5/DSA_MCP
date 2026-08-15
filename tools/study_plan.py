@@ -37,17 +37,38 @@ async def study_plan(user_id: str, target_company: Optional[str] = None) -> str:
 
         company_str = target_company.strip().lower() if target_company else None
 
+        EXCLUDED_DEFAULT_TOPICS = {"bit-manipulation", "greedy", "math", "tries", "strings"}
+        CORE_FOUNDATIONAL_TOPICS = ["arrays-hashing", "trees", "graphs", "linked-list", "binary-search"]
+
+        active_masteries = [m for m in masteries if (m.get("mastery_score") or 0.0) > 0]
+        active_slugs = {m["slug"] for m in active_masteries}
+
         if company_str:
             problems = await get_problems_by_company(conn, company_name=company_str, limit=10)
             if not problems:
                 problems, _ = await get_problems_filtered(conn, company=company_str, limit=10)
         else:
-            # Pick problems from lowest mastery topics
-            weakest_topics = masteries[:3]
-            problems = []
-            for t in weakest_topics:
-                probs, _ = await get_problems_filtered(conn, topic=t["slug"], limit=3)
-                problems.extend(probs)
+            if active_masteries:
+                # Pick problems from user's lowest active mastery topics
+                weakest_topics = active_masteries[:3]
+                problems = []
+                for t in weakest_topics:
+                    probs, _ = await get_problems_filtered(conn, topic=t["slug"], limit=3)
+                    problems.extend(probs)
+            else:
+                # User has no mastery data yet — pick problems from core foundational topics
+                problems = []
+                for topic_slug in CORE_FOUNDATIONAL_TOPICS:
+                    probs, _ = await get_problems_filtered(conn, topic=topic_slug, limit=2)
+                    problems.extend(probs)
+                    if len(problems) >= 10:
+                        break
+
+        # Filter out niche topics unless user has active mastery in them
+        problems = [
+            p for p in problems
+            if p.get("topic_slug") not in EXCLUDED_DEFAULT_TOPICS or p.get("topic_slug") in active_slugs
+        ]
 
     # Format Study Plan Output Markdown
     header_title = f"🎯 DSA Study Plan for {user.display_name or user.email}"
@@ -72,14 +93,12 @@ async def study_plan(user_id: str, target_company: Optional[str] = None) -> str:
             count = p.get("company_count") or (len(p.get("company_tags") or []))
             lines.append(f"{idx}. **[{title}]({url})** (`{diff}`) — *{topic}* (Asked by {count} companies)")
 
-    active_masteries = [m for m in masteries if (m.get("mastery_score") or 0.0) > 0]
-
     lines.extend([
         "",
         "### Topic Mastery Breakdown:",
     ])
     if not active_masteries:
-        lines.append("- Start practicing to build your mastery profile first!")
+        lines.append("- 🚀 No mastery data yet! Log your first attempt to start tracking.")
     else:
         for m in active_masteries[:5]:
             score_pct = int(m.get("mastery_score", 0.0) * 100)
