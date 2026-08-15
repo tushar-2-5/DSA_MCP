@@ -25,10 +25,36 @@ async def get_user_by_email(
     async with conn.cursor(row_factory=dict_row) as cur:
         await cur.execute(
             "SELECT id, email, display_name, created_at FROM users WHERE email = %s",
-            (email.lower(),),
+            (email.lower().strip(),),
         )
         row = await cur.fetchone()
         return User.model_validate(row) if row else None
+
+
+async def get_user_with_password_by_email(
+    conn: psycopg.AsyncConnection, email: str
+) -> Optional[dict]:
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(
+            "SELECT id, email, display_name, password_hash, created_at FROM users WHERE email = %s",
+            (email.lower().strip(),),
+        )
+        return await cur.fetchone()
+
+
+async def create_user_with_password(
+    conn: psycopg.AsyncConnection, email: str, password_hash: str, display_name: Optional[str] = None
+) -> dict:
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(
+            """
+            INSERT INTO users (email, display_name, password_hash)
+            VALUES (%s, %s, %s)
+            RETURNING id, email, display_name, created_at
+            """,
+            (email.lower().strip(), display_name, password_hash),
+        )
+        return await cur.fetchone()
 
 
 async def create_user(

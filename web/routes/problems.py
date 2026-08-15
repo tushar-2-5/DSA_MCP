@@ -13,6 +13,8 @@ from database.queries import (
 from psycopg.rows import dict_row
 from tools.log_attempt import log_attempt
 
+from core.logging import logger
+
 router = APIRouter()
 
 
@@ -20,7 +22,7 @@ router = APIRouter()
 async def render_problems(request: Request):
     user = await get_current_user(request)
     if not user:
-        return RedirectResponse(url="/?action=login", status_code=302)
+        return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
 
     templates = request.app.state.templates
     return templates.TemplateResponse(request=request, name="problems.html", context={"user": user})
@@ -56,6 +58,9 @@ async def api_get_problems(
             "acceptance_rate": p.get("acceptance_rate", 0.0),
             "leetcode_id": p.get("leetcode_id", 0),
         })
+
+    filter_str = f"topic={topic},difficulty={difficulty},company={company},search={search}"
+    logger.info("problems_fetched", filter=filter_str, count=len(results))
 
     return {"problems": results, "total": len(results)}
 

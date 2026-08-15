@@ -19,18 +19,45 @@ def test_landing_page_loads(client):
     assert "Vector Recommendations" in response.text
 
 
-@patch("web.routes.auth.get_or_create_user", new_callable=AsyncMock)
-def test_login_flow(mock_get_or_create_user, client):
-    mock_get_or_create_user.return_value = {
-        "user_id": "12345678-1234-5678-1234-567812345678",
+@patch("web.routes.auth.get_db_connection")
+@patch("web.routes.auth.get_user_with_password_by_email", new_callable=AsyncMock)
+def test_login_flow(mock_get_user_with_password, mock_get_db_connection, client):
+    mock_conn = AsyncMock()
+    mock_get_db_connection.return_value.__aenter__.return_value = mock_conn
+    mock_get_user_with_password.return_value = {
+        "id": "12345678-1234-5678-1234-567812345678",
         "email": "test@example.com",
         "display_name": "Test User",
-        "status": "created",
+        "password_hash": "$2b$04$i8/yqC9J5b8wV6X2e2J2e.wKzV2c9U1g6Z8Q7R6S5T4U3V2W1X0Y",
+    }
+
+    with patch("web.routes.auth.verify_password", return_value=True):
+        response = client.post(
+            "/login",
+            data={"email": "test@example.com", "password": "secretpassword"},
+            follow_redirects=False,
+        )
+        assert response.status_code == 303
+        assert response.headers["location"] == "/dashboard"
+        assert "session" in response.headers.get("set-cookie", "").lower()
+
+
+@patch("web.routes.auth.get_db_connection")
+@patch("web.routes.auth.get_user_with_password_by_email", new_callable=AsyncMock)
+@patch("web.routes.auth.create_user_with_password", new_callable=AsyncMock)
+def test_signup_flow(mock_create_user, mock_get_user, mock_get_db, client):
+    mock_conn = AsyncMock()
+    mock_get_db.return_value.__aenter__.return_value = mock_conn
+    mock_get_user.return_value = None
+    mock_create_user.return_value = {
+        "id": "12345678-1234-5678-1234-567812345678",
+        "email": "newuser@example.com",
+        "display_name": "New User",
     }
 
     response = client.post(
-        "/login",
-        data={"email": "test@example.com", "display_name": "Test User"},
+        "/signup",
+        data={"display_name": "New User", "email": "newuser@example.com", "password": "newpassword123"},
         follow_redirects=False,
     )
     assert response.status_code == 303

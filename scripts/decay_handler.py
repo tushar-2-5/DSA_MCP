@@ -32,7 +32,7 @@ async def run_decay():
                 if days_elapsed <= 0:
                     continue
                 decayed = float(mastery_score) * (0.5 ** (days_elapsed / 14))
-                decayed = max(0.0, min(1.0, decayed))
+                decayed = max(0.05, min(1.0, decayed))
                 await cur.execute(
                     "UPDATE mastery SET mastery_score = %s WHERE user_id = %s AND topic_id = %s",
                     (decayed, str(user_id), str(topic_id))

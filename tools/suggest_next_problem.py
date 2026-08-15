@@ -11,8 +11,7 @@ from database.queries import (
     find_similar_unattempted_problems,
 )
 from memory.recommendation import pick_weak_topic, difficulty_band
-
-logger = logging.getLogger(__name__)
+from core.logging import logger
 
 
 async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
@@ -77,8 +76,7 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
             )
             if similar_problems:
                 top_cand = similar_problems[0]
-                duration = round((time.time() - start) * 1000, 2)
-                logger.info(f"Tool completed: {tool_name} in {duration}ms")
+                logger.info("suggestion_served", user_id=str(user_id), topic=chosen_slug)
                 return {
                     "recommendation": {
                         "id": top_cand["id"],
@@ -144,14 +142,13 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
                 f"Target difficulty band {bands} had no unattempted problems, so fell back to problem with difficulty '{found_problem.difficulty}'."
             )
 
-    duration = round((time.time() - start) * 1000, 2)
-    logger.info(f"Tool completed: {tool_name} in {duration}ms")
-
-    return {
+    res = {
         "recommendation": rec,
         "targeted_topic": targeted_slug,
         "mastery_score": mastery_score,
         "reason": reason,
     }
+    logger.info("suggestion_served", user_id=str(user_id), topic=targeted_slug)
+    return res
 
 

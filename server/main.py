@@ -9,6 +9,7 @@ from mcp.server.fastmcp import FastMCP
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import JSONResponse
 
+from core.logging import setup_logging
 from database.connection import close_pool, get_pool
 from tools.flag_recurring_mistake import flag_recurring_mistake
 from tools.get_mastery_report import get_mastery_report
@@ -20,6 +21,7 @@ from tools.suggest_next_problem import suggest_next_problem
 from web.app import app as web_app
 from web.middleware.logging_middleware import RequestLoggingMiddleware
 
+setup_logging()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("recall_server")
 

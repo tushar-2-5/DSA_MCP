@@ -7,6 +7,10 @@ from tools.suggest_next_problem import suggest_next_problem
 from database.connection import get_db_connection
 from database.queries import get_user_by_email, get_problems_by_company
 
+from core.logging import logger
+
+from web.auth import get_current_user, require_login
+
 router = APIRouter()
 
 
@@ -14,7 +18,10 @@ router = APIRouter()
 async def render_dashboard(request: Request):
     user = await get_current_user(request)
     if not user:
-        return RedirectResponse(url="/?action=login", status_code=302)
+        return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
+
+    user_id = str(user.get("user_id") or user.get("id") or "guest")
+    logger.info("dashboard_loaded", user_id=user_id)
 
     templates = request.app.state.templates
     return templates.TemplateResponse(request=request, name="dashboard.html", context={"user": user})

@@ -21,7 +21,6 @@ async def get_current_user(request: Request) -> Optional[Dict[str, Any]]:
                     "display_name": user.display_name or user.email.split("@")[0],
                 }
     except Exception:
-        # Fallback to session data if db query fails
         pass
 
     email = request.session.get("user_email")
@@ -35,12 +34,18 @@ async def get_current_user(request: Request) -> Optional[Dict[str, Any]]:
     return None
 
 
-async def require_auth(request: Request) -> Dict[str, Any]:
+async def require_login(request: Request) -> Dict[str, Any]:
     """Dependency / helper to enforce authentication on protected routes."""
     user = await get_current_user(request)
     if not user:
+        if request.url.path.startswith("/api"):
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
         raise HTTPException(
             status_code=status.HTTP_303_SEE_OTHER,
             headers={"Location": "/login"},
         )
+    request.state.user = user
     return user
+
+
+require_auth = require_login

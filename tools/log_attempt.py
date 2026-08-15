@@ -15,8 +15,7 @@ from database.queries import (
 )
 from memory.mastery import decayed_mastery, update_base_score
 from embeddings.gemini_client import GeminiEmbedder
-
-logger = logging.getLogger(__name__)
+from core.logging import logger
 
 
 async def log_attempt(
@@ -136,11 +135,10 @@ async def log_attempt(
                 user_id=user_id,
                 topic_id=problem.topic_id,
                 mastery_score=new_score,
-                last_practiced_at=now,
             )
 
     duration = round((time.time() - start) * 1000, 2)
-    logger.info(f"Tool completed: {tool_name} in {duration}ms")
+    logger.info("attempt_logged", user_id=str(user_id), problem_slug=getattr(problem, "title", str(problem_id)), outcome=outcome)
 
     return {
         "attempt_id": str(attempt.id),
