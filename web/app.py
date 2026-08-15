@@ -23,6 +23,7 @@ from web.routes import auth as auth_routes
 from web.routes import dashboard as dashboard_routes
 from web.routes import problems as problems_routes
 from web.routes import progress as progress_routes
+from web.routes import history as history_routes
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("recall_web")
@@ -62,6 +63,7 @@ app.include_router(auth_routes.router)
 app.include_router(dashboard_routes.router)
 app.include_router(problems_routes.router)
 app.include_router(progress_routes.router)
+app.include_router(history_routes.router)
 
 
 @app.get("/", response_class=HTMLResponse)

@@ -805,6 +805,59 @@ async def get_user_streak(conn: psycopg.AsyncConnection, user_id: str) -> dict:
         }
 
 
+async def get_user_attempt_history(
+    conn: psycopg.AsyncConnection, user_id: str, limit: int = 100
+) -> List[dict]:
+    """Fetch detailed attempt history for a user ordered by created_at DESC."""
+    query = """
+        SELECT 
+            a.id AS id,
+            a.problem_id,
+            p.title,
+            p.difficulty,
+            p.url,
+            t.slug AS topic_slug,
+            a.outcome,
+            COALESCE(a.time_taken_seconds, 0) AS time_taken_seconds,
+            a.complexity_achieved,
+            COALESCE(m.summary, '') AS notes,
+            a.created_at
+        FROM attempts a
+        JOIN problems p ON a.problem_id = p.id
+        LEFT JOIN topics t ON p.topic_id = t.id
+        LEFT JOIN mistakes m ON m.attempt_id = a.id
+        WHERE a.user_id = %s
+        ORDER BY a.created_at DESC
+        LIMIT %s
+    """
+    import math
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(query, (str(user_id), limit))
+        rows = await cur.fetchall()
+        results = []
+        for r in rows:
+            created_at_val = r["created_at"]
+            sec = r["time_taken_seconds"] or 0
+            mins = max(1, math.ceil(sec / 60)) if sec > 0 else 0
+            diff = (r["difficulty"] or "Medium").capitalize()
+            results.append({
+                "id": str(r["id"]),
+                "problem_id": str(r["problem_id"]),
+                "title": r["title"],
+                "difficulty": diff,
+                "topic_slug": r["topic_slug"] or "",
+                "url": r["url"] or f"https://leetcode.com/problemset/all/?search={r['title'].replace(' ', '%20')}",
+                "outcome": r["outcome"],
+                "time_taken_seconds": sec,
+                "time_taken_mins": mins,
+                "complexity_achieved": r["complexity_achieved"] or "N/A",
+                "notes": r["notes"],
+                "created_at": created_at_val.isoformat() if hasattr(created_at_val, "isoformat") else str(created_at_val),
+            })
+        return results
+
+
+
 
 
 

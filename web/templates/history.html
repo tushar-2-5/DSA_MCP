@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block title %}Attempt History — Recall{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+     x-data="{
+        attempts: [],
+        loading: true,
+        
+        async init() {
+            await this.fetchHistory();
+        },
+
+        async fetchHistory() {
+            this.loading = true;
+            try {
+                const res = await fetch('/api/history');
+                if (res.ok) {
+                    const data = await res.json();
+                    this.attempts = Array.isArray(data) ? data : (data.attempts || []);
+                }
+            } catch (e) {
+                console.error(e);
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        get groupedHistory() {
+            const groups = {};
+            for (const a of this.attempts) {
+                const key = a.problem_id || a.title;
+                if (!groups[key]) {
+                    groups[key] = {
+                        problem_id: key,
+                        title: a.title,
+                        difficulty: a.difficulty || 'Medium',
+                        url: a.url,
+                        topic_slug: a.topic_slug,
+                        attempts: [],
+                        solvedCount: 0,
+                        failedCount: 0,
+                        partialCount: 0
+                    };
+                }
+                groups[key].attempts.push(a);
+                if (a.outcome === 'pass') groups[key].solvedCount++;
+                else if (a.outcome === 'fail') groups[key].failedCount++;
+                else groups[key].partialCount++;
+            }
+            return Object.values(groups);
+        },
+
+        formatDate(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+     }">
+
+    <!-- Page Header -->
+    <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold text-white tracking-tight">Attempt History</h1>
+            <p class="text-gray-400 text-sm mt-1">Review all your past solution attempts, time metrics, and mistake notes grouped by problem.</p>
+        </div>
+        <div class="text-xs font-semibold text-gray-400 bg-gray-950/60 px-4 py-2 rounded-xl border border-gray-800">
+            Total Attempts: <span class="text-indigo-400 font-bold" x-text="attempts.length"></span>
+        </div>
+    </div>
+
+    <!-- Loading state -->
+    <template x-if="loading">
+        <div class="space-y-6">
+            <template x-for="i in 3">
+                <div class="p-6 rounded-2xl bg-gray-950/40 border border-gray-800 animate-pulse space-y-4">
+                    <div class="h-5 bg-gray-800 rounded w-1/3"></div>
+                    <div class="h-4 bg-gray-800 rounded w-2/3"></div>
+                </div>
+            </template>
+        </div>
+    </template>
+
+    <!-- Empty state -->
+    <template x-if="!loading && attempts.length === 0">
+        <div class="text-center py-16 bg-gray-950/40 border border-gray-800 rounded-3xl">
+            <div class="text-4xl mb-3">📝</div>
+            <h3 class="text-lg font-bold text-white mb-1">No attempts yet. Start practicing!</h3>
+            <p class="text-gray-400 text-sm mb-6">Log your first problem submission on the dashboard or problems page.</p>
+            <a href="/problems" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition">
+                Browse Problems
+            </a>
+        </div>
+    </template>
+
+    <!-- Grouped Attempts List -->
+    <template x-if="!loading && attempts.length > 0">
+        <div class="space-y-8">
+            <template x-for="group in groupedHistory" :key="group.problem_id">
+                <div class="bg-gray-950/60 border border-gray-800 rounded-2xl p-6 overflow-hidden">
+                    <!-- Group Header Summary -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-gray-800">
+                        <div>
+                            <div class="flex items-center space-x-3 mb-1">
+                                <a :href="group.url" target="_blank" class="text-lg font-bold text-white hover:text-indigo-400 transition flex items-center space-x-1.5">
+                                    <span x-text="group.title"></span>
+                                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M14 4h6m0 0v6m0-6L10 14"/>
+                                    </svg>
+                                </a>
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase"
+                                      :class="{
+                                        'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30': (group.difficulty || '').toLowerCase() === 'easy',
+                                        'bg-amber-500/20 text-amber-400 border border-amber-500/30': (group.difficulty || '').toLowerCase() === 'medium',
+                                        'bg-rose-500/20 text-rose-400 border border-rose-500/30': (group.difficulty || '').toLowerCase() === 'hard'
+                                      }"
+                                      x-text="group.difficulty">
+                                </span>
+                            </div>
+                            <!-- Summary text -->
+                            <div class="text-xs text-gray-400 font-medium">
+                                You attempted <span class="text-gray-200 font-bold" x-text="group.title"></span> 
+                                <span class="text-indigo-400 font-bold" x-text="`${group.attempts.length} ${group.attempts.length === 1 ? 'time' : 'times'}`"></span> 
+                                — <span class="text-emerald-400 font-bold" x-text="`${group.solvedCount} solved`"></span>, 
+                                <span class="text-rose-400 font-bold" x-text="`${group.failedCount} failed`"></span>
+                                <template x-if="group.partialCount > 0">
+                                    <span>, <span class="text-amber-400 font-bold" x-text="`${group.partialCount} partial`"></span></span>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attempts Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="text-gray-500 font-semibold uppercase tracking-wider border-b border-gray-900">
+                                    <th class="pb-3 px-2">Outcome</th>
+                                    <th class="pb-3 px-2">Time Taken</th>
+                                    <th class="pb-3 px-2">Complexity</th>
+                                    <th class="pb-3 px-2">Mistake / Notes</th>
+                                    <th class="pb-3 px-2 text-right">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-900">
+                                <template x-for="item in group.attempts" :key="item.id">
+                                    <tr class="hover:bg-gray-900/50 transition">
+                                        <!-- Outcome -->
+                                        <td class="py-3 px-2">
+                                            <template x-if="item.outcome === 'pass'">
+                                                <span class="inline-flex items-center space-x-1 text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-1 rounded-md border border-emerald-500/20">
+                                                    <span>✅</span>
+                                                    <span>Solved</span>
+                                                </span>
+                                            </template>
+                                            <template x-if="item.outcome === 'partial'">
+                                                <span class="inline-flex items-center space-x-1 text-amber-400 font-semibold bg-amber-500/10 px-2 py-1 rounded-md border border-amber-500/20">
+                                                    <span>💡</span>
+                                                    <span>Partial</span>
+                                                </span>
+                                            </template>
+                                            <template x-if="item.outcome === 'fail'">
+                                                <span class="inline-flex items-center space-x-1 text-rose-400 font-semibold bg-rose-500/10 px-2 py-1 rounded-md border border-rose-500/20">
+                                                    <span>❌</span>
+                                                    <span>Failed</span>
+                                                </span>
+                                            </template>
+                                        </td>
+                                        <!-- Time Taken -->
+                                        <td class="py-3 px-2 text-gray-300 font-medium" x-text="item.time_taken_mins ? `${item.time_taken_mins} mins` : 'N/A'"></td>
+                                        <!-- Complexity -->
+                                        <td class="py-3 px-2 text-gray-300 font-mono" x-text="item.complexity_achieved || 'N/A'"></td>
+                                        <!-- Notes -->
+                                        <td class="py-3 px-2 text-gray-400 max-w-xs truncate" x-text="item.notes || 'No notes logged.'"></td>
+                                        <!-- Date -->
+                                        <td class="py-3 px-2 text-right text-gray-400" x-text="formatDate(item.created_at)"></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </template>
+</div>
+{% endblock %}

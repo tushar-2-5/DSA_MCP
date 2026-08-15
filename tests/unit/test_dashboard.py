@@ -218,4 +218,40 @@ def test_api_streak(mock_get_user_streak, mock_get_db_connection, client):
         app.dependency_overrides.pop(require_login, None)
 
 
+@patch("web.routes.history.get_db_connection")
+@patch("web.routes.history.get_user_attempt_history", new_callable=AsyncMock)
+def test_api_history(mock_get_history, mock_db_conn, client):
+    from web.auth import require_login
+    mock_conn = AsyncMock()
+    mock_db_conn.return_value.__aenter__.return_value = mock_conn
+    mock_user = {"user_id": "12345678-1234-5678-1234-567812345678"}
+    app.dependency_overrides[require_login] = lambda: mock_user
+    mock_get_history.return_value = [
+        {
+            "id": "att1",
+            "problem_id": "p1",
+            "title": "Two Sum",
+            "difficulty": "Easy",
+            "topic_slug": "arrays-hashing",
+            "url": "https://leetcode.com/problems/two-sum",
+            "outcome": "pass",
+            "time_taken_seconds": 900,
+            "time_taken_mins": 15,
+            "complexity_achieved": "O(N)",
+            "notes": "",
+            "created_at": "2026-08-15T10:00:00Z",
+        }
+    ]
+    try:
+        res = client.get("/api/history")
+        assert res.status_code == 200
+        data = res.json()
+        assert isinstance(data, list)
+        assert len(data) == 1
+        assert data[0]["title"] == "Two Sum"
+    finally:
+        app.dependency_overrides.pop(require_login, None)
+
+
+
 
