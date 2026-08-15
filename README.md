@@ -16,28 +16,14 @@ Recall bridges this gap by introducing **agentic memory** for technical intervie
 
 ## Architecture
 
-```
-+------------------------------------------------------------------+
-|                        IDE / Coding Agent                        |
-|                 (Claude Code / Cursor / Windsurf)                |
-+------------------------------------------------------------------+
-                                 |
-                        MCP Protocol (stdio)
-                                 |
-                                 v
-+------------------------------------------------------------------+
-|                    Recall MCP Server (Python)                    |
-|        FastMCP · Pydantic v2 Validation · Decayed Scoring       |
-+------------------------------------------------------------------+
-              /                  |                  \
-             v                   v                   v
-+--------------------+   +---------------+   +------------------+
-|    CockroachDB     |   | Google Gemini |   |  [Planned] AWS   |
-|     Serverless     |   |   AI Studio   |   | Lambda Scheduler |
-| Structured Tables  |   |  text-embed-  |   |  Nightly Decay   |
-| + HNSW Vector Index|   | 004 (768-dim) |   |   Cron Engine    |
-+--------------------+   +---------------+   +------------------+
-```
+![Recall System Architecture](docs/architecture.svg)
+
+The Recall system consists of 4 layers:
+- **Client Layer**: Cursor/Claude Desktop (MCP stdio), VS Code Extension (REST), Web Browser (HTTPS)
+- **Server Layer**: FastMCP (8 tools) + FastAPI Dashboard on Railway with rate limiting
+- **Data Layer**: CockroachDB with 3,359 company-tagged problems, 768-dim HNSW vector embeddings
+- **AI Layer**: Google Gemini text-embedding-004 for mistake pattern detection and smart recommendations
+- **Automation**: GitHub Actions nightly decay cron (midnight UTC)
 
 ### MCP Tools API
 
