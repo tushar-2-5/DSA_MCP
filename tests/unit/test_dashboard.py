@@ -119,8 +119,11 @@ def test_api_suggest(mock_suggest_next_problem, client):
 @patch("web.routes.problems.get_db_connection")
 @patch("web.routes.problems.get_problems_filtered", new_callable=AsyncMock)
 def test_api_problems(mock_get_problems_filtered, mock_get_db_connection, client):
+    from web.auth import require_login
     mock_conn = AsyncMock()
     mock_get_db_connection.return_value.__aenter__.return_value = mock_conn
+    mock_user = {"user_id": "12345678-1234-5678-1234-567812345678"}
+    app.dependency_overrides[require_login] = lambda: mock_user
     mock_get_problems_filtered.return_value = (
         [
             {
@@ -138,16 +141,19 @@ def test_api_problems(mock_get_problems_filtered, mock_get_db_connection, client
         ],
         1,
     )
-    response = client.get("/api/problems?search=Two&page=1&limit=50")
-    assert response.status_code == 200
-    data = response.json()
-    assert data["total"] == 1
-    assert data["page"] == 1
-    assert data["limit"] == 50
-    assert data["total_pages"] == 1
-    assert data["has_next"] is False
-    assert data["has_prev"] is False
-    assert data["problems"][0]["title"] == "Two Sum"
+    try:
+        response = client.get("/api/problems?search=Two&page=1&limit=50")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["total"] == 1
+        assert data["page"] == 1
+        assert data["limit"] == 50
+        assert data["total_pages"] == 1
+        assert data["has_next"] is False
+        assert data["has_prev"] is False
+        assert data["problems"][0]["title"] == "Two Sum"
+    finally:
+        app.dependency_overrides.pop(require_login, None)
 
 
 @patch("tools.study_plan.study_plan", new_callable=AsyncMock)
@@ -201,10 +207,15 @@ def test_api_streak(mock_get_user_streak, mock_get_db_connection, client):
         res = client.get("/api/streak")
         assert res.status_code == 200
         data = res.json()
+        assert "current_streak" in data
+        assert "longest_streak" in data
+        assert "practiced_today" in data
+        assert "last_practiced" in data
         assert data["current_streak"] == 3
         assert data["longest_streak"] == 5
         assert data["practiced_today"] is True
     finally:
         app.dependency_overrides.pop(require_login, None)
+
 
 

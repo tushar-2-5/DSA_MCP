@@ -15,11 +15,7 @@ router = APIRouter()
 
 
 @router.get("/dashboard", response_class=HTMLResponse)
-async def render_dashboard(request: Request):
-    user = await get_current_user(request)
-    if not user:
-        return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
-
+async def render_dashboard(request: Request, user=Depends(require_login)):
     user_id = str(user.get("user_id") or user.get("id") or "guest")
     logger.info("dashboard_loaded", user_id=user_id)
 

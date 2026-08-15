@@ -1,8 +1,8 @@
 import math
 from typing import Optional
-from fastapi import APIRouter, Request, HTTPException, status, Body
+from fastapi import APIRouter, Request, HTTPException, status, Body, Depends
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
-from web.auth import get_current_user
+from web.auth import get_current_user, require_login
 from web.rate_limit import limiter
 from database.connection import get_db_connection
 from database.queries import (
@@ -20,11 +20,7 @@ router = APIRouter()
 
 
 @router.get("/problems", response_class=HTMLResponse)
-async def render_problems(request: Request):
-    user = await get_current_user(request)
-    if not user:
-        return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
-
+async def render_problems(request: Request, user=Depends(require_login)):
     templates = request.app.state.templates
     return templates.TemplateResponse(request=request, name="problems.html", context={"user": user})
 
@@ -33,6 +29,7 @@ async def render_problems(request: Request):
 @limiter.limit("60/minute")
 async def api_get_problems(
     request: Request,
+    user=Depends(require_login),
     topic: Optional[str] = None,
     difficulty: Optional[str] = None,
     company: Optional[str] = None,
