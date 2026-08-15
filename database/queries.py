@@ -646,11 +646,14 @@ async def get_problems_by_company(
                    t.slug as topic_slug
             FROM problems p
             LEFT JOIN topics t ON p.topic_id = t.id
-            WHERE %s::text = ANY(p.company_tags)
+            WHERE EXISTS (
+                SELECT 1 FROM unnest(p.company_tags) AS tag
+                WHERE LOWER(tag) = LOWER(%s)
+            )
             ORDER BY p.company_count DESC, p.acceptance_rate DESC
             LIMIT %s
             """,
-            (company_name.lower().strip(), limit),
+            (company_name.strip(), limit),
         )
         return await cur.fetchall()
 

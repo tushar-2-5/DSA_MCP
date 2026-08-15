@@ -72,14 +72,19 @@ async def study_plan(user_id: str, target_company: Optional[str] = None) -> str:
             count = p.get("company_count") or (len(p.get("company_tags") or []))
             lines.append(f"{idx}. **[{title}]({url})** (`{diff}`) — *{topic}* (Asked by {count} companies)")
 
+    active_masteries = [m for m in masteries if (m.get("mastery_score") or 0.0) > 0]
+
     lines.extend([
         "",
         "### Topic Mastery Breakdown:",
     ])
-    for m in masteries[:5]:
-        score_pct = int(m.get("mastery_score", 0.0) * 100)
-        slug_name = m.get("slug", "").replace("-", " ").title()
-        lines.append(f"- **{slug_name}**: {score_pct}% mastery")
+    if not active_masteries:
+        lines.append("- Start practicing to build your mastery profile first!")
+    else:
+        for m in active_masteries[:5]:
+            score_pct = int(m.get("mastery_score", 0.0) * 100)
+            slug_name = m.get("slug", "").replace("-", " ").title()
+            lines.append(f"- **{slug_name}**: {score_pct}% mastery")
 
     if company_str:
         tip = COMPANY_TIPS.get(company_str, f"{company_str.title()} Tip: Practice explaining your thought process clearly and analyzing time/space complexity out loud.")

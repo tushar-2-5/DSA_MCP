@@ -138,10 +138,25 @@ async def api_ask(request: Request, user=Depends(require_login)):
     elif any(word in question for word in 
         ["mistake", "error", "bug", "recurring", "flag", 
          "pattern", "keep making", "always fail"]):
-        result = await flag_recurring_mistake(
+        mistakes_data = await flag_recurring_mistake(
             user_id=user_id,
             code_in_progress="# Analyze my recurring mistake patterns"
         )
+        flagged = mistakes_data.get("flagged", [])
+        summary = mistakes_data.get("summary", "")
+        tip = mistakes_data.get("tip", "")
+
+        if not flagged:
+            result = f"### ⚠️ Recurring Mistakes\n✅ No recurring mistakes detected. Clean code!"
+        else:
+            lines = "\n".join([
+                f"- **{m['summary']}** ({m['category']}) — "
+                f"seen {m['occurrences']} time(s)"
+                for m in flagged
+            ])
+            result = f"### ⚠️ Recurring Mistakes\n{lines}\n"
+            if tip:
+                result += f"\n💡 {tip}"
     
     # CASE 7: Default — always show mastery + recommendation
     else:
