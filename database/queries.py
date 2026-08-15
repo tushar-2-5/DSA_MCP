@@ -857,6 +857,107 @@ async def get_user_attempt_history(
         return results
 
 
+async def get_topic_detail(
+    conn: psycopg.AsyncConnection, user_id: str, topic_slug: str
+) -> dict:
+    """Fetch topic details, user mastery score, and problem list with user attempt metrics."""
+    topic_query = """
+        SELECT t.id AS topic_id, t.slug, t.display_name,
+               COALESCE(m.mastery_score, 0.0) AS mastery_score
+        FROM topics t
+        LEFT JOIN mastery m ON m.topic_id = t.id AND m.user_id = %s
+        WHERE LOWER(t.slug) = %s
+    """
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(topic_query, (str(user_id), topic_slug.lower().strip()))
+        topic_row = await cur.fetchone()
+
+        if not topic_row:
+            display_name = topic_slug.replace("-", " ").title()
+            return {
+                "topic": display_name,
+                "mastery_score": 0.0,
+                "total_problems": 0,
+                "attempted": 0,
+                "solved": 0,
+                "problems": [],
+            }
+
+        topic_id = topic_row["topic_id"]
+        topic_name = topic_row["display_name"] or topic_slug.replace("-", " ").title()
+        mastery_score = float(topic_row["mastery_score"] or 0.0)
+
+        problems_query = """
+            SELECT 
+                p.id,
+                p.title,
+                p.difficulty,
+                p.url,
+                COUNT(a.id) AS your_attempts,
+                COUNT(CASE WHEN a.outcome = 'pass' THEN 1 END) AS pass_count,
+                COUNT(CASE WHEN a.outcome = 'partial' THEN 1 END) AS partial_count,
+                MAX(a.created_at) AS last_attempted
+            FROM problems p
+            LEFT JOIN attempts a ON a.problem_id = p.id AND a.user_id = %s
+            WHERE p.topic_id = %s
+            GROUP BY p.id, p.title, p.difficulty, p.url
+            ORDER BY (COUNT(a.id) > 0) DESC, p.title ASC
+        """
+        await cur.execute(problems_query, (str(user_id), str(topic_id)))
+        prob_rows = await cur.fetchall()
+
+        total_problems = len(prob_rows)
+        attempted_count = 0
+        solved_count = 0
+        problems_list = []
+
+        for pr in prob_rows:
+            attempts_cnt = pr["your_attempts"] or 0
+            pass_cnt = pr["pass_count"] or 0
+            part_cnt = pr["partial_count"] or 0
+            last_att = pr["last_attempted"]
+
+            if attempts_cnt > 0:
+                attempted_count += 1
+            if pass_cnt > 0:
+                solved_count += 1
+                best_outcome = "solved"
+            elif part_cnt > 0:
+                best_outcome = "partial"
+            elif attempts_cnt > 0:
+                best_outcome = "failed"
+            else:
+                best_outcome = None
+
+            diff_str = (pr["difficulty"] or "Medium").capitalize()
+            url_str = pr["url"] or f"https://leetcode.com/problemset/all/?search={pr['title'].replace(' ', '%20')}"
+            last_att_str = (
+                last_att.strftime("%Y-%m-%d")
+                if (last_att and hasattr(last_att, "strftime"))
+                else (str(last_att) if last_att else None)
+            )
+
+            problems_list.append({
+                "id": str(pr["id"]),
+                "title": pr["title"],
+                "difficulty": diff_str,
+                "url": url_str,
+                "your_attempts": attempts_cnt,
+                "best_outcome": best_outcome,
+                "last_attempted": last_att_str,
+            })
+
+        return {
+            "topic": topic_name,
+            "mastery_score": round(mastery_score, 2),
+            "total_problems": total_problems,
+            "attempted": attempted_count,
+            "solved": solved_count,
+            "problems": problems_list,
+        }
+
+
+
 
 
 

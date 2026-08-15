@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}{{ topic_slug | replace('-', ' ') | title }} — Topic Deep Dive{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+     x-data="{
+        topicSlug: '{{ topic_slug }}',
+        topicData: {
+            topic: '{{ topic_slug | replace('-', ' ') | title }}',
+            mastery_score: 0.0,
+            total_problems: 0,
+            attempted: 0,
+            solved: 0,
+            problems: []
+        },
+        loading: true,
+
+        async init() {
+            await this.fetchTopicDetail();
+        },
+
+        async fetchTopicDetail() {
+            this.loading = true;
+            try {
+                const res = await fetch(`/api/topic/${this.topicSlug}`);
+                if (res.ok) {
+                    this.topicData = await res.json();
+                }
+            } catch (e) {
+                console.error(e);
+            } finally {
+                this.loading = false;
+            }
+        }
+     }">
+
+    <!-- Navigation Back Link -->
+    <div class="mb-6">
+        <a href="/dashboard" class="inline-flex items-center space-x-2 text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            <span>Back to Dashboard</span>
+        </a>
+    </div>
+
+    <!-- Loading State -->
+    <template x-if="loading">
+        <div class="space-y-6">
+            <div class="p-8 rounded-3xl bg-gray-950/40 border border-gray-800 animate-pulse space-y-4">
+                <div class="h-8 bg-gray-800 rounded w-1/3"></div>
+                <div class="h-4 bg-gray-800 rounded w-2/3"></div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Main Content -->
+    <template x-if="!loading">
+        <div class="space-y-8">
+            <!-- Header Card -->
+            <div class="p-8 rounded-3xl bg-gray-950/60 border border-gray-800 space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div>
+                        <div class="text-xs font-semibold text-indigo-400 uppercase tracking-widest mb-1">Topic Deep Dive</div>
+                        <h1 class="text-3xl font-extrabold text-white tracking-tight" x-text="topicData.topic"></h1>
+                    </div>
+                    <!-- Mastery Score Gauge -->
+                    <div class="w-full md:w-72 bg-gray-900 border border-gray-800 p-4 rounded-2xl">
+                        <div class="flex items-center justify-between text-xs font-bold mb-2">
+                            <span class="text-gray-400">Mastery Score</span>
+                            <span :class="{
+                                'text-rose-400': topicData.mastery_score < 0.3,
+                                'text-amber-400': topicData.mastery_score >= 0.3 && topicData.mastery_score < 0.7,
+                                'text-emerald-400': topicData.mastery_score >= 0.7
+                            }" x-text="`${Math.round(topicData.mastery_score * 100)}%`"></span>
+                        </div>
+                        <div class="w-full h-3 bg-gray-800 rounded-full overflow-hidden">
+                            <div class="h-full transition-all duration-500 rounded-full"
+                                 :style="`width: ${Math.round(topicData.mastery_score * 100)}%`"
+                                 :class="{
+                                    'bg-rose-500': topicData.mastery_score < 0.3,
+                                    'bg-amber-500': topicData.mastery_score >= 0.3 && topicData.mastery_score < 0.7,
+                                    'bg-emerald-500': topicData.mastery_score >= 0.7
+                                 }">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-gray-900">
+                    <div class="p-4 rounded-2xl bg-gray-900/50 border border-gray-800 text-center">
+                        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Total Problems</div>
+                        <div class="text-2xl font-black text-white" x-text="topicData.total_problems"></div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-gray-900/50 border border-gray-800 text-center">
+                        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Attempted</div>
+                        <div class="text-2xl font-black text-amber-400" x-text="topicData.attempted"></div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-gray-900/50 border border-gray-800 text-center">
+                        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Solved</div>
+                        <div class="text-2xl font-black text-emerald-400" x-text="topicData.solved"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problems Table Card -->
+            <div class="p-6 rounded-3xl bg-gray-950/60 border border-gray-800 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-bold text-white">Problems in Topic</h2>
+                    <span class="text-xs text-gray-400 font-semibold" x-text="`${topicData.problems.length} problems`"></span>
+                </div>
+
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr class="text-gray-500 font-semibold uppercase tracking-wider text-xs border-b border-gray-900">
+                                <th class="pb-3 px-3">Title</th>
+                                <th class="pb-3 px-3">Difficulty</th>
+                                <th class="pb-3 px-3 text-center">Your Attempts</th>
+                                <th class="pb-3 px-3">Best Outcome</th>
+                                <th class="pb-3 px-3 text-right">Last Attempted</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-900 text-xs">
+                            <template x-for="p in topicData.problems" :key="p.id">
+                                <tr class="hover:bg-gray-900/50 transition">
+                                    <!-- Title -->
+                                    <td class="py-3.5 px-3">
+                                        <a :href="p.url" target="_blank" class="font-bold text-white hover:text-indigo-400 transition inline-flex items-center space-x-1.5">
+                                            <span x-text="p.title"></span>
+                                            <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M14 4h6m0 0v6m0-6L10 14"/>
+                                            </svg>
+                                        </a>
+                                    </td>
+                                    <!-- Difficulty -->
+                                    <td class="py-3.5 px-3">
+                                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase"
+                                              :class="{
+                                                'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30': (p.difficulty || '').toLowerCase() === 'easy',
+                                                'bg-amber-500/20 text-amber-400 border border-amber-500/30': (p.difficulty || '').toLowerCase() === 'medium',
+                                                'bg-rose-500/20 text-rose-400 border border-rose-500/30': (p.difficulty || '').toLowerCase() === 'hard'
+                                              }"
+                                              x-text="p.difficulty">
+                                        </span>
+                                    </td>
+                                    <!-- Your Attempts -->
+                                    <td class="py-3.5 px-3 text-center font-bold text-gray-300" x-text="p.your_attempts"></td>
+                                    <!-- Best Outcome -->
+                                    <td class="py-3.5 px-3">
+                                        <template x-if="p.best_outcome === 'solved'">
+                                            <span class="inline-flex items-center space-x-1 text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
+                                                <span>✅</span>
+                                                <span>Solved</span>
+                                            </span>
+                                        </template>
+                                        <template x-if="p.best_outcome === 'partial'">
+                                            <span class="inline-flex items-center space-x-1 text-amber-400 font-semibold bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
+                                                <span>💡</span>
+                                                <span>Partial</span>
+                                            </span>
+                                        </template>
+                                        <template x-if="p.best_outcome === 'failed'">
+                                            <span class="inline-flex items-center space-x-1 text-rose-400 font-semibold bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20">
+                                                <span>❌</span>
+                                                <span>Failed</span>
+                                            </span>
+                                        </template>
+                                        <template x-if="!p.best_outcome">
+                                            <span class="text-gray-500 italic">Not tried yet</span>
+                                        </template>
+                                    </td>
+                                    <!-- Last Attempted -->
+                                    <td class="py-3.5 px-3 text-right">
+                                        <span x-text="p.last_attempted || 'Not tried yet'" :class="p.last_attempted ? 'text-gray-300' : 'text-gray-500 italic'"></span>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>
+{% endblock %}

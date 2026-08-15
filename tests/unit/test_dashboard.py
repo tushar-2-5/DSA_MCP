@@ -253,5 +253,44 @@ def test_api_history(mock_get_history, mock_db_conn, client):
         app.dependency_overrides.pop(require_login, None)
 
 
+@patch("web.routes.topics.get_db_connection")
+@patch("web.routes.topics.get_topic_detail", new_callable=AsyncMock)
+def test_api_topic_detail(mock_get_topic_detail, mock_db_conn, client):
+    from web.auth import require_login
+    mock_conn = AsyncMock()
+    mock_db_conn.return_value.__aenter__.return_value = mock_conn
+    mock_user = {"user_id": "12345678-1234-5678-1234-567812345678"}
+    app.dependency_overrides[require_login] = lambda: mock_user
+    mock_get_topic_detail.return_value = {
+        "topic": "Arrays & Hashing",
+        "mastery_score": 0.74,
+        "total_problems": 45,
+        "attempted": 12,
+        "solved": 8,
+        "problems": [
+            {
+                "id": "p1",
+                "title": "Two Sum",
+                "difficulty": "Easy",
+                "url": "https://leetcode.com/problems/two-sum",
+                "your_attempts": 3,
+                "best_outcome": "solved",
+                "last_attempted": "2026-08-13",
+            }
+        ],
+    }
+    try:
+        res = client.get("/api/topic/arrays-hashing")
+        assert res.status_code == 200
+        data = res.json()
+        assert "topic" in data
+        assert "problems" in data
+        assert data["topic"] == "Arrays & Hashing"
+        assert len(data["problems"]) == 1
+    finally:
+        app.dependency_overrides.pop(require_login, None)
+
+
+
 
 
