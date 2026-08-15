@@ -204,7 +204,7 @@ def test_api_ask(
         # Case 4: Mastery / progress
         res2 = client.post("/api/ask", json={"question": "Show my progress"})
         assert res2.status_code == 200
-        assert "topics" in str(res2.json()["answer"])
+        assert "Mastery Report" in res2.json()["answer"]
     finally:
         app.dependency_overrides.pop(require_login, None)
         web_app.dependency_overrides.pop(require_login, None)

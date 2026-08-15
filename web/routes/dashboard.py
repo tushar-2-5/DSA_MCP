@@ -55,6 +55,33 @@ async def api_target_company_problems(request: Request, user=Depends(require_log
     return {"company": company, "problems": problems}
 
 
+def _fmt_mastery(mastery: dict) -> str:
+    topics = mastery.get("topics", [])
+    if not topics:
+        return "### 📊 Mastery Report\nNo data yet — log your first attempt!\n"
+    lines = "\n".join(
+        f"- **{t['slug'].replace('-',' ').title()}**: "
+        f"{int(float(t.get('mastery_score', 0)) * 100)}%"
+        for t in topics
+    )
+    return f"### 📊 Mastery Report\n{lines}\n"
+
+
+def _fmt_suggestion(s: dict) -> str:
+    rec = s.get("recommendation")
+    if not rec:
+        return "### 💡 Next Problem\nNo recommendations yet.\n"
+    title = rec.get("title", "N/A")
+    diff = rec.get("difficulty", "").title()
+    topic = s.get("targeted_topic", "").replace("-", " ").title()
+    reason = s.get("reason", "")
+    return (
+        f"### 💡 Next Problem\n"
+        f"**{title}** ({diff}) — *{topic}*\n\n"
+        f"_{reason}_\n"
+    )
+
+
 @router.post("/api/ask")
 @limiter.limit("20/minute")
 async def api_ask(request: Request, user=Depends(require_login)):
@@ -81,10 +108,10 @@ async def api_ask(request: Request, user=Depends(require_login)):
     elif detected_company:
         mastery = await get_mastery_report(user_id=user_id)
         suggestion = await suggest_next_problem(user_id=user_id)
-        result = f"🎯 Preparing for {detected_company.title()} interviews:\n\n"
-        result += f"📊 Your Current Mastery:\n{mastery}\n\n"
-        result += f"💡 Recommended Next Problem:\n{suggestion}\n\n"
-        result += f"💡 Tip: Use 'Give me {detected_company} study plan' for a full 7-day plan!"
+        result = f"## 🎯 {detected_company.title()} Interview Prep\n\n"
+        result += _fmt_mastery(mastery) + "\n"
+        result += _fmt_suggestion(suggestion) + "\n"
+        result += f"> 💡 Ask *'Give me {detected_company} study plan'* for a full 7-day plan!"
     
     # CASE 3: What to practice / recommend / suggest
     elif any(word in question for word in 
@@ -93,14 +120,14 @@ async def api_ask(request: Request, user=Depends(require_login)):
          "which problem", "what problem"]):
         mastery = await get_mastery_report(user_id=user_id)
         suggestion = await suggest_next_problem(user_id=user_id)
-        result = f"📊 Your Mastery Report:\n{mastery}\n\n"
-        result += f"💡 Recommended Next Problem:\n{suggestion}"
+        result = _fmt_mastery(mastery) + "\n" + _fmt_suggestion(suggestion)
     
     # CASE 4: Mastery / progress / score check
     elif any(word in question for word in 
         ["mastery", "progress", "score", "how am i", 
          "weak", "strong", "doing", "performance", "status"]):
-        result = await get_mastery_report(user_id=user_id)
+        mastery = await get_mastery_report(user_id=user_id)
+        result = _fmt_mastery(mastery)
     
     # CASE 5: Study plan without company
     elif any(word in question for word in 
@@ -120,8 +147,7 @@ async def api_ask(request: Request, user=Depends(require_login)):
     else:
         mastery = await get_mastery_report(user_id=user_id)
         suggestion = await suggest_next_problem(user_id=user_id)
-        result = f"📊 Your Current Mastery:\n{mastery}\n\n"
-        result += f"💡 My Recommendation:\n{suggestion}"
+        result = _fmt_mastery(mastery) + "\n" + _fmt_suggestion(suggestion)
     
     if isinstance(result, dict):
         import json
