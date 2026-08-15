@@ -6,7 +6,7 @@ from tools.suggest_next_problem import suggest_next_problem
 from tools.study_plan import study_plan
 from tools.flag_recurring_mistake import flag_recurring_mistake
 from database.connection import get_db_connection
-from database.queries import get_user_by_email, get_problems_by_company, get_user_streak
+from database.queries import get_user_by_email, get_user_streak
 
 from core.logging import logger
 from web.auth import get_current_user, require_login
@@ -46,13 +46,6 @@ async def api_suggest(request: Request, user=Depends(require_login), company: st
     recommendation = await suggest_next_problem(user_id=target_user_id)
     return recommendation
 
-
-@router.get("/api/target-company-problems")
-@limiter.limit("10/minute")
-async def api_target_company_problems(request: Request, user=Depends(require_login), company: str = "amazon"):
-    async with get_db_connection() as conn:
-        problems = await get_problems_by_company(conn, company_name=company, limit=5)
-    return {"company": company, "problems": problems}
 
 
 def _fmt_mastery(mastery: dict) -> str:

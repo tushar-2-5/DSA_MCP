@@ -47,8 +47,6 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="{
         masteryData: [],
         recommendation: null,
-        companyProblems: [],
-        selectedCompany: 'amazon',
         loadingMastery: true,
         loadingSuggest: true,
         stats: { totalAttempts: 0, topicsPracticed: 0, streakDays: 0 },
@@ -72,7 +70,7 @@
         toastMessage: '',
         
         async init() {
-            await Promise.all([this.fetchMastery(), this.fetchSuggest(), this.fetchStats(), this.fetchCompanyProblems(), this.fetchStreak()]);
+            await Promise.all([this.fetchMastery(), this.fetchSuggest(), this.fetchStats(), this.fetchStreak()]);
         },
 
         async fetchStreak() {
@@ -95,18 +93,6 @@
                         this.streakToastColor = 'bg-blue-600 text-white';
                     }
                     setTimeout(() => { this.streakMessage = ''; }, 5000);
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        },
-
-        async fetchCompanyProblems() {
-            try {
-                const res = await fetch(`/api/target-company-problems?company=${this.selectedCompany}`, { credentials: 'same-origin' });
-                if (res.ok) {
-                    const data = await res.json();
-                    this.companyProblems = data.problems || [];
                 }
             } catch (e) {
                 console.error(e);
@@ -367,132 +353,6 @@
                 No active recommendation available right now. Keep practicing!
             </div>
         </template>
-    </div>
-
-    <!-- Target Company Problems Section -->
-    <div class="mb-10 p-6 rounded-3xl bg-gray-950/60 border border-gray-800">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div>
-                <h2 class="text-xl font-extrabold text-white flex items-center space-x-2">
-                    <span>🎯 Target Company Problems</span>
-                </h2>
-                <p class="text-xs text-gray-400 mt-1">Top interview questions asked by major tech companies</p>
-            </div>
-            <div class="flex items-center space-x-2">
-                <template x-for="comp in ['amazon', 'google', 'microsoft', 'meta']" :key="comp">
-                    <button @click="selectedCompany = comp; fetchCompanyProblems()"
-                        class="px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase transition border"
-                        :class="selectedCompany === comp ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30' : 'bg-gray-900 text-gray-400 border-gray-800 hover:text-white'"
-                        x-text="comp">
-                    </button>
-                </template>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <template x-for="p in companyProblems" :key="p.id">
-                <div
-                    class="p-5 rounded-2xl bg-gray-900/60 border border-gray-800 hover:border-indigo-500/40 transition flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase" :class="{
-                                    'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30': (p.difficulty || '').toLowerCase() === 'easy',
-                                    'bg-amber-500/20 text-amber-400 border border-amber-500/30': (p.difficulty || '').toLowerCase() === 'medium',
-                                    'bg-rose-500/20 text-rose-400 border border-rose-500/30': (p.difficulty || '').toLowerCase() === 'hard'
-                                  }" x-text="p.difficulty">
-                            </span>
-                            <span class="text-[11px] text-gray-400"
-                                x-text="`Asked by ${p.company_count || 0} companies`"></span>
-                        </div>
-                        <h4 class="font-bold text-white text-sm mb-1" x-text="p.title"></h4>
-                    </div>
-
-                    <div x-data="{ hist: null }"
-                         x-init="fetch(`/api/problem-history/${p.id}`,
-                                       {credentials: 'same-origin'})
-                                  .then(r => r.json())
-                                  .then(d => hist = d)
-                                  .catch(() => {})">
-
-                      <template x-if="hist && hist.total_attempts > 0">
-                        <div class="mt-2 mb-2 space-y-1">
-
-                          <!-- Main badge -->
-                          <template x-if="hist.badge === 'solved'">
-                            <div class="flex items-center gap-1.5 text-xs text-green-400
-                                        bg-green-500/10 border border-green-500/20 
-                                        rounded-lg px-2 py-1.5">
-                              ✅ <span x-text="hist.warning"></span>
-                              <template x-if="hist.avg_time_mins">
-                                <span class="text-green-300/60 ml-1"
-                                      x-text="`· ⏱️ ${hist.avg_time_mins}m avg`"></span>
-                              </template>
-                            </div>
-                          </template>
-
-                          <template x-if="hist.badge === 'partial'">
-                            <div class="text-xs text-yellow-400 bg-yellow-500/10
-                                        border border-yellow-500/20 rounded-lg px-2 py-1.5">
-                              <div>⚡ <span x-text="hist.warning"></span></div>
-                              <template x-if="hist.tip">
-                                <div class="text-yellow-300/70 text-[11px] mt-0.5"
-                                     x-text="hist.tip"></div>
-                              </template>
-                            </div>
-                          </template>
-
-                          <template x-if="hist.badge === 'failed'">
-                            <div class="text-xs text-red-400 bg-red-500/10
-                                        border border-red-500/20 rounded-lg px-2 py-1.5">
-                              <div class="font-medium">⚠️ <span x-text="hist.warning"></span></div>
-                              <template x-if="hist.tip">
-                                <div class="text-red-300/70 text-[11px] mt-0.5"
-                                     x-text="hist.tip"></div>
-                              </template>
-                              <template x-if="hist.avg_time_mins">
-                                <div class="text-red-300/50 text-[11px]"
-                                     x-text="`⏱️ Avg time spent: ${hist.avg_time_mins} mins`"></div>
-                              </template>
-                            </div>
-                          </template>
-
-                          <!-- Spaced repetition review nudge -->
-                          <template x-if="hist.review_nudge">
-                            <div class="text-xs text-blue-400 bg-blue-500/10
-                                        border border-blue-500/20 rounded-lg px-2 py-1"
-                                 x-text="hist.review_nudge">
-                            </div>
-                          </template>
-
-                          <!-- Topic pattern warning -->
-                          <template x-if="hist.pattern_warning">
-                            <div class="text-xs text-orange-400 bg-orange-500/10
-                                        border border-orange-500/20 rounded-lg px-2 py-1"
-                                 x-text="hist.pattern_warning">
-                            </div>
-                          </template>
-
-                        </div>
-                      </template>
-                    </div>
-
-                    <div class="pt-3 mt-3 border-t border-gray-800/80 flex items-center justify-between">
-                        <a :href="p.url || '#'" target="_blank"
-                            class="text-xs text-indigo-400 hover:underline flex items-center space-x-1">
-                            <span>LeetCode</span>
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                        </a>
-                        <button @click="openLogModal(p)"
-                            class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-sm">
-                            Log Attempt
-                        </button>
-                    </div>
-                </div>
-            </template>
-        </div>
     </div>
 
     <!-- Topic Mastery Score Cards -->
