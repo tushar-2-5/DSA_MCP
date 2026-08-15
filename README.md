@@ -27,16 +27,18 @@ The Recall system consists of 4 layers:
 
 ### MCP Tools API
 
-Recall exposes 6 core tools to the AI coding agent via the Model Context Protocol:
+Recall exposes 8 tools to the AI coding agent via the Model Context Protocol:
 
 | Tool Name | Trigger Context | Description |
 |---|---|---|
+| `say_hello` | Test MCP connection | Verifies server connection and returns greeting |
 | `get_or_create_user` | User opens session or introduces themselves | Registers a new user or fetches an existing user profile by email address. |
 | `get_mastery_report` | User asks "How am I doing?" or "Show my progress" | Returns overall mastery percentage and per-topic breakdowns with skill tiers (Novice, Competent, Proficient, Master). |
 | `log_attempt` | User submits code or finishes a problem | Records attempt outcome (`pass`, `fail`, `partial`), updates decaying topic mastery, and stores code/mistake embeddings. |
 | `get_problem_context` | User starts working on a specific problem | Retrieves problem statement, metadata, prerequisites, and vector-similar past attempts to highlight relevant history. |
 | `flag_recurring_mistake` | User is actively writing code and asks the agent to check for patterns, or agent proactively warns during code review | Compares in-progress code against the user's historical mistake embeddings to detect and warn of recurring bug patterns. |
 | `suggest_next_problem` | User asks "What should I practice next?" | Selects weak topics using epsilon-greedy exploration, determines difficulty band, and ranks unattempted problems by similarity to recent mistake embeddings. |
+| `study_plan` | User asks for interview prep or study plan | Returns personalized 7-day study plan with company-specific problems |
 
 ---
 
@@ -212,7 +214,7 @@ Once registered, you can interact with Recall naturally inside your IDE chat:
 | Problem Context (`get_problem_context`) | ✅ Complete | Problem statement + vector similarity to past user attempts |
 | Recurring Mistake Detection (`flag_recurring_mistake`) | ✅ Complete | Cosine distance pattern matching over past mistake embeddings |
 | Vector Recommendation (`suggest_next_problem`) | ✅ Complete | Epsilon-greedy weak topic selection + mistake similarity ranking |
-| Nightly Decay Scheduler | 🚧 In Progress | Background AWS Lambda cron for proactive score decay |
+| Nightly Decay Scheduler | ✅ Complete | GitHub Actions cron (0 0 * * *) |
 | Code Artifact S3 Storage | 🚧 In Progress | S3 bucket integration for full code historical diffs |
 
 ---

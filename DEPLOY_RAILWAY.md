@@ -143,7 +143,7 @@ If using an SSE / HTTP-compatible bridge or Claude client supporting remote HTTP
 
 ## 8. Registered MCP Tools Reference
 
-The deployed server exposes the following 7 MCP tools:
+The deployed server exposes the following 8 MCP tools:
 1. `say_hello` - Test connection and greeting
 2. `get_or_create_user` - Manage user profile and track active user
 3. `get_mastery_report` - Retrieve user topic mastery percentages and stats
@@ -151,6 +151,7 @@ The deployed server exposes the following 7 MCP tools:
 5. `get_problem_context` - Fetch problem statement and similarity matches
 6. `flag_recurring_mistake` - Record recurring coding errors
 7. `suggest_next_problem` - Get AI-driven DSA problem recommendation
+8. `study_plan` - Generate personalized 7-day DSA study plan with company targeting
 
 ---
 
