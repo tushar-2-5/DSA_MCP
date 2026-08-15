@@ -1,5 +1,4 @@
-import pytest
-from memory.recommendation import pick_weak_topic, difficulty_band
+from memory.recommendation import pick_weak_topic, difficulty_band, get_difficulty_band
 
 
 def test_pick_weak_topic_epsilon_zero():
@@ -37,3 +36,16 @@ def test_difficulty_band_boundaries():
     assert difficulty_band(0.849) == ["medium"]
     assert difficulty_band(0.85) == ["medium", "hard"]
     assert difficulty_band(1.0) == ["medium", "hard"]
+
+
+def test_difficulty_progression_easy():
+    assert get_difficulty_band(0.3) == "Easy"
+
+
+def test_difficulty_progression_medium():
+    assert get_difficulty_band(0.55) == "Medium"
+
+
+def test_difficulty_progression_hard():
+    assert get_difficulty_band(0.8) == "Hard"
+

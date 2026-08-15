@@ -23,13 +23,22 @@ def pick_weak_topic(mastery_rows: List[Dict[str, Any]], epsilon: float = 0.2) ->
     return random.choice(candidates)
 
 
-def difficulty_band(mastery_score: float) -> List[str]:
-    """Determine targeted problem difficulty band based on mastery score:
-    0.0 - 0.3  -> ["easy"]
-    0.3 - 0.6  -> ["easy", "medium"]
-    0.6 - 0.85 -> ["medium"]
-    0.85 - 1.0 -> ["medium", "hard"]
+def get_difficulty_band(score: float) -> str:
+    """Determine problem difficulty band based on user mastery score:
+    score < 0.4 -> "Easy"
+    0.4 <= score < 0.7 -> "Medium"
+    score >= 0.7 -> "Hard"
     """
+    if score < 0.4:
+        return "Easy"
+    elif score < 0.7:
+        return "Medium"
+    else:
+        return "Hard"
+
+
+def difficulty_band(mastery_score: float) -> List[str]:
+    """Determine targeted problem difficulty band list based on mastery score."""
     if mastery_score < 0.3:
         return ["easy"]
     elif mastery_score < 0.6:
@@ -38,3 +47,4 @@ def difficulty_band(mastery_score: float) -> List[str]:
         return ["medium"]
     else:
         return ["medium", "hard"]
+

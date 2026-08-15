@@ -10,8 +10,18 @@ from database.queries import (
     find_most_recent_mistake_embedding,
     find_similar_unattempted_problems,
 )
-from memory.recommendation import pick_weak_topic, difficulty_band
+from memory.recommendation import pick_weak_topic, difficulty_band, get_difficulty_band
 from core.logging import logger
+
+
+def format_progression_info(mastery_score: float, band: str) -> str:
+    """Format progression info string based on mastery score and difficulty band."""
+    if band == "Easy":
+        return f"Based on your mastery ({mastery_score:.2f}), starting with Easy problems."
+    elif band == "Medium":
+        return f"Based on your mastery ({mastery_score:.2f}), you're ready for Medium problems."
+    else:
+        return f"Your mastery ({mastery_score:.2f}) qualifies you for Hard problems. Here's a challenge:"
 
 
 async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
@@ -64,7 +74,8 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
         chosen_topic_id = chosen_topic["topic_id"]
         chosen_slug = chosen_topic["slug"]
         chosen_mastery = chosen_topic["mastery_score"]
-        chosen_bands = difficulty_band(chosen_mastery)
+        diff_band = get_difficulty_band(chosen_mastery)
+        chosen_bands = [diff_band.lower(), diff_band.capitalize(), diff_band.upper()]
 
         # 1. Check if a mistake embedding exists for the user in this weak topic
         mistake_vector = await find_most_recent_mistake_embedding(
@@ -77,6 +88,7 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
             if similar_problems:
                 top_cand = similar_problems[0]
                 logger.info("suggestion_served", user_id=str(user_id), topic=chosen_slug)
+                progression_str = format_progression_info(chosen_mastery, diff_band)
                 return {
                     "recommendation": {
                         "id": top_cand["id"],
@@ -85,7 +97,7 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
                     },
                     "targeted_topic": chosen_slug,
                     "mastery_score": chosen_mastery,
-                    "reason": f"Selected based on similarity to your recent mistake in {chosen_slug} and your current mastery level",
+                    "reason": f"{progression_str} Selected based on similarity to your recent mistake in {chosen_slug}.",
                 }
 
         # 2. Fall back to structured behavior if no mistake embeddings exist or no similar unattempted candidates
@@ -95,12 +107,14 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
 
         found_problem = None
         found_topic = None
+        found_diff_band = diff_band
         fallback_used = False
 
         for topic in ordered_topics:
             topic_id = topic["topic_id"]
             mastery_score = topic["mastery_score"]
-            bands = difficulty_band(mastery_score)
+            cur_diff_band = get_difficulty_band(mastery_score)
+            bands = [cur_diff_band.lower(), cur_diff_band.capitalize(), cur_diff_band.upper()]
 
             problem, is_fallback = await get_unattempted_problem_for_topic(
                 conn, user_id, topic_id, bands
@@ -108,6 +122,7 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
             if problem:
                 found_problem = problem
                 found_topic = topic
+                found_diff_band = cur_diff_band
                 fallback_used = is_fallback
                 break
 
@@ -123,7 +138,7 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
 
         targeted_slug = found_topic["slug"]
         mastery_score = found_topic["mastery_score"]
-        bands = difficulty_band(mastery_score)
+        progression_str = format_progression_info(mastery_score, found_diff_band)
 
         rec = {
             "id": str(found_problem.id),
@@ -132,14 +147,11 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
         }
 
         if not fallback_used:
-            reason = (
-                f"Selected weak topic '{targeted_slug}' (mastery score: {mastery_score:.2f}) "
-                f"with target difficulty band {bands}."
-            )
+            reason = f"{progression_str} Targeted topic '{targeted_slug}'."
         else:
             reason = (
-                f"Selected weak topic '{targeted_slug}' (mastery score: {mastery_score:.2f}). "
-                f"Target difficulty band {bands} had no unattempted problems, so fell back to problem with difficulty '{found_problem.difficulty}'."
+                f"{progression_str} Targeted topic '{targeted_slug}' had no unattempted {found_diff_band} problems, "
+                f"so fell back to difficulty '{found_problem.difficulty}'."
             )
 
     res = {
@@ -150,5 +162,6 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
     }
     logger.info("suggestion_served", user_id=str(user_id), topic=targeted_slug)
     return res
+
 
 
