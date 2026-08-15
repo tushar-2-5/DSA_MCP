@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Optional, List, Any
 from uuid import UUID
 import psycopg
@@ -734,6 +734,63 @@ async def get_problems_filtered(
         problems = await cur.fetchall()
 
     return problems, total
+
+
+async def get_user_streak(conn: psycopg.AsyncConnection, user_id: str) -> dict:
+    """
+    Calculate current practice streak for a user.
+    A streak day = at least 1 attempt logged that day.
+    Returns: {
+        "current_streak": int,
+        "longest_streak": int, 
+        "last_practiced": date or None,
+        "practiced_today": bool
+    }
+    """
+    async with conn.cursor() as cur:
+        await cur.execute("""
+            SELECT DISTINCT DATE(created_at) as practice_date
+            FROM attempts
+            WHERE user_id = %s
+            ORDER BY practice_date DESC
+        """, (str(user_id),))
+        
+        dates = [row[0] for row in await cur.fetchall()]
+        if not dates:
+            return {"current_streak": 0, "longest_streak": 0, 
+                    "last_practiced": None, "practiced_today": False}
+        
+        today = datetime.now(timezone.utc).date()
+        practiced_today = dates[0] == today
+        
+        # Calculate current streak
+        current_streak = 0
+        check_date = today if practiced_today else today - timedelta(days=1)
+        
+        for date in dates:
+            if date == check_date:
+                current_streak += 1
+                check_date -= timedelta(days=1)
+            elif date < check_date:
+                break
+        
+        # Calculate longest streak
+        longest = 1
+        current = 1
+        for i in range(1, len(dates)):
+            if (dates[i-1] - dates[i]).days == 1:
+                current += 1
+                longest = max(longest, current)
+            else:
+                current = 1
+        
+        return {
+            "current_streak": current_streak,
+            "longest_streak": max(longest, current_streak),
+            "last_practiced": str(dates[0]) if dates else None,
+            "practiced_today": practiced_today
+        }
+
 
 
 

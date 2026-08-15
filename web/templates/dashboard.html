@@ -12,6 +12,11 @@
         loadingMastery: true,
         loadingSuggest: true,
         stats: { totalAttempts: 0, topicsPracticed: 0, streakDays: 0 },
+        streak: 0,
+        longestStreak: 0,
+        practicedToday: false,
+        streakMessage: '',
+        streakToastColor: '',
         // Modal state
         showModal: false,
         logForm: {
@@ -27,7 +32,33 @@
         toastMessage: '',
         
         async init() {
-            await Promise.all([this.fetchMastery(), this.fetchSuggest(), this.fetchStats(), this.fetchCompanyProblems()]);
+            await Promise.all([this.fetchMastery(), this.fetchSuggest(), this.fetchStats(), this.fetchCompanyProblems(), this.fetchStreak()]);
+        },
+
+        async fetchStreak() {
+            try {
+                const res = await fetch('/api/streak');
+                if (res.ok) {
+                    const d = await res.json();
+                    this.streak = d.current_streak;
+                    this.longestStreak = d.longest_streak;
+                    this.practicedToday = d.practiced_today;
+
+                    if (this.streak > 0 && this.practicedToday) {
+                        this.streakMessage = `🔥 ${this.streak} day streak! Keep it up!`;
+                        this.streakToastColor = 'bg-emerald-600 text-white';
+                    } else if (this.streak > 0 && !this.practicedToday) {
+                        this.streakMessage = `⚠️ Practice today to keep your ${this.streak} day streak!`;
+                        this.streakToastColor = 'bg-amber-600 text-white';
+                    } else {
+                        this.streakMessage = 'Start your streak today! Log an attempt.';
+                        this.streakToastColor = 'bg-blue-600 text-white';
+                    }
+                    setTimeout(() => { this.streakMessage = ''; }, 5000);
+                }
+            } catch (e) {
+                console.error(e);
+            }
         },
 
         async fetchCompanyProblems() {
@@ -158,6 +189,15 @@
         <span x-text="toastMessage"></span>
     </div>
 
+    <!-- Streak Toast Notification -->
+    <div x-show="streakMessage" 
+         x-transition
+         x-cloak
+         class="fixed bottom-4 right-4 px-4 py-3 rounded-xl text-sm font-medium z-50 shadow-2xl"
+         :class="streakToastColor"
+         x-text="streakMessage">
+    </div>
+
     <!-- Header Section -->
     <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
@@ -200,16 +240,31 @@
             </div>
         </div>
 
-        <div class="p-6 rounded-2xl bg-gray-950/60 border border-gray-800 flex items-center space-x-4">
-            <div class="h-12 w-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>
-                </svg>
-            </div>
-            <div>
-                <div class="text-2xl font-extrabold text-white" x-text="`${stats.streakDays} Days`">0 Days</div>
-                <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Active Practice Streak</div>
-            </div>
+        <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800"
+             x-data="{streak: 0, longestStreak: 0, practicedToday: false}"
+             x-init="fetch('/api/streak')
+                      .then(r => r.json())
+                      .then(d => {
+                        streak = d.current_streak;
+                        longestStreak = d.longest_streak;
+                        practicedToday = d.practiced_today;
+                      })">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-3xl" x-text="practicedToday ? '🔥' : '💤'"></span>
+            <span class="text-xs text-gray-500 font-medium uppercase tracking-wider">
+              Practice Streak
+            </span>
+          </div>
+          <div class="text-4xl font-bold text-white mb-1" 
+               x-text="streak + (streak === 1 ? ' day' : ' days')">
+            0 days
+          </div>
+          <div class="text-sm text-gray-400" 
+               x-text="practicedToday ? '🟢 Practiced today!' : '⚠️ Practice today to keep streak!'">
+          </div>
+          <div class="mt-2 text-xs text-gray-600"
+               x-text="'Best: ' + longestStreak + ' days'">
+          </div>
         </div>
     </div>
 

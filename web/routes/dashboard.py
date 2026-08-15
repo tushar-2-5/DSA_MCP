@@ -5,7 +5,7 @@ from web.rate_limit import limiter
 from tools.get_mastery_report import get_mastery_report
 from tools.suggest_next_problem import suggest_next_problem
 from database.connection import get_db_connection
-from database.queries import get_user_by_email, get_problems_by_company
+from database.queries import get_user_by_email, get_problems_by_company, get_user_streak
 
 from core.logging import logger
 
@@ -167,5 +167,13 @@ async def api_ask(request: Request, user=Depends(require_login)):
         result += f"💡 My Recommendation:\n{suggestion}"
     
     return {"answer": result}
+
+
+@router.get("/api/streak")
+async def api_streak(request: Request, user=Depends(require_login)):
+    async with get_db_connection() as conn:
+        streak = await get_user_streak(conn, str(user["user_id"]))
+        return streak
+
 
 
