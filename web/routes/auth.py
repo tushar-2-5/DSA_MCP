@@ -1,3 +1,4 @@
+from typing import Optional
 import bcrypt
 from fastapi import APIRouter, Request, Form, status
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -78,7 +79,8 @@ async def handle_signup(
     request: Request,
     email: str = Form(...),
     password: str = Form(...),
-    display_name: str = Form(None),
+    confirm_password: Optional[str] = Form(None),
+    display_name: Optional[str] = Form(None),
 ):
     templates = request.app.state.templates
     email_clean = email.strip().lower()
@@ -88,6 +90,22 @@ async def handle_signup(
             request=request,
             name="signup.html",
             context={"error": "Email and password are required."},
+            status_code=400,
+        )
+
+    if len(password) < 8:
+        return templates.TemplateResponse(
+            request=request,
+            name="signup.html",
+            context={"error": "Password must be at least 8 characters."},
+            status_code=400,
+        )
+
+    if confirm_password is not None and password != confirm_password:
+        return templates.TemplateResponse(
+            request=request,
+            name="signup.html",
+            context={"error": "Passwords do not match."},
             status_code=400,
         )
 
