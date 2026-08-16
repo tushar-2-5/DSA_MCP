@@ -26,9 +26,7 @@ async def test_get_or_create_user_idempotent():
     user_id_1 = res1["user_id"]
     token_1 = res1["token"]
 
-    payload = verify_user_token(token_1)
-    assert payload["user_id"] == user_id_1
-    assert payload["email"] == test_email
+    assert verify_user_token(token_1, user_id_1) is True
 
     res2 = await get_or_create_user(email=test_email, display_name="Test User")
     assert res2["status"] == "existing"

@@ -44,7 +44,8 @@ async def log_attempt(
         time_taken_seconds: Optional time taken to solve the problem in seconds.
         mistake_summary: Optional summary of mistake made (for 'fail' or 'partial' outcomes).
         mistake_category: Optional category of mistake (e.g. 'sliding_window_off_by_one', 'logic_error').
-        token: Optional JWT auth token returned by get_or_create_user.
+        token: JWT token returned by get_or_create_user.
+               Pass this to verify you can only access your own data.
 
     Returns:
         Dict confirming attempt was logged and showing updated mastery score:
@@ -55,15 +56,7 @@ async def log_attempt(
     logger.info(f"Tool called: {tool_name} for user {user_id}")
 
     if token:
-        try:
-            payload = verify_user_token(token)
-            if payload["user_id"] != user_id:
-                raise ValueError(
-                    "Access denied: token does not match user_id. "
-                    "You can only access your own data."
-                )
-        except ValueError as e:
-            raise ValueError(str(e))
+        verify_user_token(token, user_id)
 
     try:
         UUID(str(user_id))

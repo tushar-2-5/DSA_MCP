@@ -29,21 +29,19 @@ async def study_plan(
 
     Always pass the token received from get_or_create_user. Never use a user_id
     that wasn't returned by get_or_create_user in this session.
+
+    Args:
+        user_id: The UUID string of the user.
+        target_company: Optional target company name for interview prep.
+        token: JWT token returned by get_or_create_user.
+               Pass this to verify you can only access your own data.
     """
     tool_name = "study_plan"
     start = time.time()
     logger.info(f"Tool called: {tool_name} for user {user_id}")
 
     if token:
-        try:
-            payload = verify_user_token(token)
-            if payload["user_id"] != user_id:
-                raise ValueError(
-                    "Access denied: token does not match user_id. "
-                    "You can only access your own data."
-                )
-        except ValueError as e:
-            raise ValueError(str(e))
+        verify_user_token(token, user_id)
 
     async with get_db_connection() as conn:
         user = await get_user(conn, user_id)

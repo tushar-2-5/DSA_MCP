@@ -20,22 +20,15 @@ async def flag_recurring_mistake(
     Args:
         user_id: The UUID string of the registered user.
         code_in_progress: The source code currently being written by the user.
-        token: Optional JWT auth token returned by get_or_create_user.
+        token: JWT token returned by get_or_create_user.
+               Pass this to verify you can only access your own data.
 
     Returns:
         Dict matching contract:
         {"flagged": [...], "checked": True, "summary": str, "tip": str|None}
     """
     if token:
-        try:
-            payload = verify_user_token(token)
-            if payload["user_id"] != user_id:
-                raise ValueError(
-                    "Access denied: token does not match user_id. "
-                    "You can only access your own data."
-                )
-        except ValueError as e:
-            raise ValueError(str(e))
+        verify_user_token(token, user_id)
 
     try:
         UUID(user_id)

@@ -22,7 +22,8 @@ async def get_mastery_report(
         user_id: The UUID string of the user.
         topic: Optional topic slug to filter results for a single topic (e.g. 'sliding-window').
                If omitted or null, returns mastery data for all topics.
-        token: Optional JWT auth token returned by get_or_create_user.
+        token: JWT token returned by get_or_create_user.
+               Pass this to verify you can only access your own data.
 
     Returns:
         Dict with key 'topics' containing a list of topic mastery summaries:
@@ -33,15 +34,7 @@ async def get_mastery_report(
     logger.info(f"Tool called: {tool_name} for user {user_id}")
 
     if token:
-        try:
-            payload = verify_user_token(token)
-            if payload["user_id"] != user_id:
-                raise ValueError(
-                    "Access denied: token does not match user_id. "
-                    "You can only access your own data."
-                )
-        except ValueError as e:
-            raise ValueError(str(e))
+        verify_user_token(token, user_id)
 
     try:
         UUID(user_id)

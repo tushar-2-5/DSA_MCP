@@ -17,7 +17,8 @@ async def get_problem_context(
     Args:
         user_id: The UUID string of the registered user.
         problem_statement: The text of the problem statement to find similar past attempts for.
-        token: Optional JWT auth token returned by get_or_create_user.
+        token: JWT token returned by get_or_create_user.
+               Pass this to verify you can only access your own data.
 
     Returns:
         Dict matching contract:
@@ -25,15 +26,7 @@ async def get_problem_context(
         - If no matches: {"matches": [], "note": "No similar past attempts found. Keep practicing to build your history!"}
     """
     if token:
-        try:
-            payload = verify_user_token(token)
-            if payload["user_id"] != user_id:
-                raise ValueError(
-                    "Access denied: token does not match user_id. "
-                    "You can only access your own data."
-                )
-        except ValueError as e:
-            raise ValueError(str(e))
+        verify_user_token(token, user_id)
 
     try:
         UUID(user_id)

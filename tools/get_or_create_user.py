@@ -5,7 +5,7 @@ import jwt
 from database.connection import get_db_connection
 from database.queries import get_user_by_email, create_user
 
-SECRET = os.getenv("SECRET_KEY", "recall-mcp-secret")
+SECRET = os.getenv("SECRET_KEY", "recall-mcp-secret-key")
 
 
 def create_user_token(user_id: str, email: str) -> str:
@@ -17,9 +17,15 @@ def create_user_token(user_id: str, email: str) -> str:
     return jwt.encode(payload, SECRET, algorithm="HS256")
 
 
-def verify_user_token(token: str) -> dict:
+def verify_user_token(token: str, expected_user_id: str) -> bool:
     try:
-        return jwt.decode(token, SECRET, algorithms=["HS256"])
+        payload = jwt.decode(token, SECRET, algorithms=["HS256"])
+        if payload["user_id"] != expected_user_id:
+            raise ValueError(
+                "Access denied: token does not match user_id. "
+                "You can only access your own data."
+            )
+        return True
     except jwt.ExpiredSignatureError:
         raise ValueError("Token expired. Call get_or_create_user again.")
     except jwt.InvalidTokenError:
