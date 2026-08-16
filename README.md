@@ -1,26 +1,32 @@
 # Recall.ai — Persistent Memory MCP Server for DSA Practice
 
-> Your AI coding practice has amnesia. Recall fixes that.
+> **Your AI coding practice has amnesia. Recall fixes that.**
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-dsa--mcp.onrender.com-purple)](https://dsa-mcp.onrender.com)
-[![Tests](https://img.shields.io/badge/Tests-49%20passing-green)]()
-[![Python](https://img.shields.io/badge/Python-3.11+-blue)]()
-[![License](https://img.shields.io/badge/License-MIT-yellow)]()
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-dsa--mcp.onrender.com-7C3AED?style=for-the-badge)](https://dsa-mcp.onrender.com)
+[![Tests](https://img.shields.io/badge/Tests-49_passing-22C55E?style=for-the-badge)]()
+[![Python](https://img.shields.io/badge/Python-3.11+-3B82F6?style=for-the-badge&logo=python)]()
+[![MCP](https://img.shields.io/badge/MCP-Compatible-F59E0B?style=for-the-badge)]()
+[![License](https://img.shields.io/badge/License-MIT-6B7280?style=for-the-badge)]()
 
-Recall is an open-source MCP server that gives AI coding assistants 
-long-term structured memory of your DSA practice history. 
-Connect Cursor, Claude Desktop, or VS Code to a persistent memory 
-backend built on CockroachDB + Google Gemini embeddings.
+Recall is an open-source **Model Context Protocol (MCP) server** that gives AI coding assistants long-term, structured memory of your DSA practice. Connect Cursor, Claude Desktop, or VS Code and let your AI tutor remember your weaknesses, track your mistakes, and plan your interview prep — automatically.
+
+---
 
 ## 🌐 Live Demo
-- **Web Dashboard**: https://dsa-mcp.onrender.com
-- **MCP Endpoint**: https://dsa-mcp.onrender.com/mcp  
-- **Demo Login**: alex@recall.dev / recall@demo123
+
+| | |
+|---|---|
+| **Web Dashboard** | https://dsa-mcp.onrender.com |
+| **MCP Endpoint** | https://dsa-mcp.onrender.com/mcp |
+| **Health Check** | https://dsa-mcp.onrender.com/health |
+| **Demo Login** | alex@recall.dev / recall@demo123 |
+
+---
 
 ## ⚡ Quick Connect (30 seconds)
 
-### Claude Desktop / Cursor
-Add to your MCP config:
+### Option 1: Remote MCP (No Installation)
+Add to your `claude_desktop_config` or `.cursor/mcp.json`:
 ```json
 {
   "mcpServers": {
@@ -31,179 +37,224 @@ Add to your MCP config:
 }
 ```
 
-Then ask your AI:
-- *"I'm yourname@email.com. What should I practice today?"*
-- *"Give me an Amazon interview study plan"*
-- *"Flag my recurring mistakes in this code"*
-
-## 🎯 Why Recall Exists
-
-AI coding assistants forget everything between sessions.
-LeetCode tracks pass/fail but not WHY you failed.
-No tool remembers your specific mistake patterns across problems.
-
-Recall fixes this with 3-tier memory:
-1. **Episodic Memory** — every attempt logged with outcome + code
-2. **Semantic Memory** — mastery scores that decay like human memory (14-day half-life)
-3. **Vector Memory** — 768-dim embeddings of your mistakes for pattern detection
-
-## 🔧 8 MCP Tools
-
-| Tool | What it does |
-|------|-------------|
-| `get_or_create_user` | Register/fetch user by email |
-| `get_mastery_report` | Topic mastery with 14-day decay |
-| `log_attempt` | Record attempt + generate mistake embeddings |
-| `suggest_next_problem` | Epsilon-greedy weak topic + vector ranking |
-| `flag_recurring_mistake` | Cosine similarity against past mistake embeddings |
-| `get_problem_context` | Problem details + similar past attempts |
-| `study_plan` | 7-day company-specific study plan |
-| `say_hello` | Test MCP connection |
-
-## 🧠 How Memory Works
-
-### Mastery Decay Formula
-
-mastery(t) = base_score × 0.5^(days_elapsed / 14)
-
-If you score 0.80 in Binary Search but don't practice for 14 days → score drops to 0.40.
-GitHub Actions runs this decay automatically every night at midnight UTC.
-
-### Vector Mistake Detection
-1. You fail a problem → mistake text embedded with Gemini (768-dim)
-2. Next time you write similar code → cosine similarity check
-3. If similarity > 0.35 → "⚠️ You made this exact mistake before!"
-
-## 🏗️ Architecture
-
-```text
-┌─────────────────────────────────────────┐
-│              Client Layer               │
-│    Cursor/Claude (stdio) │ VS Code │ Web│
-└──────────────┬──────────────────────────┘
-               │ MCP Protocol
-               ▼
-┌─────────────────────────────────────────┐
-│              Render Server              │
-│  FastMCP (8 tools) + FastAPI Dashboard  │
-│    Rate Limiting + Structured Logging   │
-└──────┬──────────────┬───────────────────┘
-       │              │
-       ▼              ▼
-┌──────────────┐ ┌───────────────────────┐
-│ CockroachDB  │ │   Google Gemini API   │
-│ 3,359 probs  │ │  text-embedding-004   │
-│ HNSW vectors │ │    768-dim vectors    │
-└──────────────┘ └───────────────────────┘
-       │
-       ▼
-┌──────────────┐
-│GitHub Actions│
-│ Nightly Decay│
-│ 0 0 * * *    │
-└──────────────┘
-```
-
-## 📸 Screenshots
-
-### Web Dashboard
-![Dashboard](docs/screenshots/dashboard.png)
-
-### AI Study Assistant  
-![AI Assistant](docs/screenshots/ai-assistant.png)
-
-### Problems Browser (3,359 problems)
-![Problems](docs/screenshots/problems.png)
-
-### Progress & Analytics
-![Progress](docs/screenshots/progress.png)
-
-## 🚀 Tech Stack
-
-| Component | Technology |
-|-----------|-----------|
-| MCP Server | FastMCP (Python 3.11+) |
-| Database | CockroachDB Serverless |
-| Vector Search | HNSW Index (cosine similarity) |
-| Embeddings | Google Gemini text-embedding-004 |
-| Web Dashboard | FastAPI + Jinja2 + Alpine.js |
-| Auth | bcrypt password hashing |
-| Rate Limiting | slowapi |
-| Deployment | Render (primary) |
-| CI/CD | GitHub Actions |
-| Tests | pytest (49 passing) |
-
-## 🛠️ Local Setup
-
-### Prerequisites
-- Python 3.11+
-- uv package manager
-- CockroachDB Serverless account (free)
-- Google AI Studio API key (free)
-
-### Steps
-```bash
-git clone https://github.com/tushar-2-5/DSA_MCP.git
-cd DSA_MCP
-uv sync
-
-# Configure environment
-cp .env.example .env
-# Edit .env with your DATABASE_URL and GEMINI_API_KEY
-
-# Apply migrations
-uv run python scripts/apply_migration.py
-
-# Seed 3,359 problems
-uv run python scripts/seed_problems.py
-uv run python scripts/seed_company_problems.py
-
-# Run tests
-uv run pytest -v
-
-# Start server
-uv run python -m server.main
-```
-
-### MCP Config (Local)
+### Option 2: Local MCP
 ```json
 {
   "mcpServers": {
     "recall": {
       "command": "uv",
-      "args": ["--directory", "/path/to/DSA_MCP", 
-               "run", "python", "-m", "server.main"]
+      "args": ["--directory", "/path/to/DSA_MCP", "run", "python", "-m", "server.main"]
     }
   }
 }
 ```
 
-## 🧪 Testing
+Then ask your AI assistant:
+- "I'm alex@recall.dev. What should I practice today?"
+- "Give me an Amazon interview study plan"
+- "Flag recurring mistakes in my code"
+- "Log my attempt: Two Sum, passed, 20 minutes"
+
+---
+
+## 🎯 Why Recall Exists
+
+| Problem | Recall's Solution |
+|---------|-----------------|
+| AI assistants forget everything between sessions | Persistent memory via MCP protocol |
+| LeetCode only tracks pass/fail, not WHY you failed | Vector embeddings of mistake patterns |
+| No personalized problem recommendations | Epsilon-greedy weak topic selection |
+| No company-specific interview prep | 3,359 problems tagged with 129+ companies |
+| Mastery fades without practice | 14-day exponential decay formula |
+
+---
+
+## 🔧 8 MCP Tools
+
+| Tool | Trigger | What it does |
+|------|---------|-------------|
+| `get_or_create_user` | Session start | Register/fetch user by email |
+| `get_mastery_report` | "How am I doing?" | Topic mastery with 14-day decay |
+| `log_attempt` | After solving | Record attempt + generate mistake embeddings |
+| `suggest_next_problem` | "What to practice?" | Epsilon-greedy weak topic + vector ranking |
+| `flag_recurring_mistake` | Code review | Cosine similarity vs past mistake embeddings |
+| `get_problem_context` | Starting a problem | Problem details + similar past attempts |
+| `study_plan` | "Prepare for Amazon" | 7-day company-specific study plan |
+| `say_hello` | Connection test | Verify MCP server connection |
+
+---
+
+## 🧠 How Memory Works
+
+### 1. Episodic Memory — Attempt History
+Every attempt logged: problem, outcome, code, time, mistakes.
+
+### 2. Semantic Memory — Decaying Mastery Scores
+
+mastery(t) = base_score × 0.5^(days_elapsed / 14)
+
+Score 0.80 in Binary Search → don't practice for 14 days → score drops to 0.40. **GitHub Actions** runs nightly decay at midnight UTC automatically.
+
+### 3. Vector Memory — Mistake Pattern Detection
+Your mistake → Gemini text-embedding-004 → 768-dim vector → stored in CockroachDB  
+Next similar code → cosine similarity check → similarity > 0.35 → WARNING!
+
+---
+
+## 🏗️ Architecture
+
+```text
+┌────────────────────────────────────────────────────┐
+│                    CLIENT LAYER                    │
+│ Cursor/Claude Desktop │  VS Code   │  Web Browser  │
+│      (MCP stdio)      │ Extension  │    (HTTPS)    │
+└──────────────┬─────────────────────────────────────┘
+               │ MCP Protocol / REST API
+               ▼
+┌────────────────────────────────────────────────────┐
+│              RENDER PRODUCTION SERVER              │
+│     FastMCP (8 tools) + FastAPI Web Dashboard      │
+│    Rate Limiting (slowapi) + Structured Logging    │
+└────────────┬──────────────────┬────────────────────┘
+             │                  │
+             ▼                  ▼
+┌──────────────────┐  ┌────────────────────────────┐
+│   CockroachDB    │  │     Google Gemini API      │
+│    Serverless    │  │     text-embedding-004     │
+│  3,359 problems  │  │  768-dimensional vectors   │
+│ HNSW vector idx  │  └────────────────────────────┘
+└──────────────────┘
+             │
+             ▼
+┌──────────────────┐
+│  GitHub Actions  │
+│   Nightly Decay  │
+│    0 0 * * *     │
+└──────────────────┘
+```
+
+---
+
+## 📸 Screenshots
+
+### Web Dashboard — Mastery Overview
+![Dashboard](docs/screenshots/dashboard.png)
+
+### AI Study Assistant
+![AI Assistant](docs/screenshots/ai-assistant.png)
+
+### Problems Browser (3,359 problems with company tags)
+![Problems](docs/screenshots/problems.png)
+
+### Progress & Analytics
+![Progress](docs/screenshots/progress.png)
+
+### VS Code Extension — Live Mastery Sidebar
+![VS Code Extension](docs/screenshots/vscode-extension.png)
+
+---
+
+## 🚀 Local Setup
+
+### Prerequisites
+- Python 3.11+
+- [uv](https://github.com/astral-sh/uv) package manager
+- CockroachDB Serverless account (free tier)
+- Google AI Studio API key (free)
+
+### Installation
 
 ```bash
+# Clone repository
+git clone https://github.com/tushar-2-5/DSA_MCP.git
+cd DSA_MCP
+
+# Install dependencies
+uv sync
+
+# Configure environment
+cp .env.example .env
+# Edit .env — add DATABASE_URL and GEMINI_API_KEY
+
+# Apply database migrations
+uv run python scripts/apply_migration.py
+
+# Seed problem database (3,359 problems)
+uv run python scripts/seed_problems.py
+uv run python scripts/seed_company_problems.py
+
+# Generate embeddings
+uv run python scripts/embed_seed_problems.py
+
+# Run tests (49 should pass)
 uv run pytest -v
-# 49 passed (4 integration + 45 unit tests)
+
+# Start local server
+uv run python -m server.main
 ```
+
+---
+
+## 🧪 Test Suite
+
+```text
+49 passed in 16.96s
+├── integration/
+│   ├── test_user_lifecycle
+│   ├── test_study_plan_integration
+│   ├── test_company_filtering
+│   └── test_error_recovery
+└── unit/
+    ├── test_dashboard (8 tests)
+    ├── test_gemini_client (4 tests)
+    ├── test_mastery (5 tests)
+    ├── test_mcp_server (2 tests)
+    ├── test_recommendation (6 tests)
+    └── test_validation (20 tests)
+```
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| MCP Server | FastMCP + Python 3.11 | 8 MCP tools via stdio/HTTP |
+| Web Dashboard | FastAPI + Jinja2 + Alpine.js | User interface |
+| Database | CockroachDB Serverless | Distributed SQL + vector search |
+| Vector Index | HNSW (cosine similarity) | Fast mistake pattern matching |
+| Embeddings | Google Gemini text-embedding-004 | 768-dim mistake vectors |
+| Auth | bcrypt + Starlette sessions | Secure password hashing |
+| Rate Limiting | slowapi | API abuse protection |
+| Deployment | Render | Production hosting |
+| CI/CD | GitHub Actions | Nightly decay cron |
+| VS Code | TypeScript Extension | IDE integration |
+
+---
 
 ## ✅ Project Status
 
-| Feature | Status |
-|---------|--------|
-| 8 MCP Tools | ✅ Complete |
-| Web Dashboard | ✅ Complete |
-| Password Authentication | ✅ Complete |
-| 3,359 Company-tagged Problems | ✅ Complete |
-| AI Study Assistant | ✅ Complete |
-| VS Code Extension | ✅ Complete |
-| Mastery Decay Engine | ✅ Complete |
-| Vector Mistake Detection | ✅ Complete |
-| GitHub Actions Nightly Decay | ✅ Complete |
-| Rate Limiting | ✅ Complete |
-| Integration Tests (49/49) | ✅ Complete |
+| Feature | Status | Details |
+|---------|--------|---------|
+| 8 MCP Tools | ✅ Complete | All tools tested and verified |
+| Web Dashboard | ✅ Complete | Login, problems, mastery, analytics |
+| Password Authentication | ✅ Complete | bcrypt hashing, session management |
+| 3,359 Company Problems | ✅ Complete | 129+ companies tagged |
+| AI Study Assistant | ✅ Complete | Smart query routing on dashboard |
+| VS Code Extension | ✅ Complete | Live mastery sidebar + notifications |
+| Mastery Decay Engine | ✅ Complete | 14-day exponential half-life |
+| Vector Mistake Detection | ✅ Complete | 768-dim cosine similarity |
+| Nightly Decay Cron | ✅ Complete | GitHub Actions (0 0 * * *) |
+| Rate Limiting | ✅ Complete | slowapi middleware |
+| Integration Tests | ✅ Complete | 49/49 passing |
+| Pagination | ✅ Complete | 50 problems per page |
+
+---
 
 ## 📄 License
+
 MIT License — see [LICENSE](LICENSE)
 
 ---
 
-> Built for hackathon by Tushar, KIIT
+*Built for hackathon by Tushar · IIT ISM Dhanbad · 2026*
