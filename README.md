@@ -103,23 +103,12 @@ Restart Claude Desktop. Then in chat:
 ### Cursor
 Add to `~/.cursor/mcp.json` — same config as above.
 
----
+## Live Demo
+🌐 **Try it now**: https://dsa-mcp.onrender.com
+- Login: `alex@recall.dev` / `recall@demo123`
 
 ## Screenshots
-
-### Web Dashboard — Mastery Overview
-![Mastery Dashboard](docs/screenshots/dashboard.png)
-
-### Web Dashboard — AI Study Assistant
-![AI Study Assistant](docs/screenshots/ai_assistant.png)
-
-### Web Dashboard — Problem Browser
-![Problem Browser](docs/screenshots/problems.png)
-
-### Claude Desktop — Live MCP Integration
-![Claude Desktop MCP](docs/screenshots/claude_desktop.png)
-
-> 📸 Screenshots coming soon — see live demo at [https://dsa-mcp.onrender.com](https://dsa-mcp.onrender.com)
+> 📸 Visit https://dsa-mcp.onrender.com to see the live dashboard
 
 ---
 
