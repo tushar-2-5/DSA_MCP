@@ -1,3 +1,4 @@
+import sys
 import logging
 import time
 from typing import Optional
@@ -11,6 +12,7 @@ from database.queries import (
 
 from tools.get_or_create_user import verify_user_token
 
+logging.basicConfig(stream=sys.stderr)
 logger = logging.getLogger(__name__)
 
 COMPANY_TIPS = {

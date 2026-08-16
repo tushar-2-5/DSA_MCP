@@ -1,3 +1,4 @@
+import sys
 import structlog
 
 
@@ -8,6 +9,7 @@ def setup_logging() -> None:
             structlog.processors.add_log_level,
             structlog.processors.JSONRenderer(),
         ],
+        logger_factory=structlog.PrintLoggerFactory(file=sys.stderr),
     )
 
 

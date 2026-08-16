@@ -1,3 +1,4 @@
+import sys
 import logging
 import time
 from typing import Dict, Any, Optional
@@ -12,9 +13,9 @@ from database.queries import (
 )
 from memory.recommendation import pick_weak_topic, get_difficulty_band
 from core.logging import logger
-
-
 from tools.get_or_create_user import verify_user_token
+
+logging.basicConfig(stream=sys.stderr)
 
 
 def format_progression_info(mastery_score: float, band: str) -> str:

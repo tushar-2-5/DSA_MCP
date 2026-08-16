@@ -1,9 +1,13 @@
+import sys
+import logging
 from typing import Dict, Any, Optional
 from uuid import UUID
 from database.connection import get_db_connection
 from database.queries import get_user, find_similar_past_attempts
 from embeddings.gemini_client import GeminiEmbedder
 from tools.get_or_create_user import verify_user_token
+
+logging.basicConfig(stream=sys.stderr)
 
 
 async def get_problem_context(

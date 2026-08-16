@@ -1,3 +1,4 @@
+import sys
 import logging
 import time
 from datetime import datetime, timezone
@@ -17,6 +18,8 @@ from memory.mastery import decayed_mastery, update_base_score
 from embeddings.gemini_client import GeminiEmbedder
 from core.logging import logger
 from tools.get_or_create_user import verify_user_token
+
+logging.basicConfig(stream=sys.stderr)
 
 
 async def log_attempt(

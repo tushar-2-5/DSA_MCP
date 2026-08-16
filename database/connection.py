@@ -15,6 +15,7 @@ if sys.platform == "win32":
 
 load_dotenv()
 
+logging.basicConfig(stream=sys.stderr)
 logger = logging.getLogger(__name__)
 
 _pool: AsyncConnectionPool | None = None

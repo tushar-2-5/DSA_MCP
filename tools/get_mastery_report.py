@@ -1,3 +1,4 @@
+import sys
 import logging
 import time
 from typing import Optional, Dict, Any
@@ -7,6 +8,7 @@ from database.queries import get_user_mastery_report_rows, get_user
 
 from tools.get_or_create_user import verify_user_token
 
+logging.basicConfig(stream=sys.stderr)
 logger = logging.getLogger(__name__)
 
 

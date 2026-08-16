@@ -1,8 +1,10 @@
+import sys
 import logging
 import time
 import uuid
 from starlette.middleware.base import BaseHTTPMiddleware
 
+logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 logger = logging.getLogger("recall.api")
 
 

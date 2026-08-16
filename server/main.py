@@ -1,8 +1,12 @@
+import sys
 import argparse
 import logging
 import os
 import secrets
 from contextlib import asynccontextmanager
+
+# In stdio mode, redirect ALL logging to stderr
+logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 
 from fastapi import FastAPI
 from mcp.server.fastmcp import FastMCP
@@ -22,7 +26,6 @@ from web.app import app as web_app
 from web.middleware.logging_middleware import RequestLoggingMiddleware
 
 setup_logging()
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("recall_server")
 
 
