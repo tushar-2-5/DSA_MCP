@@ -40,11 +40,13 @@ sec_settings = TransportSecuritySettings(
 # FastMCP instance
 mcp = FastMCP("recall", transport_security=sec_settings)
 
+is_server_ready = False
+
 
 @mcp.custom_route("/health", methods=["GET"])
 async def health_check_mcp(request=None):
     """Health check endpoint for Railway, Render and load balancers."""
-    return JSONResponse({"status": "ok"})
+    return JSONResponse({"status": "ok", "ready": is_server_ready})
 
 
 @mcp.tool()
@@ -67,6 +69,7 @@ mcp.tool()(study_plan)
 # Build combined lifespan managing both database connection pool and FastMCP session manager
 @asynccontextmanager
 async def combined_lifespan(app: FastAPI):
+    global is_server_ready
     logger.info("Initializing database pool for Recall Server & Web Dashboard...")
     try:
         await get_pool()
@@ -75,7 +78,10 @@ async def combined_lifespan(app: FastAPI):
         logger.error(f"Error initializing database pool: {e}")
 
     async with mcp.session_manager.run():
+        is_server_ready = True
+        logger.info("Recall MCP Server is fully initialized and ready.")
         yield
+        is_server_ready = False
 
     logger.info("Closing database pool...")
     try:
@@ -100,7 +106,7 @@ app.add_middleware(
 @app.get("/health")
 async def health_endpoint():
     """Health check endpoint for Render, Railway, and load balancers."""
-    return JSONResponse({"status": "ok"})
+    return JSONResponse({"status": "ok", "ready": is_server_ready})
 
 
 # Configure SessionMiddleware

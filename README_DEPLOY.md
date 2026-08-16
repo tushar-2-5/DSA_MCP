@@ -9,8 +9,12 @@ Mac path: `~/Library/Application Support/Claude/claude_desktop_config.json`
 {
   "mcpServers": {
     "recall": {
-      "type": "sse",
-      "url": "https://recall-mcp.onrender.com/sse"
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://dsa-mcp.onrender.com/mcp"
+      ]
     }
   }
 }

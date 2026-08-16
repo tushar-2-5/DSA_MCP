@@ -3,7 +3,7 @@ services:
     name: recall-mcp
     runtime: python
     buildCommand: pip install uv && uv sync
-    startCommand: uv run python -m server.main --transport sse --host 0.0.0.0 --port $PORT
+    startCommand: uv run python -m server.main --transport streamable-http --host 0.0.0.0 --port $PORT
     envVars:
       - key: DATABASE_URL
         sync: false
@@ -12,4 +12,4 @@ services:
       - key: SECRET_KEY
         sync: false
       - key: MCP_TRANSPORT
-        value: sse
+        value: streamable-http
