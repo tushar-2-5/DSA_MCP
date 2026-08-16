@@ -56,6 +56,9 @@ class Attempt(BaseModel):
     user_id: UUID
     problem_id: UUID
     code_s3_key: Optional[str] = None
+    code_blob: Optional[str] = None
+    code_language: Optional[str] = "python"
+    storage_backend: Optional[str] = "cockroachdb"
     outcome: str
     complexity_achieved: Optional[str] = None
     time_taken_seconds: Optional[int] = None

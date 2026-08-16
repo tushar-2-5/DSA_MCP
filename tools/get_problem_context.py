@@ -49,6 +49,7 @@ async def get_problem_context(
             "attempt_id": m["attempt_id"],
             "outcome": m["outcome"],
             "complexity_achieved": m["complexity_achieved"],
+            "code_snippet": m.get("code_blob", "")[:500] if m.get("code_blob") else None,
             "mistake_summary": m["mistake_summary"],
             "distance": round(float(m["distance"]), 4),
         }

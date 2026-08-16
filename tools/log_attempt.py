@@ -78,6 +78,10 @@ async def log_attempt(
             logger.warning(f"Gemini embedding failed: {e}. Saving without embedding.")
             code_vector = None
 
+        # Truncate code to 50KB max to stay within CockroachDB row limits
+        MAX_CODE_SIZE = 50 * 1024  # 50KB
+        code_stored = code[:MAX_CODE_SIZE] if code else None
+
         async with conn.transaction():
             attempt = await insert_attempt(
                 conn=conn,
@@ -87,6 +91,15 @@ async def log_attempt(
                 outcome=outcome,
                 complexity_achieved=complexity_achieved,
                 time_taken_seconds=time_taken_seconds,
+                code_blob=code_stored,
+                code_language="python",
+                storage_backend="cockroachdb",
+            )
+
+            logger.info("code_blob_stored", 
+                backend="cockroachdb",
+                size_bytes=len(code_stored) if code_stored else 0,
+                note="S3 substitute — storing code in CockroachDB JSONB"
             )
 
             # Store code submission embedding if available

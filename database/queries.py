@@ -169,13 +169,16 @@ async def insert_attempt(
     outcome: str,
     complexity_achieved: Optional[str] = None,
     time_taken_seconds: Optional[int] = None,
+    code_blob: Optional[str] = None,
+    code_language: str = "python",
+    storage_backend: str = "cockroachdb",
 ) -> Attempt:
     async with conn.cursor(row_factory=dict_row) as cur:
         await cur.execute(
             """
-            INSERT INTO attempts (user_id, problem_id, code_s3_key, outcome, complexity_achieved, time_taken_seconds)
-            VALUES (%s, %s, %s, %s, %s, %s)
-            RETURNING id, user_id, problem_id, code_s3_key, outcome, complexity_achieved, time_taken_seconds, created_at
+            INSERT INTO attempts (user_id, problem_id, code_s3_key, outcome, complexity_achieved, time_taken_seconds, code_blob, code_language, storage_backend)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id, user_id, problem_id, code_s3_key, outcome, complexity_achieved, time_taken_seconds, code_blob, code_language, storage_backend, created_at
             """,
             (
                 str(user_id),
@@ -184,6 +187,9 @@ async def insert_attempt(
                 outcome,
                 complexity_achieved,
                 time_taken_seconds,
+                code_blob,
+                code_language,
+                storage_backend,
             ),
         )
         row = await cur.fetchone()
@@ -445,6 +451,7 @@ async def find_similar_past_attempts(
             a.id AS attempt_id,
             a.outcome,
             a.complexity_achieved,
+            a.code_blob,
             m.summary AS mistake_summary,
             (e.embedding <-> %s) AS distance
         FROM embeddings e
@@ -462,6 +469,7 @@ async def find_similar_past_attempts(
                 "attempt_id": str(r["attempt_id"]),
                 "outcome": r["outcome"],
                 "complexity_achieved": r["complexity_achieved"],
+                "code_blob": r.get("code_blob"),
                 "mistake_summary": r["mistake_summary"],
                 "distance": float(r["distance"]),
             }
