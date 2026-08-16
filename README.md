@@ -16,14 +16,53 @@ Recall bridges this gap by introducing **agentic memory** for technical intervie
 
 ## Architecture
 
-![Recall System Architecture](docs/architecture.svg)
+```text
+┌─────────────────────────────────────────────────────────────┐
+│                   IDE / Coding Agent                        │
+│     Claude Desktop · Cursor · Windsurf · Continue           │
+└─────────────────────────────┬───────────────────────────────┘
+                              │
+               MCP Protocol (stdio / SSE / HTTP)
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                 Recall MCP Server (Python)                  │
+│   FastMCP · JWT Auth · Pydantic v2 · Structured Logging     │
+│                                                             │
+│   Tools:                                                    │
+│   get_or_create_user   │ get_mastery_report                 │
+│   log_attempt          │ suggest_next_problem               │
+│   get_problem_context  │ flag_recurring_mistake             │
+│   study_plan           │ say_hello                          │
+└──────────┬──────────────────────┬───────────────────────────┘
+           │                      │
+           ▼                      ▼
+┌─────────────────┐    ┌─────────────────────┐
+│  CockroachDB    │    │  Google Gemini AI   │
+│   Serverless    │    │  text-embedding-004 │
+│                 │    │  768-dim vectors    │
+│ • users         │    └─────────────────────┘
+│ • problems      │
+│ • attempts      │    ┌─────────────────────┐
+│ • mastery       │    │   GitHub Actions    │
+│ • mistakes      │    │  Nightly Decay Cron │
+│ • embeddings    │    │   00:00 UTC daily   │
+│ • topics        │    └─────────────────────┘
+│                 │
+│ HNSW Vector     │    ┌─────────────────────┐
+│ Index (768-dim) │    │    Web Dashboard    │
+│ 3,359 problems  │    │  FastAPI + Railway  │
+│ 454 embeddings  │    │  Jinja2 + Alpine.js │
+└─────────────────┘    └─────────────────────┘
+```
 
-The Recall system consists of 4 layers:
-- **Client Layer**: Cursor/Claude Desktop (MCP stdio), VS Code Extension (REST), Web Browser (HTTPS)
-- **Server Layer**: FastMCP (8 MCP tools) + FastAPI Dashboard on Railway with rate limiting
-- **Data Layer**: CockroachDB with 3,359 company-tagged problems, 768-dim HNSW vector embeddings
-- **AI Layer**: Google Gemini text-embedding-004 for mistake pattern detection and smart recommendations
-- **Automation**: GitHub Actions / Nightly Decay Cron (midnight UTC)
+**Request Flow:**  
+User types in IDE  
+→ Claude detects intent  
+→ Calls Recall MCP tool  
+→ Tool queries CockroachDB + Gemini  
+→ Returns structured memory response  
+→ Claude gives personalized advice  
 
 ### MCP Tools API
 
@@ -63,6 +102,78 @@ Restart Claude Desktop. Then in chat:
 
 ### Cursor
 Add to `~/.cursor/mcp.json` — same config as above.
+
+---
+
+## Screenshots
+
+### Web Dashboard — Mastery Overview
+![Mastery Dashboard](docs/screenshots/dashboard.png)
+
+### Web Dashboard — AI Study Assistant
+![AI Study Assistant](docs/screenshots/ai_assistant.png)
+
+### Web Dashboard — Problem Browser
+![Problem Browser](docs/screenshots/problems.png)
+
+### Claude Desktop — Live MCP Integration
+![Claude Desktop MCP](docs/screenshots/claude_desktop.png)
+
+> 📸 Screenshots coming soon — see live demo at [https://web-production-54438.up.railway.app](https://web-production-54438.up.railway.app)
+
+---
+
+## How to Use
+
+### Step 1 — Connect to Recall
+Add the remote MCP config to your IDE (see Quick Connect above). Restart your IDE.
+
+### Step 2 — Register yourself
+In your IDE chat, type:
+> "Register me on Recall: your@email.com"
+
+Claude will call `get_or_create_user` and return your user_id and token. Save these — Claude will use them automatically in future messages.
+
+### Step 3 — Check your progress
+> "How am I doing with DSA? Show my mastery report."
+
+Claude calls `get_mastery_report` and shows your topic-wise scores with decay information.
+
+### Step 4 — Get a recommendation
+> "What should I practice today?"
+
+Claude calls `suggest_next_problem` — picks your weakest topic, selects appropriate difficulty, and finds a problem similar to your past mistakes.
+
+### Step 5 — Practice and log
+Solve a problem, then tell Claude:
+> "I just solved Two Sum. Took 20 mins, used HashMap, O(N) solution."
+
+Claude calls `log_attempt` — saves your attempt, updates mastery, stores code embedding.
+
+### Step 6 — Get warned about recurring mistakes
+While writing code, ask Claude:
+> "Check my code for recurring mistakes."
+
+Paste your code. Claude calls `flag_recurring_mistake` — compares your code against past mistake embeddings and warns you instantly.
+
+### Example Conversation
+
+```text
+You: "I'm alex@example.com. What should I practice today?"
+
+Claude: [calls get_or_create_user + get_mastery_report + suggest_next_problem]
+"Welcome back Alex! Your weakest topic is Backtracking at 17%.
+I recommend: Min Cost Climbing Stairs (Easy)
+This is similar to a mistake you made 3 days ago in dynamic programming.
+Based on your mastery (0.17), starting with Easy problems."
+
+You: [solves problem] "Done! Failed, used brute force again."
+
+Claude: [calls log_attempt]
+"Logged! ⚠️ This is the 3rd time you've used brute force on
+array problems. Consider HashMap approach — you have 67% mastery
+in Arrays & Hashing, this should be within reach."
+```
 
 ---
 
