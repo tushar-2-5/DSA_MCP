@@ -9,7 +9,9 @@ from contextlib import asynccontextmanager
 logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import JSONResponse
 
@@ -28,8 +30,15 @@ from web.middleware.logging_middleware import RequestLoggingMiddleware
 setup_logging()
 logger = logging.getLogger("recall_server")
 
+# Configure TransportSecuritySettings to allow remote connections (Render deployment)
+sec_settings = TransportSecuritySettings(
+    enable_dns_rebinding_protection=False,
+    allowed_hosts=["*"],
+    allowed_origins=["*"],
+)
+
 # FastMCP instance
-mcp = FastMCP("recall")
+mcp = FastMCP("recall", transport_security=sec_settings)
 
 
 @mcp.custom_route("/health", methods=["GET"])
@@ -77,6 +86,15 @@ async def combined_lifespan(app: FastAPI):
 
 # Combined FastAPI Application
 app = FastAPI(title="Recall Server & Web Dashboard", lifespan=combined_lifespan)
+
+# Add CORS Middleware to permit all origins (required for Claude Desktop SSE)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/health")
