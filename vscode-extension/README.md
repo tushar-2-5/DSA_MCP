@@ -9,7 +9,7 @@ An AI-powered DSA practice memory assistant for Visual Studio Code, connected to
 - **Smart Startup Notifications**: Automatically highlights weak topics that require practice due to 14-day exponential memory decay.
 
 ## Configuration Settings
-- `recall.serverUrl`: URL of your Recall server instance (e.g., `https://web-production-54438.up.railway.app`).
+- `recall.serverUrl`: URL of your Recall server instance (e.g., `https://dsa-mcp.onrender.com`).
 - `recall.userEmail`: Your registered account email address.
 - `recall.targetCompany`: Target company for interview preparation (default: `amazon`).
 - `recall.notifyOnStartup`: Enable/disable weak topic warnings on VS Code launch.

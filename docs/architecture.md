@@ -8,7 +8,7 @@ graph TB
         C[Web Browser<br/>Dashboard UI]
     end
 
-    subgraph Railway["🚀 Railway Production Server"]
+    subgraph Render["🚀 Render Production Server"]
         D[FastMCP Server<br/>8 MCP Tools]
         E[FastAPI Dashboard<br/>REST API + Templates]
         F[Rate Limiter<br/>slowapi middleware]

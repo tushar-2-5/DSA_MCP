@@ -71,7 +71,7 @@
       "properties": {
         "recall.serverUrl": {
           "type": "string",
-          "default": "https://web-production-54438.up.railway.app",
+          "default": "https://dsa-mcp.onrender.com",
           "description": "Recall server URL"
         },
         "recall.userEmail": {

@@ -51,7 +51,7 @@ Recall bridges this gap by introducing **agentic memory** for technical intervie
 │                 │
 │ HNSW Vector     │    ┌─────────────────────┐
 │ Index (768-dim) │    │    Web Dashboard    │
-│ 3,359 problems  │    │  FastAPI + Railway  │
+│ 3,359 problems  │    │  FastAPI + Render   │
 │ 454 embeddings  │    │  Jinja2 + Alpine.js │
 └─────────────────┘    └─────────────────────┘
 ```
@@ -119,7 +119,7 @@ Add to `~/.cursor/mcp.json` — same config as above.
 ### Claude Desktop — Live MCP Integration
 ![Claude Desktop MCP](docs/screenshots/claude_desktop.png)
 
-> 📸 Screenshots coming soon — see live demo at [https://web-production-54438.up.railway.app](https://web-production-54438.up.railway.app)
+> 📸 Screenshots coming soon — see live demo at [https://dsa-mcp.onrender.com](https://dsa-mcp.onrender.com)
 
 ---
 
@@ -178,7 +178,8 @@ in Arrays & Hashing, this should be within reach."
 ---
 
 ## Web Dashboard
-Live at: https://web-production-54438.up.railway.app
+- **Primary URL**: https://dsa-mcp.onrender.com
+- **MCP Endpoint**: https://dsa-mcp.onrender.com/mcp
 
 Features:
 - Secure login/signup
@@ -301,30 +302,30 @@ $env:PYTHONPATH="."; uv run pytest -v
 
 ---
 
-## Railway Deployment (Remote MCP Server)
+## Render Deployment (Remote MCP Server)
 
-Recall can be deployed to [Railway](https://railway.app) as a public remote MCP server running over HTTP/HTTPS (Streamable-HTTP transport):
+Recall is deployed to Render as a public remote MCP server running over HTTP/HTTPS (Streamable-HTTP transport):
 
-1. **Deploy to Railway**: Connect your GitHub repository (`DSA_MCP`).
-2. **Environment Variables**: Add `DATABASE_URL`, `GEMINI_API_KEY`, and `MCP_TRANSPORT=streamable-http`.
-3. **Public Endpoint**: Generate a public domain under Railway Settings. Your public MCP endpoint will be:
-   `https://<YOUR_RAILWAY_DOMAIN>/mcp`
+- **Primary URL**: https://dsa-mcp.onrender.com
+- **MCP Endpoint**: https://dsa-mcp.onrender.com/mcp
+
+1. **Deploy to Render**: Connect your GitHub repository (`DSA_MCP`) using `render.yaml`.
+2. **Environment Variables**: Set `DATABASE_URL`, `GEMINI_API_KEY`, `SECRET_KEY`, and `MCP_TRANSPORT=streamable-http`.
+3. **Public Endpoint**: Render serves the app live at `https://dsa-mcp.onrender.com/mcp`.
 4. **Connect Cursor**: Add the remote URL to Cursor MCP settings:
    ```json
    {
      "mcpServers": {
        "recall-remote": {
-         "url": "https://<YOUR_RAILWAY_DOMAIN>/mcp"
+         "url": "https://dsa-mcp.onrender.com/mcp"
        }
      }
    }
    ```
 
-For full details, database initialization, and troubleshooting, see [DEPLOY_RAILWAY.md](file:///c:/Users/KIIT/OneDrive/Desktop/DSA%20PROJECT%20MCP/DEPLOY_RAILWAY.md).
-
 ### Nightly Decay Cron (GitHub Actions)
 A GitHub Actions workflow runs `scripts/decay_handler.py` every night 
-at midnight UTC. This applies 14-day exponential mastery decay to all users.
+at midnight UTC (`0 0 * * *`). This applies 14-day exponential mastery decay to all users.
 Triggered automatically via cron or manually via workflow_dispatch.
 
 ---
@@ -363,9 +364,9 @@ Once registered, you can interact with Recall naturally inside your IDE chat:
 | suggest_next_problem | ✅ Complete | Epsilon-greedy + difficulty progression |
 | study_plan | ✅ Complete | 7-day personalized study plan |
 | say_hello | ✅ Complete | Connection test tool |
-| Nightly Decay Scheduler | ✅ Complete | GitHub Actions cron at 00:00 UTC daily |
+| Nightly Decay Scheduler | ✅ Complete | GitHub Actions cron (0 0 * * *) |
 | Code Storage | ✅ Complete | CockroachDB JSONB (S3 substitute) |
-| Web Dashboard | ✅ Complete | https://web-production-54438.up.railway.app |
+| Web Dashboard | ✅ Complete | https://dsa-mcp.onrender.com |
 | Remote MCP Server | ✅ Complete | https://dsa-mcp.onrender.com/mcp |
 | JWT Authentication | ✅ Complete | Token-based user data privacy |
 

@@ -9,7 +9,7 @@ export interface MasteryTopic {
 export class RecallApiClient {
     private get serverUrl(): string {
         const config = vscode.workspace.getConfiguration('recall');
-        let url = config.get<string>('serverUrl', 'https://web-production-54438.up.railway.app');
+        let url = config.get<string>('serverUrl', 'https://dsa-mcp.onrender.com');
         return url.replace(/\/+$/, '');
     }
 

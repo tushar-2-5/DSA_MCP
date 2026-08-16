@@ -74,7 +74,7 @@ Railway will build and start the container using the provided `Procfile`:
 
 1. Go to **Settings** in your Railway service dashboard.
 2. Under **Networking** -> **Public Networking**, click **Generate Domain**.
-3. Your service will receive a public domain, such as `dsa-mcp-production.up.railway.app`.
+3. Your service will receive a public domain, such as `dsa-mcp.onrender.com`.
 
 ### Endpoints Format
 
