@@ -16,6 +16,7 @@ from database.queries import (
 from memory.mastery import decayed_mastery, update_base_score
 from embeddings.gemini_client import GeminiEmbedder
 from core.logging import logger
+from tools.get_or_create_user import verify_user_token
 
 
 async def log_attempt(
@@ -27,11 +28,12 @@ async def log_attempt(
     time_taken_seconds: Optional[int] = None,
     mistake_summary: Optional[str] = None,
     mistake_category: Optional[str] = None,
+    token: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Log a user's DSA problem solution attempt and update their topic mastery score.
 
-    Use this tool when the user states that they have completed, submitted, or attempted
-    a problem (e.g., 'I just finished this problem', 'I solved problem X', 'Here is my submission for Y').
+    Always pass the token received from get_or_create_user. Never use a user_id
+    that wasn't returned by get_or_create_user in this session.
 
     Args:
         user_id: The UUID string of the user.
@@ -42,6 +44,7 @@ async def log_attempt(
         time_taken_seconds: Optional time taken to solve the problem in seconds.
         mistake_summary: Optional summary of mistake made (for 'fail' or 'partial' outcomes).
         mistake_category: Optional category of mistake (e.g. 'sliding_window_off_by_one', 'logic_error').
+        token: Optional JWT auth token returned by get_or_create_user.
 
     Returns:
         Dict confirming attempt was logged and showing updated mastery score:
@@ -50,6 +53,17 @@ async def log_attempt(
     tool_name = "log_attempt"
     start = time.time()
     logger.info(f"Tool called: {tool_name} for user {user_id}")
+
+    if token:
+        try:
+            payload = verify_user_token(token)
+            if payload["user_id"] != user_id:
+                raise ValueError(
+                    "Access denied: token does not match user_id. "
+                    "You can only access your own data."
+                )
+        except ValueError as e:
+            raise ValueError(str(e))
 
     try:
         UUID(str(user_id))

@@ -9,6 +9,8 @@ from database.queries import (
     get_problems_filtered,
 )
 
+from tools.get_or_create_user import verify_user_token
+
 logger = logging.getLogger(__name__)
 
 COMPANY_TIPS = {
@@ -20,11 +22,28 @@ COMPANY_TIPS = {
 }
 
 
-async def study_plan(user_id: str, target_company: Optional[str] = None) -> str:
-    """Generate a personalized DSA study plan for a user, optionally targeted for a specific company interview."""
+async def study_plan(
+    user_id: str, target_company: Optional[str] = None, token: Optional[str] = None
+) -> str:
+    """Generate a personalized DSA study plan for a user, optionally targeted for a specific company interview.
+
+    Always pass the token received from get_or_create_user. Never use a user_id
+    that wasn't returned by get_or_create_user in this session.
+    """
     tool_name = "study_plan"
     start = time.time()
     logger.info(f"Tool called: {tool_name} for user {user_id}")
+
+    if token:
+        try:
+            payload = verify_user_token(token)
+            if payload["user_id"] != user_id:
+                raise ValueError(
+                    "Access denied: token does not match user_id. "
+                    "You can only access your own data."
+                )
+        except ValueError as e:
+            raise ValueError(str(e))
 
     async with get_db_connection() as conn:
         user = await get_user(conn, user_id)

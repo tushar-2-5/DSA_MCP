@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from uuid import UUID
 from database.connection import get_db_connection
 from database.queries import (
@@ -14,6 +14,9 @@ from memory.recommendation import pick_weak_topic, get_difficulty_band
 from core.logging import logger
 
 
+from tools.get_or_create_user import verify_user_token
+
+
 def format_progression_info(mastery_score: float, band: str) -> str:
     """Format progression info string based on mastery score and difficulty band."""
     if band == "Easy":
@@ -24,15 +27,15 @@ def format_progression_info(mastery_score: float, band: str) -> str:
         return f"Your mastery ({mastery_score:.2f}) qualifies you for Hard problems. Here's a challenge:"
 
 
-async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
-    """Suggest the next DSA problem for a user based on their topic mastery scores,
-    target difficulty band, and similarity to past mistakes.
+async def suggest_next_problem(user_id: str, token: Optional[str] = None) -> Dict[str, Any]:
+    """Suggest the next DSA problem for a user based on their topic mastery scores.
 
-    Use this tool when the user asks for a problem recommendation, what to practice next,
-    or next steps (e.g., 'what problem should I solve next?', 'give me a practice problem').
+    Always pass the token received from get_or_create_user. Never use a user_id
+    that wasn't returned by get_or_create_user in this session.
 
     Args:
         user_id: The UUID string of the user.
+        token: Optional JWT auth token returned by get_or_create_user.
 
     Returns:
         Dict matching contract:
@@ -46,6 +49,17 @@ async def suggest_next_problem(user_id: str) -> Dict[str, Any]:
     tool_name = "suggest_next_problem"
     start = time.time()
     logger.info(f"Tool called: {tool_name} for user {user_id}")
+
+    if token:
+        try:
+            payload = verify_user_token(token)
+            if payload["user_id"] != user_id:
+                raise ValueError(
+                    "Access denied: token does not match user_id. "
+                    "You can only access your own data."
+                )
+        except ValueError as e:
+            raise ValueError(str(e))
 
     try:
         UUID(user_id)

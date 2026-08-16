@@ -5,22 +5,24 @@ from uuid import UUID
 from database.connection import get_db_connection
 from database.queries import get_user_mastery_report_rows, get_user
 
+from tools.get_or_create_user import verify_user_token
+
 logger = logging.getLogger(__name__)
 
 
 async def get_mastery_report(
-    user_id: str, topic: Optional[str] = None
+    user_id: str, topic: Optional[str] = None, token: Optional[str] = None
 ) -> Dict[str, Any]:
     """Fetch user's DSA topic mastery report.
 
-    Use this tool when the user asks questions about their progress, mastery,
-    performance, or weaknesses (e.g., 'how am I doing?', 'what's my weak topic?',
-    'show my progress on binary trees').
+    Always pass the token received from get_or_create_user. Never use a user_id
+    that wasn't returned by get_or_create_user in this session.
 
     Args:
         user_id: The UUID string of the user.
         topic: Optional topic slug to filter results for a single topic (e.g. 'sliding-window').
                If omitted or null, returns mastery data for all topics.
+        token: Optional JWT auth token returned by get_or_create_user.
 
     Returns:
         Dict with key 'topics' containing a list of topic mastery summaries:
@@ -29,6 +31,17 @@ async def get_mastery_report(
     tool_name = "get_mastery_report"
     start = time.time()
     logger.info(f"Tool called: {tool_name} for user {user_id}")
+
+    if token:
+        try:
+            payload = verify_user_token(token)
+            if payload["user_id"] != user_id:
+                raise ValueError(
+                    "Access denied: token does not match user_id. "
+                    "You can only access your own data."
+                )
+        except ValueError as e:
+            raise ValueError(str(e))
 
     try:
         UUID(user_id)

@@ -1,29 +1,42 @@
 from collections import Counter
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from uuid import UUID
 from database.connection import get_db_connection
 from database.queries import get_user, find_similar_past_mistakes
 from embeddings.gemini_client import GeminiEmbedder
+from tools.get_or_create_user import verify_user_token
 
 SIMILARITY_THRESHOLD: float = 0.35
 
 
 async def flag_recurring_mistake(
-    user_id: str, code_in_progress: str
+    user_id: str, code_in_progress: str, token: Optional[str] = None
 ) -> Dict[str, Any]:
     """Analyze code currently being written against past mistake embeddings to warn of recurring mistakes.
 
-    Use this tool when a user is writing or editing code for a problem to proactively check if they are
-    repeating a mistake pattern from their history.
+    Always pass the token received from get_or_create_user. Never use a user_id
+    that wasn't returned by get_or_create_user in this session.
 
     Args:
         user_id: The UUID string of the registered user.
         code_in_progress: The source code currently being written by the user.
+        token: Optional JWT auth token returned by get_or_create_user.
 
     Returns:
         Dict matching contract:
         {"flagged": [...], "checked": True, "summary": str, "tip": str|None}
     """
+    if token:
+        try:
+            payload = verify_user_token(token)
+            if payload["user_id"] != user_id:
+                raise ValueError(
+                    "Access denied: token does not match user_id. "
+                    "You can only access your own data."
+                )
+        except ValueError as e:
+            raise ValueError(str(e))
+
     try:
         UUID(user_id)
     except (ValueError, TypeError):

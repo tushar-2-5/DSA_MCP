@@ -1,27 +1,40 @@
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from uuid import UUID
 from database.connection import get_db_connection
 from database.queries import get_user, find_similar_past_attempts
 from embeddings.gemini_client import GeminiEmbedder
+from tools.get_or_create_user import verify_user_token
 
 
 async def get_problem_context(
-    user_id: str, problem_statement: str
+    user_id: str, problem_statement: str, token: Optional[str] = None
 ) -> Dict[str, Any]:
     """Find structurally similar past attempts from the user's history for a problem statement.
 
-    Use this tool when a user is working on a problem or asks for relevant past context/attempts
-    (e.g., 'have I solved something like this before?', 'show past attempts for this problem').
+    Always pass the token received from get_or_create_user. Never use a user_id
+    that wasn't returned by get_or_create_user in this session.
 
     Args:
         user_id: The UUID string of the registered user.
         problem_statement: The text of the problem statement to find similar past attempts for.
+        token: Optional JWT auth token returned by get_or_create_user.
 
     Returns:
         Dict matching contract:
         - If matches exist: {"matches": [{"attempt_id": str, "outcome": str, "complexity_achieved": str|None, "mistake_summary": str|None, "distance": float}]}
         - If no matches: {"matches": [], "note": "No similar past attempts found. Keep practicing to build your history!"}
     """
+    if token:
+        try:
+            payload = verify_user_token(token)
+            if payload["user_id"] != user_id:
+                raise ValueError(
+                    "Access denied: token does not match user_id. "
+                    "You can only access your own data."
+                )
+        except ValueError as e:
+            raise ValueError(str(e))
+
     try:
         UUID(user_id)
     except (ValueError, TypeError):

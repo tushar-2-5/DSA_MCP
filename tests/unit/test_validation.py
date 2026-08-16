@@ -6,7 +6,7 @@ from database.connection import get_db_connection, close_pool
 from tools.get_mastery_report import get_mastery_report
 from tools.log_attempt import log_attempt
 from tools.suggest_next_problem import suggest_next_problem
-from tools.get_or_create_user import get_or_create_user
+from tools.get_or_create_user import get_or_create_user, create_user_token, verify_user_token
 from tools.get_problem_context import get_problem_context
 from tools.flag_recurring_mistake import flag_recurring_mistake
 
@@ -22,10 +22,17 @@ async def test_get_or_create_user_idempotent():
     test_email = f"pytest_user_{uuid.uuid4().hex[:6]}@example.com"
     res1 = await get_or_create_user(email=test_email, display_name="Test User")
     assert res1["status"] == "created"
+    assert "token" in res1
     user_id_1 = res1["user_id"]
+    token_1 = res1["token"]
+
+    payload = verify_user_token(token_1)
+    assert payload["user_id"] == user_id_1
+    assert payload["email"] == test_email
 
     res2 = await get_or_create_user(email=test_email, display_name="Test User")
     assert res2["status"] == "existing"
+    assert "token" in res2
     user_id_2 = res2["user_id"]
 
     assert user_id_1 == user_id_2
@@ -35,6 +42,26 @@ async def test_get_or_create_user_idempotent():
         async with conn.cursor() as cur:
             await cur.execute("DELETE FROM users WHERE id = %s", (user_id_1,))
         await conn.commit()
+
+
+@pytest.mark.asyncio
+async def test_token_auth_verification():
+    user1_id = str(uuid.uuid4())
+    user2_id = str(uuid.uuid4())
+
+    token1 = create_user_token(user1_id, "user1@example.com")
+
+    # Valid token matching user1_id should pass token check
+    with pytest.raises(ValueError, match="Call get_or_create_user first to register"):
+        await get_mastery_report(user_id=user1_id, token=token1)
+
+    # Token mismatch should raise Access denied
+    with pytest.raises(ValueError, match="Access denied: token does not match user_id"):
+        await get_mastery_report(user_id=user2_id, token=token1)
+
+    # Invalid token should raise Invalid token
+    with pytest.raises(ValueError, match="Invalid token"):
+        await get_mastery_report(user_id=user1_id, token="invalid-token-str")
 
 
 @pytest.mark.asyncio
