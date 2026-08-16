@@ -10,8 +10,8 @@ logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from mcp.server.fastmcp import FastMCP
 from mcp.server.transport_security import TransportSecuritySettings
+from mcp.server.fastmcp import FastMCP
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import JSONResponse
 
@@ -25,7 +25,7 @@ from tools.log_attempt import log_attempt
 from tools.study_plan import study_plan
 from tools.suggest_next_problem import suggest_next_problem
 from web.app import app as web_app
-from web.middleware.logging_middleware import RequestLoggingMiddleware
+
 
 setup_logging()
 logger = logging.getLogger("recall_server")
@@ -118,7 +118,6 @@ SECRET_KEY = (
 if not os.environ.get("SECRET_KEY") and not os.environ.get("SESSION_SECRET_KEY"):
     logger.warning("SECRET_KEY not set — using ephemeral key. All sessions will reset on restart.")
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
-app.add_middleware(RequestLoggingMiddleware)
 
 # Inherit state (Jinja2 templates) from web_app
 app.state.templates = web_app.state.templates
