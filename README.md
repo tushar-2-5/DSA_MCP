@@ -108,7 +108,18 @@ Add to `~/.cursor/mcp.json` — same config as above.
 - Login: `alex@recall.dev` / `recall@demo123`
 
 ## Screenshots
-> 📸 Visit https://dsa-mcp.onrender.com to see the live dashboard
+
+### Web Dashboard — Mastery Overview
+![Dashboard](docs/screenshots/dashboard.png)
+
+### AI Study Assistant
+![AI Assistant](docs/screenshots/ai-assistant.png)
+
+### Problems Browser
+![Problems](docs/screenshots/problems.png)
+
+### Progress & Analytics
+![Progress](docs/screenshots/progress.png)
 
 ---
 
