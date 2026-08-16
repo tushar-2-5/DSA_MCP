@@ -281,4 +281,4 @@ MIT License — see [LICENSE](LICENSE)
 
 ---
 
-*Built for hackathon by Tushar · IIT ISM Dhanbad · 2026*
+*Built   By Tushar 7710809(ISC)·  THANK YOU*
