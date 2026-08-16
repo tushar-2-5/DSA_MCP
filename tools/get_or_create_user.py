@@ -49,6 +49,9 @@ async def get_or_create_user(
         raise ValueError("email must be a non-empty string.")
 
     email_clean = email.strip().lower()
+    import re
+    if not re.match(r'^[^@]+@[^@]+\.[^@]+$', email_clean):
+        raise ValueError(f"Invalid email format: '{email_clean}'. Please provide a valid email address.")
 
     async with get_db_connection() as conn:
         existing_user = await get_user_by_email(conn, email_clean)

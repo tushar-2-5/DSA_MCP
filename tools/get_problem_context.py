@@ -108,3 +108,41 @@ async def get_problem_context(
         res["note"] = "No similar past attempts found. Keep practicing to build your history!"
 
     return res
+
+
+async def get_problem_by_title(
+    title: str
+) -> Dict[str, Any]:
+    """Search for a problem by its title or name. Use this to find the problem_id UUID needed for log_attempt. 
+    
+    Args:
+        title: Problem name to search for (e.g. 'Two Sum', 'Binary Search')
+    
+    Returns:
+        Dict with problem_id, title, difficulty, topic
+    """
+    async with get_db_connection() as conn:
+        result = await conn.execute(
+            """
+            SELECT id, title, difficulty, topic_id 
+            FROM problems 
+            WHERE LOWER(title) LIKE LOWER(%s)
+            LIMIT 5
+            """,
+            (f"%{title}%",)
+        )
+        rows = await result.fetchall()
+        if not rows:
+            raise ValueError(f"No problem found matching '{title}'. Try a different title.")
+        return {
+            "problems": [
+                {
+                    "problem_id": str(row[0]),
+                    "title": row[1],
+                    "difficulty": row[2],
+                    "topic_id": row[3]
+                }
+                for row in rows
+            ]
+        }
+
