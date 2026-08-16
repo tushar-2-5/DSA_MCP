@@ -12,6 +12,28 @@ Recall is an open-source **Model Context Protocol (MCP) server** that gives AI c
 
 ---
 
+## ⚡ Quick Connect (No Installation Required)
+
+Recall is live on Render. Add this to your `claude_desktop_config.json` and restart Claude Desktop — no setup needed:
+
+**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+**Mac:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "recall": {
+      "type": "sse",
+      "url": "https://dsa-mcp.onrender.com/sse"
+    }
+  }
+}
+```
+
+> **Note:** The server is on Render free tier — first request may take ~30 seconds to wake up. Subsequent requests are fast.
+
+---
+
 ## 🌐 Live Demo
 
 | | |
@@ -20,40 +42,6 @@ Recall is an open-source **Model Context Protocol (MCP) server** that gives AI c
 | **MCP Endpoint** | https://dsa-mcp.onrender.com/mcp |
 | **Health Check** | https://dsa-mcp.onrender.com/health |
 | **Demo Login** | alex@recall.dev / recall@demo123 |
-
----
-
-## ⚡ Quick Connect (30 seconds)
-
-### Option 1: Remote MCP (No Installation)
-Add to your `claude_desktop_config` or `.cursor/mcp.json`:
-```json
-{
-  "mcpServers": {
-    "recall": {
-      "url": "https://dsa-mcp.onrender.com/mcp"
-    }
-  }
-}
-```
-
-### Option 2: Local MCP
-```json
-{
-  "mcpServers": {
-    "recall": {
-      "command": "uv",
-      "args": ["--directory", "/path/to/DSA_MCP", "run", "python", "-m", "server.main"]
-    }
-  }
-}
-```
-
-Then ask your AI assistant:
-- "I'm alex@recall.dev. What should I practice today?"
-- "Give me an Amazon interview study plan"
-- "Flag recurring mistakes in my code"
-- "Log my attempt: Two Sum, passed, 20 minutes"
 
 ---
 
@@ -192,6 +180,48 @@ uv run pytest -v
 # Start local server
 uv run python -m server.main
 ```
+
+### Local MCP Config
+```json
+{
+  "mcpServers": {
+    "recall": {
+      "command": "uv",
+      "args": ["--directory", "/path/to/DSA_MCP", "run", "python", "-m", "server.main"]
+    }
+  }
+}
+```
+
+**Or connect to the live server (no local setup needed):**
+```json
+{
+  "mcpServers": {
+    "recall": {
+      "type": "sse",
+      "url": "https://dsa-mcp.onrender.com/sse"
+    }
+  }
+}
+```
+
+---
+
+## Live Deployment (Render)
+
+Recall is deployed on Render at `https://dsa-mcp.onrender.com`.
+
+| Endpoint | Purpose |
+|---|---|
+| `GET /health` | Health check |
+| `GET /sse` | SSE transport for Claude Desktop |
+| `POST /mcp` | Streamable HTTP transport |
+
+To deploy your own instance:
+1. Fork this repo
+2. Connect to [render.com](https://render.com) → New Web Service → select your fork
+3. Add environment variables: `DATABASE_URL`, `GEMINI_API_KEY`
+4. Deploy — `render.yaml` handles the rest
 
 ---
 
