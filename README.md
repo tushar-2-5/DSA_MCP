@@ -20,14 +20,14 @@ Recall bridges this gap by introducing **agentic memory** for technical intervie
 
 The Recall system consists of 4 layers:
 - **Client Layer**: Cursor/Claude Desktop (MCP stdio), VS Code Extension (REST), Web Browser (HTTPS)
-- **Server Layer**: FastMCP (8 tools) + FastAPI Dashboard on Railway with rate limiting
+- **Server Layer**: FastMCP (8 MCP tools) + FastAPI Dashboard on Railway with rate limiting
 - **Data Layer**: CockroachDB with 3,359 company-tagged problems, 768-dim HNSW vector embeddings
 - **AI Layer**: Google Gemini text-embedding-004 for mistake pattern detection and smart recommendations
-- **Automation**: GitHub Actions nightly decay cron (midnight UTC)
+- **Automation**: GitHub Actions / Nightly Decay Cron (midnight UTC)
 
 ### MCP Tools API
 
-Recall exposes 8 tools to the AI coding agent via the Model Context Protocol:
+Recall exposes 8 MCP tools to the AI coding agent via the Model Context Protocol:
 
 | Tool Name | Trigger Context | Description |
 |---|---|---|
@@ -38,23 +38,45 @@ Recall exposes 8 tools to the AI coding agent via the Model Context Protocol:
 | `get_problem_context` | User starts working on a specific problem | Retrieves problem statement, metadata, prerequisites, and vector-similar past attempts to highlight relevant history. |
 | `flag_recurring_mistake` | User is actively writing code and asks the agent to check for patterns, or agent proactively warns during code review | Compares in-progress code against the user's historical mistake embeddings to detect and warn of recurring bug patterns. |
 | `suggest_next_problem` | User asks "What should I practice next?" | Selects weak topics using epsilon-greedy exploration, determines difficulty band, and ranks unattempted problems by similarity to recent mistake embeddings. |
-| `study_plan` | User asks for a study plan | Generates a personalized 7-day study plan targeting weak topics, optionally filtered by target company |
+| `study_plan` | User asks for a study plan | Generates personalized 7-day study plan targeting weak topics |
+
+---
+
+## Quick Connect (No Local Setup Required)
+
+Connect to Recall's hosted MCP server instantly — no Python, no local setup:
+
+### Claude Desktop
+Add to `%APPDATA%\Claude\claude_desktop_config.json`:
+```json
+{
+  "mcpServers": {
+    "recall": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://dsa-mcp.onrender.com/mcp"]
+    }
+  }
+}
+```
+Restart Claude Desktop. Then in chat:
+> "Register me on Recall with email your@email.com"
+
+### Cursor
+Add to `~/.cursor/mcp.json` — same config as above.
 
 ---
 
 ## Web Dashboard
+Live at: https://web-production-54438.up.railway.app
 
-Recall includes a full-featured web dashboard deployed on Railway:
-- **URL**: [https://web-production-54438.up.railway.app](https://web-production-54438.up.railway.app)
-- **Features**:
-  - Secure login/signup with bcrypt password hashing
-  - Mastery overview with topic-wise progress bars
-  - Practice streak tracker with 🔥 daily streak badges
-  - AI Study Assistant with smart query routing
-  - Problems browser (3,359 problems) with search, filters, and sort
-  - Attempt History page with per-problem grouped history
-  - Topic Deep Dive pages with full attempt breakdown
-  - Difficulty progression (Easy→Medium→Hard based on mastery)
+Features:
+- Secure login/signup
+- Mastery scores with decay visualization  
+- Practice streak tracker
+- AI Study Assistant
+- 3,359 problems with company filters
+- Attempt history + topic deep dive
+- Past attempt warnings with spaced repetition
 
 ---
 
@@ -194,9 +216,7 @@ A GitHub Actions workflow runs `scripts/decay_handler.py` every night
 at midnight UTC. This applies 14-day exponential mastery decay to all users.
 Triggered automatically via cron or manually via workflow_dispatch.
 
-
 ---
-
 
 ## Usage Examples
 
@@ -222,19 +242,24 @@ Once registered, you can interact with Recall naturally inside your IDE chat:
 
 ## Project Status
 
-| Component / Feature | Status | Details |
+| Component | Status | Details |
 |---|---|---|
-| User Registration (`get_or_create_user`) | ✅ Complete | Email lookup & automatic UUID generation |
-| Mastery Reporting (`get_mastery_report`) | ✅ Complete | Decayed scoring breakdown across 20 topics |
-| Attempt Logging (`log_attempt`) | ✅ Complete | Automatic score updates & mistake embedding creation |
-| Problem Context (`get_problem_context`) | ✅ Complete | Problem statement + vector similarity to past user attempts |
-| Recurring Mistake Detection (`flag_recurring_mistake`) | ✅ Complete | Cosine distance pattern matching over past mistake embeddings |
-| Vector Recommendation (`suggest_next_problem`) | ✅ Complete | Epsilon-greedy weak topic selection + mistake similarity ranking |
-| Nightly Decay Scheduler | ✅ Complete | GitHub Actions cron at 00:00 UTC, exponential decay with 0.05 floor |
+| get_or_create_user | ✅ Complete | JWT-authenticated user registration |
+| get_mastery_report | ✅ Complete | Decayed scoring across 16 topics |
+| log_attempt | ✅ Complete | Score updates + code blob storage in CockroachDB |
+| get_problem_context | ✅ Complete | Vector similarity to past attempts |
+| flag_recurring_mistake | ✅ Complete | Cosine distance pattern matching |
+| suggest_next_problem | ✅ Complete | Epsilon-greedy + difficulty progression |
+| study_plan | ✅ Complete | 7-day personalized study plan |
+| say_hello | ✅ Complete | Connection test tool |
+| Nightly Decay Scheduler | ✅ Complete | GitHub Actions cron at 00:00 UTC daily |
+| Code Storage | ✅ Complete | CockroachDB JSONB (S3 substitute) |
+| Web Dashboard | ✅ Complete | https://web-production-54438.up.railway.app |
+| Remote MCP Server | ✅ Complete | https://dsa-mcp.onrender.com/mcp |
+| JWT Authentication | ✅ Complete | Token-based user data privacy |
 
 ---
 
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-
