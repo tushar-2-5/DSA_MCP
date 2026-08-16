@@ -14,7 +14,7 @@ Recall is an open-source **Model Context Protocol (MCP) server** that gives AI c
 
 ## ⚡ Quick Connect (No Installation Required)
 
-Recall is live on Render. Add this to your Claude Desktop config and restart — no setup needed:
+Add to your `claude_desktop_config.json` and restart Claude Desktop:
 
 **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
 **Mac:** `~/Library/Application Support/Claude/claude_desktop_config.json`
@@ -23,21 +23,14 @@ Recall is live on Render. Add this to your Claude Desktop config and restart —
 {
   "mcpServers": {
     "recall": {
-      "type": "sse",
-      "url": "https://dsa-mcp.onrender.com/sse"
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://dsa-mcp.onrender.com/sse"]
     }
   }
 }
 ```
 
-> ⚠️ Free tier server may take ~30 seconds to wake up on first request. Subsequent requests are instant.
-
-**Live endpoints:**
-| Endpoint | Use |
-|---|---|
-| `https://dsa-mcp.onrender.com/sse` | Claude Desktop (SSE) |
-| `https://dsa-mcp.onrender.com/mcp` | Cursor / Streamable HTTP |
-| `https://dsa-mcp.onrender.com/health` | Health check |
+> ⚠️ Free tier — first request may take ~30 seconds to wake up.
 
 ---
 
@@ -64,7 +57,7 @@ Recall is live on Render. Add this to your Claude Desktop config and restart —
 
 ---
 
-## 🔧 8 MCP Tools
+## 🔧 9 MCP Tools
 
 | Tool | Trigger | What it does |
 |------|---------|-------------|
@@ -74,8 +67,9 @@ Recall is live on Render. Add this to your Claude Desktop config and restart —
 | `suggest_next_problem` | "What to practice?" | Epsilon-greedy weak topic + vector ranking |
 | `flag_recurring_mistake` | Code review | Cosine similarity vs past mistake embeddings |
 | `get_problem_context` | Starting a problem | Problem details + similar past attempts |
-| `study_plan` | "Prepare for Amazon" | 7-day company-specific study plan |
-| `say_hello` | Connection test | Verify MCP server connection |
+| `get_problem_by_title` | User asks to log attempt by problem name | Searches problem database by title, returns UUID needed for log_attempt. |
+| `study_plan` | User asks for interview prep plan | Generates personalized DSA study plan targeting specific company patterns. |
+| `say_hello` | User wants to test MCP connection | Verifies MCP server is connected and responding. |
 
 ---
 
@@ -108,7 +102,7 @@ Next similar code → cosine similarity check → similarity > 0.35 → WARNING!
                ▼
 ┌────────────────────────────────────────────────────┐
 │              RENDER PRODUCTION SERVER              │
-│     FastMCP (8 tools) + FastAPI Web Dashboard      │
+│     FastMCP (9 tools) + FastAPI Web Dashboard      │
 │    Rate Limiting (slowapi) + Structured Logging    │
 └────────────┬──────────────────┬────────────────────┘
              │                  │
@@ -205,8 +199,8 @@ uv run python -m server.main
 {
   "mcpServers": {
     "recall": {
-      "type": "sse",
-      "url": "https://dsa-mcp.onrender.com/sse"
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://dsa-mcp.onrender.com/sse"]
     }
   }
 }
@@ -216,19 +210,12 @@ uv run python -m server.main
 
 ## Live Deployment (Render)
 
-Recall is deployed on Render at `https://dsa-mcp.onrender.com`.
+Recall is live at `https://dsa-mcp.onrender.com` — free, no installation needed.
 
-| Endpoint | Purpose |
+| Endpoint | Use |
 |---|---|
-| `GET /health` | Health check |
-| `GET /sse` | SSE transport for Claude Desktop |
-| `POST /mcp` | Streamable HTTP transport |
-
-To deploy your own instance:
-1. Fork this repo
-2. Connect to [render.com](https://render.com) → New Web Service → select your fork
-3. Add environment variables: `DATABASE_URL`, `GEMINI_API_KEY`
-4. Deploy — `render.yaml` handles the rest
+| `/sse` | Claude Desktop (via mcp-remote) |
+| `/health` | Health check |
 
 ---
 
@@ -256,7 +243,7 @@ To deploy your own instance:
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
-| MCP Server | FastMCP + Python 3.11 | 8 MCP tools via stdio/HTTP |
+| MCP Server | FastMCP + Python 3.11 | 9 MCP tools via stdio/HTTP |
 | Web Dashboard | FastAPI + Jinja2 + Alpine.js | User interface |
 | Database | CockroachDB Serverless | Distributed SQL + vector search |
 | Vector Index | HNSW (cosine similarity) | Fast mistake pattern matching |
@@ -273,7 +260,7 @@ To deploy your own instance:
 
 | Feature | Status | Details |
 |---------|--------|---------|
-| 8 MCP Tools | ✅ Complete | All tools tested and verified |
+| 9 MCP Tools | ✅ Complete | All tools tested and verified |
 | Web Dashboard | ✅ Complete | Login, problems, mastery, analytics |
 | Password Authentication | ✅ Complete | bcrypt hashing, session management |
 | 3,359 Company Problems | ✅ Complete | 129+ companies tagged |
