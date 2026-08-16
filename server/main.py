@@ -28,21 +28,14 @@ from web.middleware.logging_middleware import RequestLoggingMiddleware
 setup_logging()
 logger = logging.getLogger("recall_server")
 
-
-host = os.environ.get("HOST", "0.0.0.0")
-port = int(os.environ.get("PORT", 8000))
-
-mcp = FastMCP("recall", host=host, port=port)
+# FastMCP instance
+mcp = FastMCP("recall")
 
 
 @mcp.custom_route("/health", methods=["GET"])
-async def health_check(request):
-    """Health check endpoint for Railway and load balancers."""
-    return JSONResponse({
-        "status": "ok",
-        "service": "recall-mcp-server",
-        "transport": mcp.settings.streamable_http_path,
-    })
+async def health_check_mcp(request=None):
+    """Health check endpoint for Railway, Render and load balancers."""
+    return JSONResponse({"status": "ok"})
 
 
 @mcp.tool()
@@ -85,6 +78,13 @@ async def combined_lifespan(app: FastAPI):
 # Combined FastAPI Application
 app = FastAPI(title="Recall Server & Web Dashboard", lifespan=combined_lifespan)
 
+
+@app.get("/health")
+async def health_endpoint():
+    """Health check endpoint for Render, Railway, and load balancers."""
+    return JSONResponse({"status": "ok"})
+
+
 # Configure SessionMiddleware
 SECRET_KEY = (
     os.environ.get("SECRET_KEY")
@@ -96,25 +96,35 @@ if not os.environ.get("SECRET_KEY") and not os.environ.get("SESSION_SECRET_KEY")
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 app.add_middleware(RequestLoggingMiddleware)
 
-
 # Inherit state (Jinja2 templates) from web_app
 app.state.templates = web_app.state.templates
 
-# Mount/Include MCP Streamable-HTTP routes (/mcp, /health)
-mcp_starlette_app = mcp.streamable_http_app()
-app.routes.extend(mcp_starlette_app.routes)
+# Mount SSE routes (/sse, /messages) and Streamable HTTP routes (/mcp)
+app.routes.extend(mcp.sse_app().routes)
+app.routes.extend(mcp.streamable_http_app().routes)
 
-# Mount/Include Web Dashboard routes (/, /dashboard, /problems, /progress, /api/*)
+# Mount Web Dashboard routes (/, /dashboard, /problems, /progress, /api/*)
 app.routes.extend(web_app.routes)
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Recall Server & Web Dashboard")
+    parser = argparse.ArgumentParser(description="Recall MCP Server & Web Dashboard")
     parser.add_argument(
         "--transport",
         choices=["stdio", "sse", "streamable-http"],
         default=os.environ.get("MCP_TRANSPORT", "stdio"),
         help="Transport protocol (stdio, sse, streamable-http)",
+    )
+    parser.add_argument(
+        "--host",
+        default=os.environ.get("HOST", "0.0.0.0"),
+        help="Host address to bind to (default: 0.0.0.0)",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=int(os.environ.get("PORT", 8000)),
+        help="Port number to bind to (default: 8000)",
     )
     args = parser.parse_args()
 
@@ -123,10 +133,10 @@ def main():
     else:
         import uvicorn
 
-        uvicorn.run("server.main:app", host=host, port=port, reload=False)
+        mcp.settings.host = args.host
+        mcp.settings.port = args.port
+        uvicorn.run("server.main:app", host=args.host, port=args.port, reload=False)
 
 
 if __name__ == "__main__":
     main()
-
-
