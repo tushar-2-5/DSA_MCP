@@ -14,7 +14,7 @@ Recall is an open-source **Model Context Protocol (MCP) server** that gives AI c
 
 ## ⚡ Quick Connect (No Installation Required)
 
-Recall is live on Render. Add this to your `claude_desktop_config.json` and restart Claude Desktop — no setup needed:
+Recall is live on Render. Add this to your Claude Desktop config and restart — no setup needed:
 
 **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
 **Mac:** `~/Library/Application Support/Claude/claude_desktop_config.json`
@@ -30,7 +30,14 @@ Recall is live on Render. Add this to your `claude_desktop_config.json` and rest
 }
 ```
 
-> **Note:** The server is on Render free tier — first request may take ~30 seconds to wake up. Subsequent requests are fast.
+> ⚠️ Free tier server may take ~30 seconds to wake up on first request. Subsequent requests are instant.
+
+**Live endpoints:**
+| Endpoint | Use |
+|---|---|
+| `https://dsa-mcp.onrender.com/sse` | Claude Desktop (SSE) |
+| `https://dsa-mcp.onrender.com/mcp` | Cursor / Streamable HTTP |
+| `https://dsa-mcp.onrender.com/health` | Health check |
 
 ---
 
