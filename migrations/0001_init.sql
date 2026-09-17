@@ -7,8 +7,11 @@ CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email TEXT UNIQUE NOT NULL,
     display_name TEXT,
+    password_hash TEXT,
     created_at TIMESTAMPTZ DEFAULT now()
 );
+
+ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash TEXT;
 
 CREATE TABLE IF NOT EXISTS topics (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
