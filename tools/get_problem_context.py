@@ -140,7 +140,7 @@ async def get_problem_by_title(
                     "problem_id": str(row[0]),
                     "title": row[1],
                     "difficulty": row[2],
-                    "topic_id": row[3]
+                    "topic_id": str(row[3]) if row[3] else None
                 }
                 for row in rows
             ]

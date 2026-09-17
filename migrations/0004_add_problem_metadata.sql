@@ -1,3 +1,4 @@
+-- Migration 0004_add_problem_metadata.sql
 -- Add problem metadata columns
 ALTER TABLE problems ADD COLUMN IF NOT EXISTS study_priority TEXT;
 ALTER TABLE problems ADD COLUMN IF NOT EXISTS tags TEXT[];

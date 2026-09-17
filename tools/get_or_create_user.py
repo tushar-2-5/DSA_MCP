@@ -5,7 +5,7 @@ import jwt
 from database.connection import get_db_connection
 from database.queries import get_user_by_email, create_user
 
-SECRET = os.getenv("SECRET_KEY", "recall-mcp-secret-key")
+SECRET = os.getenv("SECRET_KEY", "recall-mcp-jwt-secret-key-minimum-32-bytes-long!")
 
 
 def create_user_token(user_id: str, email: str) -> str:

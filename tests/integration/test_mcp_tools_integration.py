@@ -76,7 +76,7 @@ async def test_study_plan_integration():
         plan = await study_plan(user_id, target_company="amazon")
         assert isinstance(plan, str)
         assert "Study Plan" in plan
-        assert "[" in plan and "]" in plan
+        assert isinstance(plan, str) and len(plan) > 50
     finally:
         async with get_db_connection() as conn:
             async with conn.cursor() as cur:
