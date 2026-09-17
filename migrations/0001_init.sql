@@ -1,6 +1,8 @@
 -- Migration 0001_init.sql
 -- Initial schema for Recall MCP server
 
+CREATE EXTENSION IF NOT EXISTS vector;
+
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email TEXT UNIQUE NOT NULL,
