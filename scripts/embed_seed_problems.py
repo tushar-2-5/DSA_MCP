@@ -53,15 +53,28 @@ async def main():
 
                 continue
 
-            # Generate embedding for statement text
-            vector = embedder.embed(statement)
+            try:
+                # Generate embedding for statement text
+                vector = embedder.embed(statement)
 
-            # Store in database
-            await insert_embedding(conn, "problem", prob_id, vector)
-            await conn.commit()
+                # Store in database
+                await insert_embedding(conn, "problem", prob_id, vector)
+                await conn.commit()
 
-            print(f"Embedding problem {index}/{total_problems}: '{title}'... done", flush=True)
-            embedded_count += 1
+                print(f"Embedding problem {index}/{total_problems}: '{title}'... done", flush=True)
+                embedded_count += 1
+            except Exception as e:
+                err_msg = str(e)
+                if "429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg or "quota" in err_msg.lower() or "limit reached" in err_msg.lower():
+                    logger.warning(f"Quota/Rate limit encountered on problem {index}/{total_problems} ('{title}'): {e}")
+                    print(f"\n⚠️ Gemini free tier quota limit reached at problem {index}/{total_problems}.")
+                    print(f"Progress has been saved to Neon DB ({embedded_count} embedded this run, {skipped_count} previously existing).")
+                    print("Re-run this script after your daily quota resets (midnight UTC) to continue embedding remaining problems.")
+                    break
+                else:
+                    logger.error(f"Error embedding problem '{title}': {e}")
+                    continue
+
 
     await close_pool()
     print("-" * 50, flush=True)
