@@ -171,7 +171,7 @@ async def insert_attempt(
     time_taken_seconds: Optional[int] = None,
     code_blob: Optional[str] = None,
     code_language: str = "python",
-    storage_backend: str = "cockroachdb",
+    storage_backend: str = "neon",
 ) -> Attempt:
     async with conn.cursor(row_factory=dict_row) as cur:
         await cur.execute(

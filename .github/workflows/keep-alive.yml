@@ -1,0 +1,22 @@
+name: Render Keep Alive
+on:
+  schedule:
+    # Ping every 10 minutes to keep Render free tier alive
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    name: Ping Health Endpoint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send keep-alive HTTP GET request
+        run: |
+          echo "Pinging https://dsa-mcp.onrender.com/health..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://dsa-mcp.onrender.com/health)
+          echo "Response HTTP Status: $STATUS"
+          if [ "$STATUS" -eq 200 ]; then
+            echo "Render service is awake and healthy."
+          else
+            echo "Warning: Response code $STATUS received from Render health check."
+          fi

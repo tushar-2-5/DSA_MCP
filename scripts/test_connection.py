@@ -1,6 +1,12 @@
 import asyncio
 import logging
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from database.connection import get_db_connection, close_pool
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -16,7 +22,8 @@ async def main():
             # Check version
             await cur.execute("SELECT version();")
             version_row = await cur.fetchone()
-            logger.info(f"Connected to CockroachDB: {version_row[0]}")
+            logger.info(f"Connected to PostgreSQL/Neon: {version_row[0]}")
+
 
             # Clean up existing test user if present
             await cur.execute("DELETE FROM users WHERE email = %s;", (test_email,))
@@ -46,4 +53,7 @@ async def main():
 
 
 if __name__ == "__main__":
+    if sys.platform == "win32":
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(main())
+

@@ -23,9 +23,19 @@ async def main():
     embedder = GeminiEmbedder()
 
     async with get_db_connection() as conn:
+        # Step 0: Verify vector extension and HNSW index exist before inserting embeddings
+        logger.info("Verifying vector extension and HNSW index in Neon DB...")
+        async with conn.cursor() as cur:
+            await cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
+            await cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_embeddings_hnsw ON embeddings USING hnsw (embedding vector_cosine_ops);"
+            )
+            await conn.commit()
+
         problems = await get_all_problems_with_topics(conn)
         total_problems = len(problems)
         logger.info(f"Fetched {total_problems} problems from database.")
+
 
         embedded_count = 0
         skipped_count = 0
@@ -38,8 +48,9 @@ async def main():
             # Check if embedding already exists (idempotency check)
             existing = await get_embedding_by_source(conn, "problem", prob_id)
             if existing:
-                print(f"Embedding problem {index}/{total_problems}: '{title}'... skipped (already exists)")
+                print(f"Embedding problem {index}/{total_problems}: '{title}'... skipped (already exists)", flush=True)
                 skipped_count += 1
+
                 continue
 
             # Generate embedding for statement text
@@ -49,12 +60,13 @@ async def main():
             await insert_embedding(conn, "problem", prob_id, vector)
             await conn.commit()
 
-            print(f"Embedding problem {index}/{total_problems}: '{title}'... done")
+            print(f"Embedding problem {index}/{total_problems}: '{title}'... done", flush=True)
             embedded_count += 1
 
     await close_pool()
-    print("-" * 50)
-    print(f"Summary: Embedded {embedded_count} problem(s), Skipped {skipped_count} problem(s), Total {total_problems}.")
+    print("-" * 50, flush=True)
+    print(f"Summary: Embedded {embedded_count} problem(s), Skipped {skipped_count} problem(s), Total {total_problems}.", flush=True)
+
 
 
 if __name__ == "__main__":

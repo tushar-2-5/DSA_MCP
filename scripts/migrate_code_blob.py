@@ -16,10 +16,11 @@ async def migrate():
                 ALTER TABLE attempts 
                 ADD COLUMN IF NOT EXISTS code_blob TEXT,
                 ADD COLUMN IF NOT EXISTS code_language VARCHAR(50) DEFAULT 'python',
-                ADD COLUMN IF NOT EXISTS storage_backend VARCHAR(20) DEFAULT 'cockroachdb'
+                ADD COLUMN IF NOT EXISTS storage_backend VARCHAR(20) DEFAULT 'neon'
             ''')
             print('Migration done', flush=True)
         await conn.commit()
+
 
 if __name__ == '__main__':
     if sys.platform == "win32":

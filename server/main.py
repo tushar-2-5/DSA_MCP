@@ -49,22 +49,16 @@ async def health_check_mcp(request=None):
     return JSONResponse({"status": "ok", "ready": is_server_ready})
 
 
-@mcp.tool()
-def say_hello(name: str) -> str:
-    """Say hello to someone by name. Use this only when the user explicitly 
-    asks for a greeting or wants to test the Recall MCP server connection."""
-    return f"Hello, {name}! Recall MCP server is working."
-
-
-# Register additional tools
+# Register MCP tools in strict priority order (get_or_create_user MUST be first)
+mcp.tool()(get_or_create_user)
 mcp.tool()(get_mastery_report)
 mcp.tool()(log_attempt)
-mcp.tool()(suggest_next_problem)
-mcp.tool()(get_or_create_user)
 mcp.tool()(get_problem_context)
-mcp.tool()(get_problem_by_title)
 mcp.tool()(flag_recurring_mistake)
+mcp.tool()(suggest_next_problem)
+mcp.tool()(get_problem_by_title)
 mcp.tool()(study_plan)
+
 
 
 # Build combined lifespan managing both database connection pool and FastMCP session manager

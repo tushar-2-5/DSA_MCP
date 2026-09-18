@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from database.connection import get_db_connection, close_pool
+from database.connection import get_direct_db_connection, close_pool
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -16,7 +16,9 @@ async def main():
     migrations_dir = Path(__file__).parent.parent / "migrations"
     migration_files = sorted(migrations_dir.glob("*.sql"))
 
-    async with get_db_connection() as conn:
+    logger.info("Connecting directly to Neon database for migrations...")
+    async with get_direct_db_connection() as conn:
+
         # Step 1: Ensure tracking table exists
         async with conn.cursor() as cur:
             await cur.execute(

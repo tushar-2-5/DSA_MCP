@@ -5,7 +5,7 @@ try:
     from pydantic_settings import BaseSettings, SettingsConfigDict
 
     class Settings(BaseSettings):
-        database_url: str = "postgresql://root@localhost:26257/recall?sslmode=disable"
+        database_url: str = "postgresql://neondb_owner:password@ep-sample.aws.neon.tech/neondb?sslmode=require"
         gemini_api_key: str = ""
 
         model_config = SettingsConfigDict(
@@ -18,6 +18,7 @@ try:
 except ImportError:
     load_dotenv()
     DATABASE_URL = os.getenv(
-        "DATABASE_URL", "postgresql://root@localhost:26257/recall?sslmode=disable"
+        "DATABASE_URL", "postgresql://neondb_owner:password@ep-sample.aws.neon.tech/neondb?sslmode=require"
     )
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+

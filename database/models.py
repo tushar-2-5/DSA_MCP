@@ -58,7 +58,7 @@ class Attempt(BaseModel):
     code_s3_key: Optional[str] = None
     code_blob: Optional[str] = None
     code_language: Optional[str] = "python"
-    storage_backend: Optional[str] = "cockroachdb"
+    storage_backend: Optional[str] = "neon"
     outcome: str
     complexity_achieved: Optional[str] = None
     time_taken_seconds: Optional[int] = None
