@@ -38,7 +38,21 @@ sec_settings = TransportSecuritySettings(
 )
 
 # FastMCP instance
-mcp = FastMCP("recall", transport_security=sec_settings)
+mcp = FastMCP(
+    "recall",
+    instructions="""
+    IMPORTANT: To get started, always search for get_or_create_user 
+    using the query "register user email" before calling any other tool.
+    Then call get_or_create_user with the user's email to get their 
+    user_id and token. Pass both to every subsequent tool call.
+    
+    Tool usage order:
+    1. Search "register user email" to load get_or_create_user
+    2. Call get_or_create_user(email="...") to authenticate
+    3. Use returned user_id and token for all other tools
+    """,
+    transport_security=sec_settings,
+)
 
 is_server_ready = False
 

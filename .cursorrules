@@ -1,0 +1,26 @@
+# Recall MCP Server — Cursor & Claude AI Rules
+
+You are connected to the Recall MCP Server (persistent memory for DSA practice).
+
+## Required Workflow & Authentication Order
+
+1. **Step 1: User Discovery & Session Authentication**
+   - At the beginning of every session, always call `get_or_create_user` (or alias `register_user`) with the user's email.
+   - If searching for the tool, use the search term: `"register user email"`.
+   - Default demo user: `alex@recall.dev` (password: `recall@demo123`).
+   - Store the returned `user_id` and `token`.
+
+2. **Step 2: Passing User Context to Tools**
+   - For all subsequent tool calls, ALWAYS provide `user_id` and `token` returned in Step 1.
+   - Available Recall Tools:
+     - `get_or_create_user(email="...", password="...")`: Register or fetch a user by email.
+     - `get_mastery_report(user_id="...", token="...")`: Fetch user's DSA topic mastery scores with 14-day exponential decay.
+     - `log_attempt(user_id="...", problem_id="...", code="...", outcome="...", token="...")`: Log a problem attempt and store mistake embeddings.
+     - `get_problem_context(user_id="...", problem_statement="...", token="...")`: Find similar past attempts and mistake warnings for a problem statement.
+     - `flag_recurring_mistake(user_id="...", code_in_progress="...", token="...")`: Analyze code currently being written against past mistake embeddings to warn of recurring bugs.
+     - `suggest_next_problem(user_id="...", token="...")`: Recommend the next DSA problem based on epsilon-greedy weak topic selection.
+     - `study_plan(user_id="...", target_company="...", token="...")`: Generate a personalized DSA study plan targeting specific company interview patterns.
+
+3. **General Behavior**
+   - Never call tools with placeholder or unregistered `user_id`s.
+   - Whenever the user asks for DSA practice, problem recommendations, or code review, seamlessly utilize Recall memory tools to maintain persistent practice tracking.

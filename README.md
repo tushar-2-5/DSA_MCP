@@ -8,7 +8,7 @@
 [![MCP](https://img.shields.io/badge/MCP-Compatible-F59E0B?style=for-the-badge)]()
 [![License](https://img.shields.io/badge/License-MIT-6B7280?style=for-the-badge)]()
 
-Recall is an open-source **Model Context Protocol (MCP) server** that gives AI coding assistants long-term, structured memory of your DSA practice. Connect Cursor, Claude Desktop, or VS Code and let your AI tutor remember your weaknesses, track your mistakes, and plan your interview prep — automatically.
+Recall is an open-source **Model Context Protocol (MCP) server** that gives AI coding assistants long-term, structured memory of your DSA practice. Connect Cursor, Claude Desktop, Claude.ai, or VS Code and let your AI tutor remember your weaknesses, track your mistakes, and plan your interview prep — automatically.
 
 ---
 
@@ -16,7 +16,7 @@ Recall is an open-source **Model Context Protocol (MCP) server** that gives AI c
 
 Add to your `claude_desktop_config.json` and restart Claude Desktop:
 
-**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`  
 **Mac:** `~/Library/Application Support/Claude/claude_desktop_config.json`
 
 ```json
@@ -34,14 +34,47 @@ Add to your `claude_desktop_config.json` and restart Claude Desktop:
 
 ---
 
-## 🌐 Live Demo
+## 🤖 Claude.ai Integration
 
-| | |
-|---|---|
-| **Web Dashboard** | https://dsa-mcp.onrender.com |
-| **MCP Endpoint** | https://dsa-mcp.onrender.com/mcp |
-| **Health Check** | https://dsa-mcp.onrender.com/health |
-| **Demo Login** | alex@recall.dev / recall@demo123 |
+Claude.ai uses a deferred tool loading mechanism where tools are dynamically discovered via search.
+
+### MCP Configuration
+Use `mcp-remote` to connect directly to the live SSE stream:
+```bash
+npx -y mcp-remote https://dsa-mcp.onrender.com/sse
+```
+
+### Tool Discovery & Initialization
+- Search query: Claude must search **`register user email`** to load the `get_or_create_user` tool at session start.
+- Once discovered, Claude calls `get_or_create_user` to retrieve the user's `user_id` and authentication `token`.
+- Pass both `user_id` and `token` to all subsequent tool invocations (`get_mastery_report`, `log_attempt`, etc.).
+
+### Claude Desktop / Claude.ai User Preferences & Custom Instructions
+Add this exact block to your Claude.ai Project instructions or Custom Instructions:
+
+```text
+When working with Recall DSA tools:
+1. First, search for "register user email" to load get_or_create_user.
+2. Call get_or_create_user(email="alex@recall.dev", password="recall@demo123") to obtain the user_id and session token.
+3. Pass the returned user_id and token to every subsequent Recall tool call (get_mastery_report, log_attempt, get_problem_context, flag_recurring_mistake, suggest_next_problem, study_plan).
+```
+
+### Default Demo Account
+- **Email:** `alex@recall.dev`
+- **Password:** `recall@demo123`
+- **User ID:** `77ae399e-31ea-4a84-9fdb-23dab394f2d7`
+
+---
+
+## 🌐 Live Demo & REST Endpoints
+
+| Resource | URL | Details |
+|---|---|---|
+| **Web Dashboard** | https://dsa-mcp.onrender.com | Live dashboard & practice interface |
+| **MCP SSE Endpoint** | https://dsa-mcp.onrender.com/sse | Claude Desktop & Cursor remote SSE |
+| **Health Check** | https://dsa-mcp.onrender.com/health | Uptime monitoring (`status: ok`) |
+| **REST User API** | https://dsa-mcp.onrender.com/api/users | HTTP registration / user lookup |
+| **Demo Login** | `alex@recall.dev` / `recall@demo123` | Pre-seeded with 40 attempts & masteries |
 
 ---
 
@@ -57,19 +90,18 @@ Add to your `claude_desktop_config.json` and restart Claude Desktop:
 
 ---
 
-## 🔧 9 MCP Tools
+## 🔧 MCP Tools
 
-| Tool | Trigger | What it does |
-|------|---------|-------------|
-| `get_or_create_user` | Session start | Register/fetch user by email |
-| `get_mastery_report` | "How am I doing?" | Topic mastery with 14-day decay |
-| `log_attempt` | After solving | Record attempt + generate mistake embeddings |
-| `suggest_next_problem` | "What to practice?" | Epsilon-greedy weak topic + vector ranking |
-| `flag_recurring_mistake` | Code review | Cosine similarity vs past mistake embeddings |
-| `get_problem_context` | Starting a problem | Problem details + similar past attempts |
-| `get_problem_by_title` | User asks to log attempt by problem name | Searches problem database by title, returns UUID needed for log_attempt. |
-| `study_plan` | User asks for interview prep plan | Generates personalized DSA study plan targeting specific company patterns. |
-| `say_hello` | User wants to test MCP connection | Verifies MCP server is connected and responding. |
+| Tool | Trigger / Search Term | What it does |
+|------|-----------------------|-------------|
+| `get_or_create_user` | `register user email`, `recall login` | Register or fetch a user by email |
+| `register_user` | `register user`, `create user` | Alias for `get_or_create_user` |
+| `get_mastery_report` | `mastery report`, `topic scores` | Get DSA topic mastery scores |
+| `log_attempt` | `log attempt`, `record solution` | Log a problem attempt |
+| `get_problem_context` | `problem context`, `similar attempts` | Get similar past attempts |
+| `flag_recurring_mistake` | `check bugs`, `recurring mistakes` | Check code for recurring bugs |
+| `suggest_next_problem` | `suggest problem`, `next question` | Suggest next DSA problem |
+| `study_plan` | `study plan`, `interview prep` | Generate a personalized study plan |
 
 ---
 
@@ -80,13 +112,13 @@ Every attempt logged: problem, outcome, code, time, mistakes.
 
 ### 2. Semantic Memory — Decaying Mastery Scores
 
-mastery(t) = base_score × 0.5^(days_elapsed / 14)
+$$\text{mastery}(t) = \text{base\_score} \times 0.5^{(\text{days\_elapsed} / 14)}$$
 
 Score 0.80 in Binary Search → don't practice for 14 days → score drops to 0.40. **GitHub Actions** runs nightly decay at midnight UTC automatically.
 
 ### 3. Vector Memory — Mistake Pattern Detection
-Your mistake → Gemini text-embedding-004 → 768-dim vector → stored in CockroachDB  
-Next similar code → cosine similarity check → similarity > 0.35 → WARNING!
+Your mistake → Gemini text-embedding-004 → 768-dim vector → stored in Neon PostgreSQL (`pgvector` with HNSW index)  
+Next similar code → cosine distance check (`<->`) → distance < 0.35 → recurring mistake warning!
 
 ---
 
@@ -95,21 +127,21 @@ Next similar code → cosine similarity check → similarity > 0.35 → WARNING!
 ```text
 ┌────────────────────────────────────────────────────┐
 │                    CLIENT LAYER                    │
-│ Cursor/Claude Desktop │  VS Code   │  Web Browser  │
-│      (MCP stdio)      │ Extension  │    (HTTPS)    │
+│ Cursor / Claude Desktop │ Claude.ai │ Web Browser │
+│        (MCP SSE/stdio)  │  (Remote) │   (HTTPS)   │
 └──────────────┬─────────────────────────────────────┘
                │ MCP Protocol / REST API
                ▼
 ┌────────────────────────────────────────────────────┐
 │              RENDER PRODUCTION SERVER              │
-│     FastMCP (9 tools) + FastAPI Web Dashboard      │
+│     FastMCP Tools + FastAPI Web Dashboard          │
 │    Rate Limiting (slowapi) + Structured Logging    │
 └────────────┬──────────────────┬────────────────────┘
              │                  │
              ▼                  ▼
 ┌──────────────────┐  ┌────────────────────────────┐
-│   CockroachDB    │  │     Google Gemini API      │
-│    Serverless    │  │     text-embedding-004     │
+│ Neon PostgreSQL  │  │     Google Gemini API      │
+│  with pgvector   │  │     text-embedding-004     │
 │  3,359 problems  │  │  768-dimensional vectors   │
 │ HNSW vector idx  │  └────────────────────────────┘
 └──────────────────┘
@@ -124,31 +156,12 @@ Next similar code → cosine similarity check → similarity > 0.35 → WARNING!
 
 ---
 
-## 📸 Screenshots
-
-### Web Dashboard — Mastery Overview
-![Dashboard](docs/screenshots/dashboard.png)
-
-### AI Study Assistant
-![AI Assistant](docs/screenshots/ai-assistant.png)
-
-### Problems Browser (3,359 problems with company tags)
-![Problems](docs/screenshots/problems.png)
-
-### Progress & Analytics
-![Progress](docs/screenshots/progress.png)
-
-### VS Code Extension — Live Mastery Sidebar
-![VS Code Extension](docs/screenshots/vscode-extension.png)
-
----
-
 ## 🚀 Local Setup
 
 ### Prerequisites
 - Python 3.11+
 - [uv](https://github.com/astral-sh/uv) package manager
-- CockroachDB Serverless account (free tier)
+- Neon PostgreSQL database instance
 - Google AI Studio API key (free)
 
 ### Installation
@@ -194,35 +207,12 @@ uv run python -m server.main
 }
 ```
 
-**Or connect to the live server (no local setup needed):**
-```json
-{
-  "mcpServers": {
-    "recall": {
-      "command": "npx",
-      "args": ["-y", "mcp-remote", "https://dsa-mcp.onrender.com/sse"]
-    }
-  }
-}
-```
-
----
-
-## Live Deployment (Render)
-
-Recall is live at `https://dsa-mcp.onrender.com` — free, no installation needed.
-
-| Endpoint | Use |
-|---|---|
-| `/sse` | Claude Desktop (via mcp-remote) |
-| `/health` | Health check |
-
 ---
 
 ## 🧪 Test Suite
 
 ```text
-49 passed in 16.96s
+49 passed in 15.44s
 ├── integration/
 │   ├── test_user_lifecycle
 │   ├── test_study_plan_integration
@@ -234,44 +224,9 @@ Recall is live at `https://dsa-mcp.onrender.com` — free, no installation neede
     ├── test_mastery (5 tests)
     ├── test_mcp_server (2 tests)
     ├── test_recommendation (6 tests)
+    ├── test_user_api (1 test)
     └── test_validation (20 tests)
 ```
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| MCP Server | FastMCP + Python 3.11 | 9 MCP tools via stdio/HTTP |
-| Web Dashboard | FastAPI + Jinja2 + Alpine.js | User interface |
-| Database | CockroachDB Serverless | Distributed SQL + vector search |
-| Vector Index | HNSW (cosine similarity) | Fast mistake pattern matching |
-| Embeddings | Google Gemini text-embedding-004 | 768-dim mistake vectors |
-| Auth | bcrypt + Starlette sessions | Secure password hashing |
-| Rate Limiting | slowapi | API abuse protection |
-| Deployment | Render | Production hosting |
-| CI/CD | GitHub Actions | Nightly decay cron |
-| VS Code | TypeScript Extension | IDE integration |
-
----
-
-## ✅ Project Status
-
-| Feature | Status | Details |
-|---------|--------|---------|
-| 9 MCP Tools | ✅ Complete | All tools tested and verified |
-| Web Dashboard | ✅ Complete | Login, problems, mastery, analytics |
-| Password Authentication | ✅ Complete | bcrypt hashing, session management |
-| 3,359 Company Problems | ✅ Complete | 129+ companies tagged |
-| AI Study Assistant | ✅ Complete | Smart query routing on dashboard |
-| VS Code Extension | ✅ Complete | Live mastery sidebar + notifications |
-| Mastery Decay Engine | ✅ Complete | 14-day exponential half-life |
-| Vector Mistake Detection | ✅ Complete | 768-dim cosine similarity |
-| Nightly Decay Cron | ✅ Complete | GitHub Actions (0 0 * * *) |
-| Rate Limiting | ✅ Complete | slowapi middleware |
-| Integration Tests | ✅ Complete | 49/49 passing |
-| Pagination | ✅ Complete | 50 problems per page |
 
 ---
 
@@ -281,4 +236,4 @@ MIT License — see [LICENSE](LICENSE)
 
 ---
 
-*Built   By Tushar 7710809(ISC)·  THANK YOU*
+*Built with ❤️ for AI-assisted DSA Mastery.*
