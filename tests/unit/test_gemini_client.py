@@ -49,7 +49,18 @@ def test_gemini_embedder_mocked():
 )
 def test_gemini_embedder_live():
     embedder = GeminiEmbedder()
-    result = embedder.embed("hello world")
-    assert isinstance(result, list)
-    assert len(result) == 768
-    assert all(isinstance(x, float) for x in result)
+    try:
+        result = embedder.embed("hello world")
+        assert isinstance(result, list)
+        assert len(result) == 768
+        assert all(isinstance(x, float) for x in result)
+    except Exception as e:
+        if (
+            "429" in str(e)
+            or "RESOURCE_EXHAUSTED" in str(e)
+            or "quota" in str(e).lower()
+            or "limit reached" in str(e).lower()
+        ):
+            pytest.skip("Gemini API free tier quota limit reached for today.")
+        raise
+
