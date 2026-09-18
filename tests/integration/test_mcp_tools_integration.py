@@ -18,12 +18,6 @@ pytestmark = [
 ]
 
 
-@pytest_asyncio.fixture(autouse=True)
-async def cleanup_db_pool():
-    yield
-    await close_pool()
-
-
 @pytest.mark.asyncio
 async def test_user_lifecycle():
     test_email = f"int_user_{uuid.uuid4().hex[:8]}@example.com"

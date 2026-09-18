@@ -27,17 +27,7 @@ COMPANY_TIPS = {
 async def study_plan(
     user_id: str, target_company: Optional[str] = None, token: Optional[str] = None
 ) -> str:
-    """Generate a personalized DSA study plan for a user, optionally targeted for a specific company interview.
-
-    Always pass the token received from get_or_create_user. Never use a user_id
-    that wasn't returned by get_or_create_user in this session.
-
-    Args:
-        user_id: The UUID string of the user.
-        target_company: Optional target company name for interview prep.
-        token: JWT token returned by get_or_create_user.
-               Pass this to verify you can only access your own data.
-    """
+    """Generate a personalized study plan"""
     tool_name = "study_plan"
     start = time.time()
     logger.info(f"Tool called: {tool_name} for user {user_id}")

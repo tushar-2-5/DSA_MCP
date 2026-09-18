@@ -33,27 +33,7 @@ async def log_attempt(
     mistake_category: Optional[str] = None,
     token: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Log a user's DSA problem solution attempt and update their topic mastery score.
-
-    Always pass the token received from get_or_create_user. Never use a user_id
-    that wasn't returned by get_or_create_user in this session.
-
-    Args:
-        user_id: The UUID string of the user.
-        problem_id: The UUID string of the problem attempted.
-        code: The source code submitted by the user.
-        outcome: Outcome of the attempt. Must be 'pass', 'fail', or 'partial'.
-        complexity_achieved: Optional time/space complexity achieved (e.g., 'O(N)').
-        time_taken_seconds: Optional time taken to solve the problem in seconds.
-        mistake_summary: Optional summary of mistake made (for 'fail' or 'partial' outcomes).
-        mistake_category: Optional category of mistake (e.g. 'sliding_window_off_by_one', 'logic_error').
-        token: JWT token returned by get_or_create_user.
-               Pass this to verify you can only access your own data.
-
-    Returns:
-        Dict confirming attempt was logged and showing updated mastery score:
-        {"attempt_id": str, "status": "logged", "mastery_score_after": float}
-    """
+    """Log a problem attempt"""
     tool_name = "log_attempt"
     start = time.time()
     logger.info(f"Tool called: {tool_name} for user {user_id}")

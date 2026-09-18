@@ -16,21 +16,7 @@ SIMILARITY_THRESHOLD: float = 0.35
 async def flag_recurring_mistake(
     user_id: str, code_in_progress: str, token: Optional[str] = None
 ) -> Dict[str, Any]:
-    """Analyze code currently being written against past mistake embeddings to warn of recurring mistakes.
-
-    Always pass the token received from get_or_create_user. Never use a user_id
-    that wasn't returned by get_or_create_user in this session.
-
-    Args:
-        user_id: The UUID string of the registered user.
-        code_in_progress: The source code currently being written by the user.
-        token: JWT token returned by get_or_create_user.
-               Pass this to verify you can only access your own data.
-
-    Returns:
-        Dict matching contract:
-        {"flagged": [...], "checked": True, "summary": str, "tip": str|None}
-    """
+    """Check code for recurring bugs"""
     if token:
         verify_user_token(token, user_id)
 

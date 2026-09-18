@@ -29,25 +29,7 @@ def format_progression_info(mastery_score: float, band: str) -> str:
 
 
 async def suggest_next_problem(user_id: str, token: Optional[str] = None) -> Dict[str, Any]:
-    """Suggest the next DSA problem for a user based on their topic mastery scores.
-
-    Always pass the token received from get_or_create_user. Never use a user_id
-    that wasn't returned by get_or_create_user in this session.
-
-    Args:
-        user_id: The UUID string of the user.
-        token: JWT token returned by get_or_create_user.
-               Pass this to verify you can only access your own data.
-
-    Returns:
-        Dict matching contract:
-        {
-            "recommendation": {"id": str, "title": str, "difficulty": str} or None,
-            "targeted_topic": str,
-            "mastery_score": float,
-            "reason": str or None
-        }
-    """
+    """Suggest next DSA problem"""
     tool_name = "suggest_next_problem"
     start = time.time()
     logger.info(f"Tool called: {tool_name} for user {user_id}")

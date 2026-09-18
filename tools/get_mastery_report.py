@@ -15,22 +15,7 @@ logger = logging.getLogger(__name__)
 async def get_mastery_report(
     user_id: str, topic: Optional[str] = None, token: Optional[str] = None
 ) -> Dict[str, Any]:
-    """Fetch user's DSA topic mastery report.
-
-    Always pass the token received from get_or_create_user. Never use a user_id
-    that wasn't returned by get_or_create_user in this session.
-
-    Args:
-        user_id: The UUID string of the user.
-        topic: Optional topic slug to filter results for a single topic (e.g. 'sliding-window').
-               If omitted or null, returns mastery data for all topics.
-        token: JWT token returned by get_or_create_user.
-               Pass this to verify you can only access your own data.
-
-    Returns:
-        Dict with key 'topics' containing a list of topic mastery summaries:
-        {"topics": [{"slug": str, "mastery_score": float, "last_practiced_at": str or None}]}
-    """
+    """Get DSA topic mastery scores"""
     tool_name = "get_mastery_report"
     start = time.time()
     logger.info(f"Tool called: {tool_name} for user {user_id}")

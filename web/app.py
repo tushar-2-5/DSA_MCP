@@ -21,6 +21,7 @@ from web.routes import problems as problems_routes
 from web.routes import progress as progress_routes
 from web.routes import history as history_routes
 from web.routes import topics as topics_routes
+from web.routes import user as user_routes
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("recall_web")
@@ -36,6 +37,7 @@ templates = Jinja2Templates(directory="web/templates")
 app.state.templates = templates
 
 # Include Routers
+app.include_router(user_routes.router)
 app.include_router(auth_routes.router)
 app.include_router(dashboard_routes.router)
 app.include_router(problems_routes.router)

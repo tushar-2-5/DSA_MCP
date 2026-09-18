@@ -13,22 +13,7 @@ logging.basicConfig(stream=sys.stderr)
 async def get_problem_context(
     user_id: str, problem_statement: str, token: Optional[str] = None
 ) -> Dict[str, Any]:
-    """Find structurally similar past attempts from the user's history for a problem statement.
-
-    Always pass the token received from get_or_create_user. Never use a user_id
-    that wasn't returned by get_or_create_user in this session.
-
-    Args:
-        user_id: The UUID string of the registered user.
-        problem_statement: The text of the problem statement to find similar past attempts for.
-        token: JWT token returned by get_or_create_user.
-               Pass this to verify you can only access your own data.
-
-    Returns:
-        Dict matching contract:
-        - If matches exist: {"matches": [{"attempt_id": str, "outcome": str, "complexity_achieved": str|None, "mistake_summary": str|None, "distance": float}]}
-        - If no matches: {"matches": [], "note": "No similar past attempts found. Keep practicing to build your history!"}
-    """
+    """Get similar past attempts"""
     if token:
         verify_user_token(token, user_id)
 

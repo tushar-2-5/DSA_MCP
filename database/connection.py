@@ -68,10 +68,15 @@ async def get_pool() -> AsyncConnectionPool:
 
 async def close_pool():
     global _pool
-    if _pool is not None and not _pool.closed:
-        await _pool.close()
-        _pool = None
-        logger.info("Database connection pool closed")
+    if _pool is not None:
+        try:
+            if not _pool.closed:
+                await _pool.close()
+        except Exception as e:
+            logger.debug(f"Error closing connection pool: {e}")
+        finally:
+            _pool = None
+            logger.info("Database connection pool closed")
 
 
 @asynccontextmanager

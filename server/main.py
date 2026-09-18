@@ -17,13 +17,13 @@ from starlette.responses import JSONResponse
 
 from core.logging import setup_logging
 from database.connection import close_pool, get_pool
-from tools.flag_recurring_mistake import flag_recurring_mistake
-from tools.get_mastery_report import get_mastery_report
 from tools.get_or_create_user import get_or_create_user
-from tools.get_problem_context import get_problem_context, get_problem_by_title
+from tools.get_mastery_report import get_mastery_report
 from tools.log_attempt import log_attempt
-from tools.study_plan import study_plan
+from tools.get_problem_context import get_problem_context
+from tools.flag_recurring_mistake import flag_recurring_mistake
 from tools.suggest_next_problem import suggest_next_problem
+from tools.study_plan import study_plan
 from web.app import app as web_app
 
 
@@ -50,15 +50,14 @@ async def health_check_mcp(request=None):
 
 
 # Register MCP tools in strict priority order (get_or_create_user MUST be first)
-mcp.tool()(get_or_create_user)
-mcp.tool()(get_mastery_report)
-mcp.tool()(log_attempt)
-mcp.tool()(get_problem_context)
-mcp.tool()(flag_recurring_mistake)
-mcp.tool()(suggest_next_problem)
-mcp.tool()(get_problem_by_title)
-mcp.tool()(study_plan)
-
+# Tool descriptions must stay strictly under 50 characters for Claude.ai
+mcp.tool(description="Register or fetch a user by email")(get_or_create_user)
+mcp.tool(description="Get DSA topic mastery scores")(get_mastery_report)
+mcp.tool(description="Log a problem attempt")(log_attempt)
+mcp.tool(description="Get similar past attempts")(get_problem_context)
+mcp.tool(description="Check code for recurring bugs")(flag_recurring_mistake)
+mcp.tool(description="Suggest next DSA problem")(suggest_next_problem)
+mcp.tool(description="Generate a personalized study plan")(study_plan)
 
 
 # Build combined lifespan managing both database connection pool and FastMCP session manager

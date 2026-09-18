@@ -11,12 +11,6 @@ from tools.get_problem_context import get_problem_context
 from tools.flag_recurring_mistake import flag_recurring_mistake
 
 
-@pytest_asyncio.fixture(autouse=True)
-async def cleanup_db_pool():
-    yield
-    await close_pool()
-
-
 @pytest.mark.asyncio
 async def test_get_or_create_user_idempotent():
     test_email = f"pytest_user_{uuid.uuid4().hex[:6]}@example.com"
