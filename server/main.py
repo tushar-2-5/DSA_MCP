@@ -51,13 +51,25 @@ async def health_check_mcp(request=None):
 
 # Register MCP tools in strict priority order (get_or_create_user MUST be first)
 # Tool descriptions must stay strictly under 50 characters for Claude.ai
-mcp.tool(description="Register or fetch a user by email")(get_or_create_user)
-mcp.tool(description="Get DSA topic mastery scores")(get_mastery_report)
-mcp.tool(description="Log a problem attempt")(log_attempt)
-mcp.tool(description="Get similar past attempts")(get_problem_context)
-mcp.tool(description="Check code for recurring bugs")(flag_recurring_mistake)
-mcp.tool(description="Suggest next DSA problem")(suggest_next_problem)
-mcp.tool(description="Generate a personalized study plan")(study_plan)
+mcp.tool(
+    name="get_or_create_user",
+    description="Register or fetch a user by email",
+    meta={"tags": ["user", "register", "auth", "recall", "login"]},
+)(get_or_create_user)
+
+# Secondary alias to maximize discovery under alternative Claude.ai tool searches
+mcp.tool(
+    name="register_user",
+    description="Register or fetch a user by email",
+    meta={"tags": ["user", "register", "auth", "recall", "login"]},
+)(get_or_create_user)
+
+mcp.tool(name="get_mastery_report", description="Get DSA topic mastery scores")(get_mastery_report)
+mcp.tool(name="log_attempt", description="Log a problem attempt")(log_attempt)
+mcp.tool(name="get_problem_context", description="Get similar past attempts")(get_problem_context)
+mcp.tool(name="flag_recurring_mistake", description="Check code for recurring bugs")(flag_recurring_mistake)
+mcp.tool(name="suggest_next_problem", description="Suggest next DSA problem")(suggest_next_problem)
+mcp.tool(name="study_plan", description="Generate a personalized study plan")(study_plan)
 
 
 # Build combined lifespan managing both database connection pool and FastMCP session manager

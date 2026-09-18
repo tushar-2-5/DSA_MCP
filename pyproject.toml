@@ -22,6 +22,7 @@ dependencies = [
     "structlog>=24.0.0",
     "bcrypt>=5.0.0",
     "pyjwt>=2.13.0",
+    "fastmcp>=3.4.7",
 ]
 
 [dependency-groups]

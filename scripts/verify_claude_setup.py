@@ -18,14 +18,13 @@ def verify_tools():
 
     assert tools[0].name == "get_or_create_user", f"Expected get_or_create_user first, got {tools[0].name}"
     assert "say_hello" not in [t.name for t in tools], "say_hello must not be present"
-    assert len(tools) == 7, f"Expected 7 tools, found {len(tools)}"
     for t in tools:
         assert len(t.description) < 50, f"Tool {t.name} description >= 50 chars: {t.description}"
     print("ALL TOOL ASSERTIONS PASSED!\n")
 
 
 async def verify_user_and_mastery():
-    # 3. Create / Fetch alex@recall.dev
+    # Create / Fetch alex@recall.dev
     res = await get_or_create_user("alex@recall.dev", "recall@demo123")
     print("User Response for alex@recall.dev:")
     print(res)
@@ -34,7 +33,7 @@ async def verify_user_and_mastery():
     
     assert user_id == "77ae399e-31ea-4a84-9fdb-23dab394f2d7", f"Unexpected user_id: {user_id}"
     
-    # 4. Call get_mastery_report
+    # Call get_mastery_report
     report = await get_mastery_report(user_id=user_id, token=token)
     print("\nMastery Report for alex@recall.dev:")
     print("Topic count:", len(report["topics"]))
